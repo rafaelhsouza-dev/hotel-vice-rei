@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
@@ -6,6 +5,7 @@ import { getDictionary } from "@/i18n";
 import { rooms } from "@/data/hotel";
 import { PageHero } from "@/components/PageHero";
 import { Icon } from "@/components/Icon";
+import { LightboxGallery } from "@/components/LightboxGallery";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -40,22 +40,15 @@ export default async function RoomDetailPage({ params }: Props) {
             <p key={i}>{p}</p>
           ))}
 
-          <div className="grid grid-cols-2 gap-4 pt-6">
-            {room.gallery.map((src) => (
-              <div
-                key={src}
-                className="relative aspect-[4/3] overflow-hidden rounded-2xl"
-              >
-                <Image
-                  src={src}
-                  alt={room.name[locale]}
-                  fill
-                  className="object-cover"
-                  sizes="40vw"
-                />
-              </div>
-            ))}
-          </div>
+          <LightboxGallery
+            className="grid grid-cols-2 gap-4 pt-6"
+            aspectClass="aspect-[4/3]"
+            images={room.gallery.map((src) => ({
+              src,
+              alt: room.name[locale],
+              caption: room.name[locale],
+            }))}
+          />
 
           <div className="pt-6">
             <h2 className="font-display text-2xl tracking-tight text-[var(--color-ink)]">
