@@ -158,7 +158,7 @@ export const pt = {
     panoramaHint: "Arraste para rodar a vista",
     panoramaLoad: "Iniciar visita 360º",
     panoramaConsent:
-      "Ao iniciar carrega um visor externo (Google VR View). Só é carregado depois de clicar.",
+      "Ao iniciar carrega uma biblioteca 3D externa (A-Frame). Só é carregada depois de clicar.",
   },
   contact: {
     title: "Contactos",

@@ -1,18 +1,48 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n";
 import { Icon } from "./Icon";
 
 const DEFAULT_IMAGE =
   "https://mike-henderson.github.io/vrview/examples/gallery/R0010164-post.jpg";
+const AFRAME_SRC = "https://aframe.io/releases/1.5.0/aframe.min.js";
+
+declare global {
+  interface Window {
+    AFRAME?: unknown;
+  }
+}
+
+/** Load the A-Frame library once, on demand (shared across instances). */
+function loadAframe(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === "undefined") return resolve();
+    if (window.AFRAME) return resolve();
+    const existing = document.querySelector<HTMLScriptElement>(
+      "script[data-aframe]",
+    );
+    if (existing) {
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", () => reject(new Error("aframe")));
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = AFRAME_SRC;
+    s.async = true;
+    s.dataset.aframe = "true";
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error("aframe"));
+    document.head.appendChild(s);
+  });
+}
 
 /**
- * Immersive 360º photo viewer (Google VR View).
- * Click-to-load: the third-party iframe is only injected after the user
- * interacts, so nothing external loads (and no third-party cookies are set)
- * until the visitor opts in — friendlier for RGPD/GDPR compliance.
+ * Immersive, drag-to-rotate 360º photo viewer powered by self-hosted A-Frame
+ * (WebGL) — no third-party iframe. Click-to-load: the (heavy) A-Frame library
+ * is only fetched after the user interacts, which keeps the page fast and is
+ * friendlier for RGPD/GDPR.
  */
 export function Panorama360({
   dict,
@@ -24,24 +54,52 @@ export function Panorama360({
   poster?: string;
 }) {
   const [active, setActive] = useState(false);
-  // Google VR View embed — a single-image, drag-to-rotate 360 viewer built
-  // for iframing (the demo index.html page is not a clean embed).
-  const embed = `https://storage.googleapis.com/vrview/2.0/embed?image=${encodeURIComponent(
-    image,
-  )}&is_stereo=false&is_autopan_off=true`;
+  const [failed, setFailed] = useState(false);
+  const sceneRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!active) return;
+    let cancelled = false;
+    const host = sceneRef.current;
+
+    loadAframe()
+      .then(() => {
+        if (cancelled || !host) return;
+        host.innerHTML = `
+          <a-scene
+            embedded
+            vr-mode-ui="enabled: false"
+            loading-screen="enabled: false"
+            device-orientation-permission-ui="enabled: false"
+            style="width:100%;height:100%;"
+          >
+            <a-sky src="${image}"></a-sky>
+            <a-camera look-controls="reverseMouseDrag: true; touchEnabled: true" wasd-controls-enabled="false"></a-camera>
+          </a-scene>`;
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+
+    return () => {
+      cancelled = true;
+      // Remove the scene so A-Frame tears down its canvas / render loop.
+      if (host) host.innerHTML = "";
+    };
+  }, [active, image]);
 
   return (
     <div className="overflow-hidden rounded-3xl hairline bg-[var(--color-ink)]">
       <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
         {active ? (
-          <iframe
-            title={dict.gallery.panoramaTitle}
-            src={embed}
-            allowFullScreen
-            allow="accelerometer; gyroscope; fullscreen; xr-spatial-tracking"
-            loading="lazy"
-            className="absolute inset-0 h-full w-full border-0"
-          />
+          <>
+            <div ref={sceneRef} className="absolute inset-0 h-full w-full" />
+            {failed && (
+              <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/80">
+                {dict.gallery.panoramaConsent}
+              </div>
+            )}
+          </>
         ) : (
           <button
             type="button"

@@ -160,7 +160,7 @@ export const fr: Dictionary = {
     panoramaHint: "Faites glisser pour pivoter la vue",
     panoramaLoad: "Lancer la visite 360º",
     panoramaConsent:
-      "Le lancement charge un lecteur externe (Google VR View). Il n'est chargé qu'après votre clic.",
+      "Le lancement charge une bibliothèque 3D externe (A-Frame). Elle n'est chargée qu'après votre clic.",
   },
   contact: {
     title: "Contact",
