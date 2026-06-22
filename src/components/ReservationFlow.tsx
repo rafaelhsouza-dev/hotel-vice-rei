@@ -59,11 +59,58 @@ export function ReservationFlow({
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
   const [notes, setNotes] = useState("");
+  const [extras, setExtras] = useState({
+    breakfast: false,
+    parking: false,
+    lateCheckout: false,
+    upgrade: false,
+  });
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{ code: string; pct: number } | null>(null);
+  const [promoError, setPromoError] = useState(false);
+  const [payMethod, setPayMethod] = useState<
+    "mbway" | "multibanco" | "card" | "hotel"
+  >("hotel");
+  const [payPhone, setPayPhone] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
 
   const nights = nightsBetween(checkIn, checkOut);
   const selectedRoom = rooms.find((r) => r.id === roomId);
-  const total =
-    selectedRoom && nights > 0 ? selectedRoom.priceFrom * nights : 0;
+
+  const extraDefs = [
+    { key: "breakfast" as const, price: 8, perNight: true, label: dict.extras.breakfast, desc: dict.extras.breakfastDesc },
+    { key: "parking" as const, price: 12, perNight: true, label: dict.extras.parking, desc: dict.extras.parkingDesc },
+    { key: "lateCheckout" as const, price: 20, perNight: false, label: dict.extras.lateCheckout, desc: dict.extras.lateCheckoutDesc },
+    { key: "upgrade" as const, price: 25, perNight: false, label: dict.extras.upgrade, desc: dict.extras.upgradeDesc },
+  ];
+
+  const base = selectedRoom && nights > 0 ? selectedRoom.priceFrom * nights : 0;
+  const extrasTotal = extraDefs.reduce(
+    (sum, ex) =>
+      extras[ex.key]
+        ? sum + (ex.perNight ? ex.price * Math.max(1, nights) : ex.price)
+        : sum,
+    0,
+  );
+  const discount = promo
+    ? Math.round((base + extrasTotal) * promo.pct * 100) / 100
+    : 0;
+  const total = Math.max(0, base + extrasTotal - discount);
+
+  const promoCodes: Record<string, number> = { VICEREI10: 0.1, PORTO15: 0.15 };
+  function applyPromo() {
+    const code = promoInput.trim().toUpperCase();
+    if (promoCodes[code]) {
+      setPromo({ code, pct: promoCodes[code] });
+      setPromoError(false);
+    } else {
+      setPromo(null);
+      setPromoError(true);
+    }
+  }
 
   const steps = [
     dict.booking_page.step1,
@@ -312,6 +359,86 @@ export function ReservationFlow({
                     </label>
                   ))}
               </div>
+
+              {/* Extras (upsells) */}
+              <div className="border-t border-[var(--color-line)] pt-6">
+                <h3 className="font-display text-xl tracking-tight">
+                  {dict.extras.title}
+                </h3>
+                <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
+                  {dict.extras.subtitle}
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {extraDefs.map((ex) => {
+                    const on = extras[ex.key];
+                    return (
+                      <label
+                        key={ex.key}
+                        className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors ${
+                          on
+                            ? "border-[var(--color-accent-deep)] bg-[var(--color-line-soft)]"
+                            : "border-[var(--color-line)] hover:bg-[var(--color-line-soft)]/50"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            setExtras((s) => ({ ...s, [ex.key]: !s[ex.key] }))
+                          }
+                          className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent-deep)]"
+                        />
+                        <span className="flex-1">
+                          <span className="flex items-center justify-between gap-2">
+                            <span className="font-medium">{ex.label}</span>
+                            <span className="text-sm font-medium text-[var(--color-accent-deep)]">
+                              +{ex.price}€
+                            </span>
+                          </span>
+                          <span className="mt-0.5 block text-xs text-[var(--color-ink-muted)]">
+                            {ex.desc} ·{" "}
+                            {ex.perNight ? dict.extras.perNight : dict.extras.perStay}
+                          </span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Promo code */}
+              <div className="border-t border-[var(--color-line)] pt-6">
+                <label className={label} htmlFor="rf-promo">
+                  {dict.extras.promoTitle}
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="rf-promo"
+                    value={promoInput}
+                    onChange={(e) => setPromoInput(e.target.value)}
+                    placeholder={dict.extras.promoPlaceholder}
+                    className={field}
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromo}
+                    className="shrink-0 rounded-xl bg-[var(--color-ink)] px-5 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-deep)]"
+                  >
+                    {dict.extras.promoApply}
+                  </button>
+                </div>
+                {promo && (
+                  <p className="mt-2 text-xs text-[var(--color-success)]">
+                    {dict.extras.promoApplied}: {promo.code} (−
+                    {Math.round(promo.pct * 100)}%)
+                  </p>
+                )}
+                {promoError && (
+                  <p className="mt-2 text-xs text-red-600">
+                    {dict.extras.promoInvalid}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
@@ -393,6 +520,122 @@ export function ReservationFlow({
                   />
                 </div>
               </div>
+
+              {/* Payment method (mock) */}
+              <div className="border-t border-[var(--color-line)] pt-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-display text-xl tracking-tight">
+                    {dict.payment.title}
+                  </h3>
+                  <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+                    <Icon name="shield" width={14} height={14} />
+                    {dict.payment.secure}
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
+                  {dict.payment.subtitle}
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {([
+                    { key: "mbway", label: dict.payment.mbway },
+                    { key: "multibanco", label: dict.payment.multibanco },
+                    { key: "card", label: dict.payment.card },
+                    { key: "hotel", label: dict.payment.payAtHotel },
+                  ] as const).map((op) => (
+                    <label
+                      key={op.key}
+                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-colors ${
+                        payMethod === op.key
+                          ? "border-[var(--color-accent-deep)] bg-[var(--color-line-soft)]"
+                          : "border-[var(--color-line)] hover:bg-[var(--color-line-soft)]/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="payMethod"
+                        checked={payMethod === op.key}
+                        onChange={() => setPayMethod(op.key)}
+                        className="h-4 w-4 accent-[var(--color-accent-deep)]"
+                      />
+                      <span className="font-medium">{op.label}</span>
+                    </label>
+                  ))}
+                </div>
+
+                {payMethod === "mbway" && (
+                  <div className="mt-4">
+                    <label className={label} htmlFor="rf-mbway">
+                      {dict.payment.phoneNumber}
+                    </label>
+                    <input
+                      id="rf-mbway"
+                      value={payPhone}
+                      onChange={(e) => setPayPhone(e.target.value)}
+                      placeholder="9XX XXX XXX"
+                      className={field}
+                    />
+                  </div>
+                )}
+                {payMethod === "multibanco" && (
+                  <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
+                    {dict.payment.reference}
+                  </p>
+                )}
+                {payMethod === "card" && (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <label className={label} htmlFor="rf-card-number">
+                        {dict.payment.cardNumber}
+                      </label>
+                      <input
+                        id="rf-card-number"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        placeholder="0000 0000 0000 0000"
+                        inputMode="numeric"
+                        className={field}
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className={label} htmlFor="rf-card-name">
+                        {dict.payment.cardName}
+                      </label>
+                      <input
+                        id="rf-card-name"
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                        className={field}
+                      />
+                    </div>
+                    <div>
+                      <label className={label} htmlFor="rf-card-exp">
+                        {dict.payment.cardExpiry}
+                      </label>
+                      <input
+                        id="rf-card-exp"
+                        value={cardExpiry}
+                        onChange={(e) => setCardExpiry(e.target.value)}
+                        placeholder="MM/AA"
+                        className={field}
+                      />
+                    </div>
+                    <div>
+                      <label className={label} htmlFor="rf-card-cvc">
+                        {dict.payment.cardCvc}
+                      </label>
+                      <input
+                        id="rf-card-cvc"
+                        value={cardCvc}
+                        onChange={(e) => setCardCvc(e.target.value)}
+                        placeholder="123"
+                        inputMode="numeric"
+                        className={field}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <p className="text-xs text-[var(--color-ink-muted)] mt-2 leading-relaxed">
                 {dict.booking_page.paymentNote}
               </p>
@@ -471,6 +714,23 @@ export function ReservationFlow({
                 {selectedRoom ? selectedRoom.name[locale] : "—"}
               </dd>
             </div>
+            {extrasTotal > 0 && (
+              <div className="flex items-center justify-between">
+                <dt className="text-[var(--color-ink-muted)]">
+                  {dict.extras.extrasLine}
+                </dt>
+                <dd className="font-medium">+{extrasTotal}€</dd>
+              </div>
+            )}
+            {discount > 0 && (
+              <div className="flex items-center justify-between text-[var(--color-success)]">
+                <dt>
+                  {dict.extras.discount}
+                  {promo ? ` · ${promo.code}` : ""}
+                </dt>
+                <dd className="font-medium">−{discount}€</dd>
+              </div>
+            )}
           </dl>
 
           <div className="mt-6 border-t border-[var(--color-line)] pt-6">

@@ -304,11 +304,38 @@ export default async function HomePage({ params }: Props) {
 
       {/* TESTIMONIALS */}
       <section className="container-x py-16 sm:py-20 lg:py-28">
-        <Reveal className="max-w-2xl">
-          <span className="eyebrow">{dict.home.testimonials.eyebrow}</span>
-          <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
-            {dict.home.testimonials.title}
-          </h2>
+        <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <span className="eyebrow">{dict.home.testimonials.eyebrow}</span>
+            <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+              {dict.home.testimonials.title}
+            </h2>
+          </div>
+          <a
+            href={hotel.social.tripadvisor}
+            target="_blank"
+            rel="noreferrer"
+            className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-white hairline px-5 py-4 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-floating)]"
+          >
+            <span className="grid h-11 w-11 place-items-center rounded-full bg-[var(--color-success)]/10 font-display text-lg text-[var(--color-success)]">
+              {hotel.rating.score}
+            </span>
+            <span className="leading-tight">
+              <span className="flex items-center gap-0.5 text-[var(--color-accent)]">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Icon key={i} name="star" width={13} height={13} />
+                ))}
+              </span>
+              <span className="mt-1 block text-xs text-[var(--color-ink-muted)]">
+                {dict.reviews.basedOn} {hotel.rating.count.toLocaleString()}{" "}
+                {dict.reviews.reviewsWord}
+              </span>
+              <span className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-deep)] transition-all group-hover:gap-2">
+                {dict.reviews.viewOnTripadvisor}
+                <Icon name="arrow-right" width={12} height={12} />
+              </span>
+            </span>
+          </a>
         </Reveal>
         <Reveal
           className="mt-12 grid gap-6 md:grid-cols-3"

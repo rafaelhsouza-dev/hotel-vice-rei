@@ -4,6 +4,7 @@ import { hotel } from "@/data/hotel";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
 import { Icon } from "./Icon";
+import { Newsletter } from "./Newsletter";
 
 export function Footer({
   locale,
@@ -14,6 +15,7 @@ export function Footer({
 }) {
   return (
     <footer className="mt-32 bg-[var(--color-ink)] text-white">
+      <Newsletter locale={locale} dict={dict} />
       <div className="container-x py-20 grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <Link
@@ -58,6 +60,15 @@ export function Footer({
             >
               <Icon name="instagram" width={14} height={14} />
             </a>
+            <a
+              href={hotel.social.tripadvisor}
+              aria-label="TripAdvisor"
+              target="_blank"
+              rel="noreferrer"
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/15 hover:border-white/40 hover:bg-white/5 transition-colors"
+            >
+              <Icon name="star" width={14} height={14} />
+            </a>
           </div>
         </div>
 
@@ -73,6 +84,7 @@ export function Footer({
               { href: "/servicos", k: "services" as const },
               { href: "/promocoes", k: "offers" as const },
               { href: "/galeria", k: "gallery" as const },
+              { href: "/blog", k: "blog" as const },
               { href: "/contactos", k: "contact" as const },
             ].map((it) => (
               <li key={it.k}>
@@ -182,6 +194,14 @@ export function Footer({
             </li>
             <li>
               <Link
+                href={`/${locale}/cancelamento`}
+                className="text-white/80 hover:text-white transition-colors"
+              >
+                {dict.footer.cancellation}
+              </Link>
+            </li>
+            <li>
+              <Link
                 href={`/${locale}/reservar`}
                 className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-accent-soft)] transition-colors"
               >
@@ -197,9 +217,10 @@ export function Footer({
         <div className="container-x py-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-xs text-white/50">
           <p>
             © {hotel.legal.copyrightYear}–{new Date().getFullYear()}{" "}
-            {hotel.name}. {dict.footer.rights}
+            {hotel.name}. {dict.footer.rights}{" "}
+            <span className="text-white/40">· {hotel.legal.rnet}</span>
           </p>
-          <p className="flex items-center gap-3">
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <a
               href={hotel.legal.complaintsBook}
               target="_blank"
@@ -216,6 +237,15 @@ export function Footer({
               className="hover:text-white/80"
             >
               {dict.footer.cleanSafe}
+            </a>
+            <span aria-hidden>·</span>
+            <a
+              href={hotel.legal.euODR}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white/80"
+            >
+              ODR (UE)
             </a>
           </p>
         </div>

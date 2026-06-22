@@ -16,6 +16,7 @@ const navItems = [
   { href: "/servicos", labelKey: "services" as const },
   { href: "/promocoes", labelKey: "offers" as const },
   { href: "/galeria", labelKey: "gallery" as const },
+  { href: "/blog", labelKey: "blog" as const },
   { href: "/contactos", labelKey: "contact" as const },
 ];
 
@@ -85,7 +86,7 @@ export function Header({
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-7 text-sm">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm">
           {navItems.map((item) => {
             const href = `/${locale}${item.href}`;
             const active =

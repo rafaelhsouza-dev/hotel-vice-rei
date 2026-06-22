@@ -95,11 +95,18 @@ export const hotel = {
   social: {
     facebook: "https://www.facebook.com/HotelViceRei",
     instagram: "https://www.instagram.com/hotelvicerei",
+    tripadvisor:
+      "https://www.tripadvisor.com/Hotel_Review-g189180-d952655-Reviews-Hotel_Vice_Rei-Porto_Porto_District_Northern_Portugal.html",
   },
   coords: { lat: 41.158, lng: -8.628 },
+  rating: { score: 4.6, count: 1280 },
   legal: {
     complaintsBook: "https://www.livroreclamacoes.pt/Inicio/",
     cleanSafe: "https://portugalcleanandsafe.pt/pt",
+    // Registo Nacional dos Empreendimentos Turísticos (mock number)
+    rnet: "RNET 4286",
+    // EU Online Dispute Resolution platform
+    euODR: "https://ec.europa.eu/consumers/odr",
     copyrightYear: 2016,
   },
   paymentMethods: ["Visa", "Mastercard", "American Express", "Diners"],

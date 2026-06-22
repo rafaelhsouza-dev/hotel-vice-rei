@@ -32,6 +32,9 @@ export type IconName =
   | "globe"
   | "menu"
   | "close"
+  | "link"
+  | "whatsapp"
+  | "twitter"
   | "bed";
 
 const paths: Record<IconName, ReactElement> = {
@@ -168,6 +171,19 @@ const paths: Record<IconName, ReactElement> = {
   ),
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   close: <path d="M6 6l12 12M18 6 6 18" />,
+  link: (
+    <>
+      <path d="M10 13a5 5 0 0 0 7.07 0l2-2a5 5 0 0 0-7.07-7.07l-1.1 1.1" />
+      <path d="M14 11a5 5 0 0 0-7.07 0l-2 2a5 5 0 0 0 7.07 7.07l1.1-1.1" />
+    </>
+  ),
+  whatsapp: (
+    <>
+      <path d="M3.5 20.5 4.9 16A8 8 0 1 1 8 19.1z" />
+      <path d="M8.6 8.4c-.3.7-.2 1.6.3 2.4a8 8 0 0 0 3.7 3.3c.8.3 1.7.3 2.3-.1" />
+    </>
+  ),
+  twitter: <path d="M4 4l16 16M20 4 4 20" />,
   bed: (
     <>
       <path d="M3 8v12M21 12v8" />

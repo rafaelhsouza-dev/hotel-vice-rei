@@ -4,6 +4,7 @@ import { getDictionary } from "@/i18n";
 import { rooms, offers } from "@/data/hotel";
 import { PageHero } from "@/components/PageHero";
 import { ReservationFlow } from "@/components/ReservationFlow";
+import { BestPriceBadge } from "@/components/BestPriceBadge";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -36,13 +37,16 @@ export default async function ReservePage({ params, searchParams }: Props) {
   return (
     <div>
       <PageHero
-        eyebrow="Booking"
+        eyebrow={dict.nav.book}
         title={dict.booking_page.title}
         subtitle={dict.booking_page.subtitle}
         image="/images/hero/featured-suite.jpg"
       />
 
       <section className="container-x py-20">
+        <div className="mb-8">
+          <BestPriceBadge dict={dict} />
+        </div>
         <ReservationFlow
           locale={locale}
           dict={dict}

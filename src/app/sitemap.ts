@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { rooms } from "@/data/hotel";
+import { posts } from "@/data/blog";
 
 const BASE = "https://www.hotelvicerei.com";
 
@@ -13,6 +14,8 @@ const sections = [
   "/galeria",
   "/contactos",
   "/reservar",
+  "/blog",
+  "/cancelamento",
   "/privacidade",
   "/acessibilidade",
 ];
@@ -34,6 +37,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: new Date(),
         changeFrequency: "monthly",
         priority: 0.6,
+      });
+    }
+    for (const p of posts) {
+      items.push({
+        url: `${BASE}/${locale}/blog/${p.slug}`,
+        lastModified: new Date(p.date),
+        changeFrequency: "monthly",
+        priority: 0.5,
       });
     }
   }
