@@ -229,7 +229,8 @@ export default async function HomePage({ params }: Props) {
         <div className="relative container-x py-16 sm:py-20 lg:py-28">
           <Reveal className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div>
-              <span className="eyebrow text-[var(--color-accent-soft)] before:bg-[var(--color-accent-soft)]">
+              <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[var(--color-accent-soft)]">
+                <span aria-hidden className="h-px w-6 bg-[var(--color-accent-soft)]" />
                 {dict.home.offers.eyebrow}
               </span>
               <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">

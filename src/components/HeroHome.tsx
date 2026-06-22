@@ -129,7 +129,8 @@ export function HeroHome({
       <div className="relative container-x flex min-h-[100svh] flex-col justify-end pb-10 pt-28 sm:pt-32 lg:pt-44 text-white">
         <div className="max-w-3xl">
           <div ref={eyebrowRef}>
-            <span className="eyebrow text-white/80 before:bg-white/60">
+            <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90">
+              <span aria-hidden className="h-px w-6 bg-white/70" />
               {dict.hero.eyebrow}
             </span>
           </div>

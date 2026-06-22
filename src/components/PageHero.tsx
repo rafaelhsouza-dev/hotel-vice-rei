@@ -69,7 +69,8 @@ export function PageHero({
         className="relative container-x flex h-full flex-col justify-end pb-14 pt-36 text-white"
       >
         {eyebrow && (
-          <span className="eyebrow text-white/80 before:bg-white/60">
+          <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90">
+            <span aria-hidden className="h-px w-6 bg-white/70" />
             {eyebrow}
           </span>
         )}
