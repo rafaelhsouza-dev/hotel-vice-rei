@@ -69,15 +69,22 @@ export default async function BackofficePage({ params }: Props) {
   };
 
   return (
-    <div className="container-x pt-28 pb-20 sm:pt-32">
-      <header className="flex flex-col gap-2">
-        <span className="eyebrow">{dict.backoffice.title}</span>
-        <h1 className="font-display text-3xl tracking-tight sm:text-4xl">
-          {dict.backoffice.subtitle}
-        </h1>
-      </header>
+    <div>
+      {/* Dark band sits behind the fixed header so its white text stays readable */}
+      <section className="bg-[var(--color-ink)] text-white">
+        <div className="container-x pt-28 pb-12 sm:pt-32">
+          <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[var(--color-accent-soft)]">
+            <span aria-hidden className="h-px w-6 bg-[var(--color-accent-soft)]" />
+            {dict.backoffice.title}
+          </span>
+          <h1 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">
+            {dict.backoffice.subtitle}
+          </h1>
+        </div>
+      </section>
 
-      <div className="mt-6 rounded-2xl border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-4 py-3 text-sm text-[var(--color-accent-deep)]">
+      <div className="container-x py-10 sm:py-12">
+        <div className="rounded-2xl border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-4 py-3 text-sm text-[var(--color-accent-deep)]">
         {dict.backoffice.demoNote}
       </div>
 
@@ -132,6 +139,7 @@ export default async function BackofficePage({ params }: Props) {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   );
