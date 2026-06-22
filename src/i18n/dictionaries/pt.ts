@@ -151,6 +151,14 @@ export const pt = {
   gallery: {
     title: "Galeria",
     subtitle: "Um vislumbre do que o espera no Hotel Vice-Rei.",
+    panoramaEyebrow: "Multimédia · 360º",
+    panoramaTitle: "Visita em 360º",
+    panoramaSubtitle:
+      "Explore o hotel numa panorâmica imersiva. Arraste para olhar em redor — em telemóvel, mova o aparelho.",
+    panoramaHint: "Arraste para rodar a vista",
+    panoramaLoad: "Iniciar visita 360º",
+    panoramaConsent:
+      "Ao iniciar carrega um visor externo (Google VR View). Só é carregado depois de clicar.",
   },
   contact: {
     title: "Contactos",
@@ -207,6 +215,74 @@ export const pt = {
     complaintsBook: "Livro de Reclamações",
     cleanSafe: "Clean & Safe",
     facebook: "Facebook",
+    privacy: "Política de Privacidade",
+    accessibility: "Acessibilidade",
+    cookies: "Cookies",
+  },
+  cookies: {
+    title: "A sua privacidade",
+    message:
+      "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies para analisar a navegação. Pode aceitar, recusar ou saber mais.",
+    accept: "Aceitar tudo",
+    reject: "Rejeitar não essenciais",
+    learnMore: "Saber mais",
+    settings: "Definições",
+  },
+  privacy: {
+    title: "Política de Privacidade",
+    subtitle:
+      "Como o Hotel Vice-Rei recolhe, utiliza e protege os seus dados pessoais, em conformidade com o RGPD.",
+    updated: "Última atualização: junho de 2026",
+    sections: [
+      {
+        heading: "1. Responsável pelo tratamento",
+        body: "O responsável pelo tratamento dos seus dados é o Hotel Vice-Rei, com sede na Rua Júlio Dinis, 779, 4050-326 Porto, Portugal. Para qualquer questão sobre privacidade pode contactar-nos através de geral@hotelvicerei.com.",
+      },
+      {
+        heading: "2. Dados que recolhemos",
+        body: "Recolhemos os dados que nos fornece ao efetuar uma reserva ou ao contactar-nos (nome, email, telefone, país e mensagem) e dados técnicos de navegação (endereço IP, tipo de dispositivo e páginas visitadas) quando consente a utilização de cookies analíticos.",
+      },
+      {
+        heading: "3. Finalidades e base legal",
+        body: "Tratamos os seus dados para gerir reservas e pedidos de contacto (execução de contrato), para cumprir obrigações legais e fiscais, e para melhorar o site mediante o seu consentimento. Não tomamos decisões automatizadas com efeitos jurídicos.",
+      },
+      {
+        heading: "4. Conservação dos dados",
+        body: "Conservamos os dados apenas durante o período necessário às finalidades indicadas ou para cumprimento de obrigações legais, findo o qual são eliminados ou anonimizados de forma segura.",
+      },
+      {
+        heading: "5. Os seus direitos",
+        body: "Tem o direito de aceder, retificar, apagar, limitar ou opor-se ao tratamento dos seus dados, bem como à portabilidade. Pode exercê-los através de geral@hotelvicerei.com e apresentar reclamação à Comissão Nacional de Proteção de Dados (CNPD).",
+      },
+      {
+        heading: "6. Cookies",
+        body: "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies analíticos. Pode gerir as suas preferências a qualquer momento através do banner de cookies ou das definições do seu navegador.",
+      },
+    ],
+  },
+  accessibility: {
+    title: "Acessibilidade",
+    subtitle:
+      "Estamos empenhados em tornar o site do Hotel Vice-Rei utilizável por todas as pessoas, independentemente das suas capacidades.",
+    updated: "Última atualização: junho de 2026",
+    sections: [
+      {
+        heading: "Compromisso",
+        body: "Procuramos seguir as diretrizes WCAG 2.1 nível AA, garantindo contraste adequado, navegação por teclado e compatibilidade com tecnologias de apoio como leitores de ecrã.",
+      },
+      {
+        heading: "Medidas implementadas",
+        body: "Estrutura semântica e marcos de navegação (landmarks), textos alternativos nas imagens, foco visível, áreas de toque amplas e respeito pela preferência de movimento reduzido do sistema.",
+      },
+      {
+        heading: "Movimento e animações",
+        body: "Se ativar a opção «reduzir movimento» no seu sistema operativo, desativamos automaticamente animações e efeitos não essenciais em todo o site.",
+      },
+      {
+        heading: "Limitações conhecidas e contacto",
+        body: "Alguns conteúdos de terceiros (mapas e visor 360º) podem ter limitações de acessibilidade. Se encontrar alguma barreira, contacte-nos por geral@hotelvicerei.com ou +351 225 430 120 e ajudaremos com a maior brevidade.",
+      },
+    ],
   },
 };
 

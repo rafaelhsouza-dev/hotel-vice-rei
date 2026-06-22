@@ -6,6 +6,7 @@ import { rooms } from "@/data/hotel";
 import { PageHero } from "@/components/PageHero";
 import { Icon } from "@/components/Icon";
 import { LightboxGallery } from "@/components/LightboxGallery";
+import { Panorama360 } from "@/components/Panorama360";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -99,6 +100,28 @@ export default async function RoomDetailPage({ params }: Props) {
             </Link>
           </div>
         </aside>
+      </section>
+
+      {/* 360º ROOM VIEW */}
+      <section className="bg-[var(--color-line-soft)]">
+        <div className="container-x py-16 sm:py-20 lg:py-24">
+          <div className="max-w-2xl">
+            <span className="eyebrow">{dict.gallery.panoramaEyebrow}</span>
+            <h2 className="mt-4 font-display text-3xl tracking-tight sm:text-4xl">
+              {dict.gallery.panoramaTitle}
+            </h2>
+            <p className="mt-4 text-[var(--color-ink-soft)]">
+              {dict.gallery.panoramaSubtitle}
+            </p>
+          </div>
+          <div className="mt-10">
+            <Panorama360
+              dict={dict}
+              image={room.panorama360}
+              poster={room.image}
+            />
+          </div>
+        </div>
       </section>
     </div>
   );

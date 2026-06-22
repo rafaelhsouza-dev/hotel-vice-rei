@@ -58,7 +58,6 @@ export function LocaleSwitcher({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <Icon name="globe" width={14} height={14} />
         <span className="font-medium tracking-wider uppercase">{current}</span>
         <Icon name="chevron-down" width={12} height={12} />
       </button>

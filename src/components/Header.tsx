@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -54,39 +55,33 @@ export function Header({
       <div className="container-x flex h-20 items-center justify-between gap-6">
         <Link
           href={`/${locale}`}
-          className="flex items-center gap-3 group"
-          aria-label="Hotel Vice-Rei"
+          className="group shrink-0"
+          aria-label="Hotel Vice-Rei · Porto"
         >
-          <span
-            className={`relative grid h-11 w-11 place-items-center rounded-full font-display text-xl transition-colors duration-500 ${
-              light
-                ? "bg-[var(--color-accent-soft)] text-[var(--color-ink)] shadow-[0_0_0_1px_rgba(255,255,255,0.4)]"
-                : "bg-[var(--color-ink)] text-[var(--color-accent-soft)] shadow-[0_0_0_1px_var(--color-line)]"
-            }`}
-          >
-            <span className="leading-none">V</span>
-            <span
-              aria-hidden
-              className={`pointer-events-none absolute -inset-1 rounded-full border transition-opacity duration-500 ${
-                light ? "border-white/30" : "border-[var(--color-accent)]/30"
-              } group-hover:opacity-100 opacity-60`}
+          {/* Wide horizontal lockup (~3.94:1). Container widths track the
+              height so object-contain fills exactly with no letterboxing,
+              and both variants cross-fade with the header's colour shift. */}
+          <span className="relative block h-8 w-[126px] sm:h-9 sm:w-[142px] lg:h-10 lg:w-[158px]">
+            <Image
+              src="/logo-hotel-vice-rei.webp"
+              alt="Hotel Vice-Rei"
+              fill
+              sizes="160px"
+              className={`object-contain object-left transition-opacity duration-500 ${
+                light ? "opacity-0" : "opacity-100"
+              }`}
             />
-          </span>
-          <span className="flex flex-col leading-tight">
-            <span
-              className={`font-display text-base sm:text-lg tracking-tight transition-colors duration-500 ${
-                light ? "text-white" : "text-[var(--color-ink)]"
+            <Image
+              src="/logo-hotel-vice-rei-branco.webp"
+              alt=""
+              aria-hidden
+              fill
+              priority
+              sizes="160px"
+              className={`object-contain object-left transition-opacity duration-500 ${
+                light ? "opacity-100" : "opacity-0"
               }`}
-            >
-              Hotel Vice-Rei
-            </span>
-            <span
-              className={`hidden sm:block text-[10px] uppercase tracking-[0.3em] transition-colors duration-500 ${
-                light ? "text-white/70" : "text-[var(--color-ink-muted)]"
-              }`}
-            >
-              Porto · Boutique
-            </span>
+            />
           </span>
         </Link>
 

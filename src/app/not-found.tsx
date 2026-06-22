@@ -1,9 +1,19 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function NotFound() {
   return (
     <main className="container-x flex-1 grid place-items-center py-32">
       <div className="text-center max-w-md">
+        <Image
+          src="/logo-hotel-vice-rei.webp"
+          alt="Hotel Vice-Rei"
+          width={2016}
+          height={512}
+          sizes="240px"
+          className="mx-auto mb-10 h-9 w-auto sm:h-11"
+          priority
+        />
         <p className="text-xs uppercase tracking-[0.25em] text-[var(--color-ink-muted)]">
           404
         </p>

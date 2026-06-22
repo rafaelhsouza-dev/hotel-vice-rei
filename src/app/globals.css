@@ -102,6 +102,16 @@ body {
   50% { opacity: 1; }
 }
 
+/* Hero intro veil — fades out on load via CSS (not JS), so the hero image
+   is revealed even if client-side JavaScript fails to execute. */
+@keyframes hero-veil {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.hero-veil {
+  animation: hero-veil 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

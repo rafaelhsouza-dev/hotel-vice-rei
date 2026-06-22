@@ -153,6 +153,14 @@ export const en: Dictionary = {
   gallery: {
     title: "Gallery",
     subtitle: "A glimpse of what awaits you at Hotel Vice-Rei.",
+    panoramaEyebrow: "Multimedia · 360º",
+    panoramaTitle: "360º tour",
+    panoramaSubtitle:
+      "Explore the hotel in an immersive panorama. Drag to look around — on mobile, just move your device.",
+    panoramaHint: "Drag to look around",
+    panoramaLoad: "Start 360º tour",
+    panoramaConsent:
+      "Starting loads an external viewer (Google VR View). It only loads after you click.",
   },
   contact: {
     title: "Contact",
@@ -208,5 +216,73 @@ export const en: Dictionary = {
     complaintsBook: "Complaints Book",
     cleanSafe: "Clean & Safe",
     facebook: "Facebook",
+    privacy: "Privacy Policy",
+    accessibility: "Accessibility",
+    cookies: "Cookies",
+  },
+  cookies: {
+    title: "Your privacy",
+    message:
+      "We use cookies that are essential to run the site and, with your consent, cookies to analyse browsing. You can accept, reject or learn more.",
+    accept: "Accept all",
+    reject: "Reject non-essential",
+    learnMore: "Learn more",
+    settings: "Settings",
+  },
+  privacy: {
+    title: "Privacy Policy",
+    subtitle:
+      "How Hotel Vice-Rei collects, uses and protects your personal data, in compliance with the GDPR.",
+    updated: "Last updated: June 2026",
+    sections: [
+      {
+        heading: "1. Data controller",
+        body: "The controller of your data is Hotel Vice-Rei, located at Rua Júlio Dinis, 779, 4050-326 Porto, Portugal. For any privacy matter you can contact us at geral@hotelvicerei.com.",
+      },
+      {
+        heading: "2. Data we collect",
+        body: "We collect the data you provide when making a booking or contacting us (name, email, phone, country and message) and technical browsing data (IP address, device type and pages visited) when you consent to analytics cookies.",
+      },
+      {
+        heading: "3. Purposes and legal basis",
+        body: "We process your data to manage bookings and contact requests (performance of a contract), to comply with legal and tax obligations, and to improve the site with your consent. We do not make automated decisions with legal effects.",
+      },
+      {
+        heading: "4. Data retention",
+        body: "We keep data only for as long as necessary for the stated purposes or to meet legal obligations, after which it is securely deleted or anonymised.",
+      },
+      {
+        heading: "5. Your rights",
+        body: "You have the right to access, rectify, erase, restrict or object to the processing of your data, as well as data portability. You can exercise them at geral@hotelvicerei.com and lodge a complaint with the Portuguese Data Protection Authority (CNPD).",
+      },
+      {
+        heading: "6. Cookies",
+        body: "We use cookies essential to the operation of the site and, with your consent, analytics cookies. You can manage your preferences at any time through the cookie banner or your browser settings.",
+      },
+    ],
+  },
+  accessibility: {
+    title: "Accessibility",
+    subtitle:
+      "We are committed to making the Hotel Vice-Rei website usable by everyone, regardless of their abilities.",
+    updated: "Last updated: June 2026",
+    sections: [
+      {
+        heading: "Commitment",
+        body: "We aim to follow the WCAG 2.1 AA guidelines, ensuring adequate contrast, keyboard navigation and compatibility with assistive technologies such as screen readers.",
+      },
+      {
+        heading: "Measures in place",
+        body: "Semantic structure and navigation landmarks, alternative text on images, visible focus, generous tap targets and respect for the system's reduced-motion preference.",
+      },
+      {
+        heading: "Motion and animations",
+        body: "If you enable the “reduce motion” option in your operating system, we automatically disable non-essential animations and effects across the whole site.",
+      },
+      {
+        heading: "Known limitations and contact",
+        body: "Some third-party content (maps and the 360º viewer) may have accessibility limitations. If you encounter any barrier, contact us at geral@hotelvicerei.com or +351 225 430 120 and we will help as soon as possible.",
+      },
+    ],
   },
 };

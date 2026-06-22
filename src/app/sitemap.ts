@@ -13,6 +13,8 @@ const sections = [
   "/galeria",
   "/contactos",
   "/reservar",
+  "/privacidade",
+  "/acessibilidade",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

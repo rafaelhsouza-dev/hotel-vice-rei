@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { hotel } from "@/data/hotel";
 import type { Locale } from "@/i18n/config";
@@ -15,19 +16,20 @@ export function Footer({
     <footer className="mt-32 bg-[var(--color-ink)] text-white">
       <div className="container-x py-20 grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <div className="flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-[var(--color-accent)] text-[var(--color-ink)] font-display text-xl">
-              V
-            </span>
-            <div>
-              <p className="font-display text-xl tracking-tight">
-                Hotel Vice-Rei
-              </p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/50">
-                Porto · Boutique
-              </p>
-            </div>
-          </div>
+          <Link
+            href={`/${locale}`}
+            aria-label="Hotel Vice-Rei · Porto"
+            className="inline-block"
+          >
+            <Image
+              src="/logo-hotel-vice-rei-branco.webp"
+              alt="Hotel Vice-Rei"
+              width={2016}
+              height={512}
+              sizes="200px"
+              className="h-10 w-auto sm:h-12"
+            />
+          </Link>
           <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/70">
             {hotel.brandTagline[locale]}.
           </p>
@@ -161,6 +163,22 @@ export function Footer({
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                 />
               </a>
+            </li>
+            <li>
+              <Link
+                href={`/${locale}/privacidade`}
+                className="text-white/80 hover:text-white transition-colors"
+              >
+                {dict.footer.privacy}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={`/${locale}/acessibilidade`}
+                className="text-white/80 hover:text-white transition-colors"
+              >
+                {dict.footer.accessibility}
+              </Link>
             </li>
             <li>
               <Link

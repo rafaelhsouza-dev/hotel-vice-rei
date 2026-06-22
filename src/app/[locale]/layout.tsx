@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { CookieConsent } from "@/components/CookieConsent";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
 
@@ -30,6 +31,7 @@ export async function generateMetadata({
         pt: "/pt",
         en: "/en",
         es: "/es",
+        fr: "/fr",
       },
     },
   };
@@ -46,6 +48,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Header locale={locale} dict={dict} />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} dict={dict} />
+      <CookieConsent locale={locale} dict={dict} />
     </>
   );
 }
