@@ -6,14 +6,19 @@ import { safeQuery } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 async function counts() {
-  const rows = await safeQuery<{ pending: string; unread: string }>(
+  const rows = await safeQuery<Record<string, string>>(
     `SELECT
        (SELECT count(*) FROM bookings WHERE status = 'pending')::text AS pending,
-       (SELECT count(*) FROM messages WHERE read = false)::text AS unread`,
+       (SELECT count(*) FROM messages WHERE read = false)::text AS unread,
+       (SELECT count(*) FROM tasks WHERE status <> 'done')::text AS tasks,
+       (SELECT count(*) FROM inventory_items WHERE active AND quantity <= min_quantity)::text AS low_stock`,
   );
+  const r = rows?.[0];
   return {
-    pending: Number(rows?.[0]?.pending ?? 0),
-    unread: Number(rows?.[0]?.unread ?? 0),
+    pending: Number(r?.pending ?? 0),
+    unread: Number(r?.unread ?? 0),
+    tasks: Number(r?.tasks ?? 0),
+    lowStock: Number(r?.low_stock ?? 0),
   };
 }
 
@@ -23,7 +28,7 @@ export default async function PainelLayout({
   children: React.ReactNode;
 }) {
   const session = await requireSession();
-  const { pending, unread } = await counts();
+  const { pending, unread, tasks, lowStock } = await counts();
 
   const groups: NavGroup[] = [
     {
@@ -36,9 +41,20 @@ export default async function PainelLayout({
       ],
     },
     {
+      title: "Hotel",
+      items: [
+        { href: "/admin/acomodacoes", label: "Acomodações", icon: "bed" },
+        { href: "/admin/tarefas", label: "Tarefas", icon: "check", badge: tasks },
+        { href: "/admin/equipa", label: "Equipa", icon: "users" },
+        { href: "/admin/insumos", label: "Insumos", icon: "safe", badge: lowStock },
+        { href: "/admin/refeicoes", label: "Refeições", icon: "breakfast" },
+        { href: "/admin/fornecedores", label: "Fornecedores", icon: "concierge" },
+      ],
+    },
+    {
       title: "Conteúdo",
       items: [
-        { href: "/admin/quartos", label: "Quartos", icon: "bed" },
+        { href: "/admin/quartos", label: "Tipologias", icon: "tag" },
         { href: "/admin/promocoes", label: "Promoções", icon: "sparkle" },
         { href: "/admin/servicos", label: "Serviços", icon: "concierge" },
         { href: "/admin/blog", label: "Blog", icon: "tours" },

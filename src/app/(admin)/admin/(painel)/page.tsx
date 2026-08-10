@@ -2,6 +2,8 @@ import Link from "next/link";
 import { requireSession } from "@/lib/auth/session";
 import { getHotel, getRooms } from "@/lib/repo/content";
 import { getDashboardStats, type DashboardStats } from "@/lib/repo/ops";
+import { opsSnapshot, type OpsSnapshot } from "@/lib/repo/operations";
+import { UNIT_LABEL, UNIT_DOT } from "@/components/admin/StatusPill";
 import { Icon, type IconName } from "@/components/Icon";
 import { AdminHeader, Section, Badge, TableWrap, Th, Td, EmptyState } from "@/components/admin/ui";
 
@@ -50,9 +52,13 @@ export default async function DashboardPage() {
   const rooms = await getRooms();
 
   let stats = EMPTY;
+  let ops: OpsSnapshot | null = null;
   let dbDown = false;
   try {
-    stats = await getDashboardStats(hotel.totalRooms);
+    [stats, ops] = await Promise.all([
+      getDashboardStats(hotel.totalRooms),
+      opsSnapshot(),
+    ]);
   } catch {
     dbDown = true;
   }
@@ -84,6 +90,91 @@ export default async function DashboardPage() {
         {dbDown && (
           <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             Não foi possível ligar à base de dados. Os valores abaixo estão a zero.
+          </div>
+        )}
+
+        {ops && (
+          <div className="mb-8 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-2xl border border-[var(--color-line)] bg-white p-5 lg:col-span-2">
+              <div className="flex items-baseline justify-between gap-3">
+                <h2 className="font-display text-lg tracking-tight">Estado das acomodações</h2>
+                <Link
+                  href="/admin/acomodacoes"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-accent-deep)] hover:text-[var(--color-ink)]"
+                >
+                  Ver mapa
+                  <Icon name="arrow-right" width={13} height={13} />
+                </Link>
+              </div>
+
+              {/* Proportional bar: one segment per state, widths sum to 100%. */}
+              <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-[var(--color-line-soft)]">
+                {(["available", "occupied", "cleaning", "maintenance", "blocked"] as const).map(
+                  (s) =>
+                    ops!.units[s] > 0 ? (
+                      <span
+                        key={s}
+                        className={UNIT_DOT[s]}
+                        style={{ width: `${(ops!.units[s] / Math.max(1, ops!.units.total)) * 100}%` }}
+                        title={`${UNIT_LABEL[s]}: ${ops!.units[s]}`}
+                      />
+                    ) : null,
+                )}
+              </div>
+
+              <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
+                {(["available", "occupied", "cleaning", "maintenance", "blocked"] as const).map((s) => (
+                  <li key={s} className="flex items-center gap-2 text-sm">
+                    <span className={`h-2 w-2 rounded-full ${UNIT_DOT[s]}`} aria-hidden />
+                    <span className="text-[var(--color-ink-soft)]">{UNIT_LABEL[s]}</span>
+                    <span className="ml-auto font-medium">{ops!.units[s]}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rounded-2xl border border-[var(--color-line)] bg-white p-5">
+              <h2 className="font-display text-lg tracking-tight">Hoje</h2>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li className="flex items-center justify-between gap-3">
+                  <span className="text-[var(--color-ink-soft)]">Chegadas</span>
+                  <span className="font-medium">{ops.arrivalsToday}</span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <span className="text-[var(--color-ink-soft)]">Saídas</span>
+                  <span className="font-medium">{ops.departuresToday}</span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <Link href="/admin/tarefas" className="text-[var(--color-ink-soft)] hover:text-[var(--color-accent-deep)]">
+                    Tarefas em aberto
+                  </Link>
+                  <span className="font-medium">
+                    {ops.openTasks}
+                    {ops.urgentTasks > 0 && (
+                      <span className="ml-1.5 text-xs text-red-700">({ops.urgentTasks} urgentes)</span>
+                    )}
+                  </span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <Link href="/admin/insumos?rutura=1" className="text-[var(--color-ink-soft)] hover:text-[var(--color-accent-deep)]">
+                    Insumos em rutura
+                  </Link>
+                  <span className="font-medium">{ops.lowStock}</span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <Link href="/admin/reservas" className="text-[var(--color-ink-soft)] hover:text-[var(--color-accent-deep)]">
+                    Reservas sem quarto
+                  </Link>
+                  <span className="font-medium">{ops.unassignedArrivals}</span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <Link href="/admin/equipa" className="text-[var(--color-ink-soft)] hover:text-[var(--color-accent-deep)]">
+                    Equipa ativa
+                  </Link>
+                  <span className="font-medium">{ops.staffOnDuty}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         )}
 

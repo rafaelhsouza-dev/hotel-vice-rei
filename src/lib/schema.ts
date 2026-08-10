@@ -206,6 +206,122 @@ CREATE TABLE IF NOT EXISTS media (
 );
 CREATE INDEX IF NOT EXISTS media_created_idx ON media (created_at DESC);
 
+-- ===========================================================================
+-- Hotel operations
+-- ===========================================================================
+
+-- Physical accommodation units, as opposed to the sales categories in "rooms".
+CREATE TABLE IF NOT EXISTS units (
+  id         serial      PRIMARY KEY,
+  code       text        NOT NULL UNIQUE,
+  floor      integer     NOT NULL DEFAULT 0,
+  room_id    text        REFERENCES rooms(id) ON DELETE SET NULL,
+  status     text        NOT NULL DEFAULT 'available'
+             CHECK (status IN ('available','occupied','cleaning','maintenance','blocked')),
+  notes      text        NOT NULL DEFAULT '',
+  active     boolean     NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS units_status_idx ON units (status);
+CREATE INDEX IF NOT EXISTS units_floor_idx ON units (floor, code);
+
+CREATE TABLE IF NOT EXISTS staff (
+  id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       text        NOT NULL,
+  role       text        NOT NULL DEFAULT '',
+  department text        NOT NULL DEFAULT 'housekeeping'
+             CHECK (department IN ('reception','housekeeping','maintenance','kitchen','management')),
+  email      text        NOT NULL DEFAULT '',
+  phone      text        NOT NULL DEFAULT '',
+  shift      text        NOT NULL DEFAULT 'morning'
+             CHECK (shift IN ('morning','afternoon','night','flexible')),
+  active     boolean     NOT NULL DEFAULT true,
+  hired_at   date,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS staff_department_idx ON staff (department, active);
+
+-- Housekeeping, maintenance and inspection work, always tied to a unit.
+CREATE TABLE IF NOT EXISTS tasks (
+  id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  unit_id      integer     REFERENCES units(id) ON DELETE CASCADE,
+  kind         text        NOT NULL DEFAULT 'cleaning'
+               CHECK (kind IN ('cleaning','maintenance','inspection')),
+  title        text        NOT NULL,
+  description  text        NOT NULL DEFAULT '',
+  assignee_id  uuid        REFERENCES staff(id) ON DELETE SET NULL,
+  priority     text        NOT NULL DEFAULT 'normal'
+               CHECK (priority IN ('low','normal','high','urgent')),
+  status       text        NOT NULL DEFAULT 'pending'
+               CHECK (status IN ('pending','in_progress','done')),
+  due_date     date,
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  completed_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS tasks_status_idx ON tasks (status, due_date);
+CREATE INDEX IF NOT EXISTS tasks_unit_idx ON tasks (unit_id);
+
+CREATE TABLE IF NOT EXISTS suppliers (
+  id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       text        NOT NULL UNIQUE,
+  contact    text        NOT NULL DEFAULT '',
+  email      text        NOT NULL DEFAULT '',
+  phone      text        NOT NULL DEFAULT '',
+  notes      text        NOT NULL DEFAULT '',
+  active     boolean     NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS inventory_items (
+  id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name         text        NOT NULL,
+  category     text        NOT NULL DEFAULT 'other'
+               CHECK (category IN ('amenities','cleaning','linen','food','beverage','maintenance','office','other')),
+  unit         text        NOT NULL DEFAULT 'un',
+  quantity     numeric(12,2) NOT NULL DEFAULT 0,
+  min_quantity numeric(12,2) NOT NULL DEFAULT 0,
+  cost         numeric(10,2) NOT NULL DEFAULT 0,
+  supplier_id  uuid        REFERENCES suppliers(id) ON DELETE SET NULL,
+  active       boolean     NOT NULL DEFAULT true,
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS inventory_category_idx ON inventory_items (category, active);
+
+-- Append-only stock ledger; inventory_items.quantity is the running total.
+CREATE TABLE IF NOT EXISTS inventory_movements (
+  id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  item_id    uuid        NOT NULL REFERENCES inventory_items(id) ON DELETE CASCADE,
+  delta      numeric(12,2) NOT NULL,
+  reason     text        NOT NULL DEFAULT 'adjustment'
+             CHECK (reason IN ('purchase','consumption','loss','adjustment')),
+  note       text        NOT NULL DEFAULT '',
+  staff_id   uuid        REFERENCES staff(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS movements_item_idx ON inventory_movements (item_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS meals (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  service     text        NOT NULL DEFAULT 'breakfast'
+              CHECK (service IN ('breakfast','lunch','dinner','room_service','bar')),
+  name        jsonb       NOT NULL DEFAULT '{}'::jsonb,
+  description jsonb       NOT NULL DEFAULT '{}'::jsonb,
+  price       numeric(10,2) NOT NULL DEFAULT 0,
+  allergens   jsonb       NOT NULL DEFAULT '[]'::jsonb,
+  vegetarian  boolean     NOT NULL DEFAULT false,
+  available   boolean     NOT NULL DEFAULT true,
+  position    integer     NOT NULL DEFAULT 0,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS meals_service_idx ON meals (service, position);
+
+-- Link a booking to the physical unit it was assigned.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS unit_id integer REFERENCES units(id) ON DELETE SET NULL;
+
 CREATE TABLE IF NOT EXISTS admin_users (
   id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
   email         text        NOT NULL UNIQUE,

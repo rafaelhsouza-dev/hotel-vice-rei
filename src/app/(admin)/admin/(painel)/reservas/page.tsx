@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { listBookings, type BookingStatus } from "@/lib/repo/ops";
 import { getRooms } from "@/lib/repo/content";
+import { listUnits, availableUnitsFor } from "@/lib/repo/operations";
+import { assignUnit } from "@/app/(admin)/admin/actions-ops";
 import { setBookingStatus, removeBooking } from "@/app/(admin)/admin/actions";
 import { Icon } from "@/components/Icon";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge, fieldClass } from "@/components/admin/ui";
@@ -52,6 +54,9 @@ export default async function BookingsAdminPage({
 
   const rooms = await getRooms();
   const roomName = (id: string | null) => rooms.find((r) => r.id === id)?.name.pt ?? "—";
+  const allUnits = await listUnits().catch(() => []);
+  const unitCode = (id: number | null) =>
+    allUnits.find((u) => u.id === id)?.code ?? null;
 
   let items: Awaited<ReturnType<typeof listBookings>>["items"] = [];
   let total = 0;
@@ -148,7 +153,14 @@ export default async function BookingsAdminPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((b) => (
+                  {await Promise.all(items.map(async (b) => {
+                    const free = await availableUnitsFor(
+                      b.roomId,
+                      b.checkIn,
+                      b.checkOut,
+                      b.id,
+                    ).catch(() => []);
+                    return (
                     <tr
                       key={b.id}
                       className="border-b border-[var(--color-line-soft)] last:border-0 align-top"
@@ -180,6 +192,29 @@ export default async function BookingsAdminPage({
                             + {b.extras.length} extra{b.extras.length === 1 ? "" : "s"}
                           </p>
                         )}
+                        <form action={assignUnit} className="mt-2 flex items-center gap-1.5">
+                          <input type="hidden" name="bookingId" value={b.id} />
+                          <label className="sr-only" htmlFor={`un-${b.id}`}>
+                            Unidade atribuída à reserva {b.reference}
+                          </label>
+                          <select
+                            id={`un-${b.id}`}
+                            name="unitId"
+                            defaultValue={b.unitId ? String(b.unitId) : ""}
+                            className="rounded-lg border border-[var(--color-line)] bg-white px-2 py-1 text-xs"
+                          >
+                            <option value="">Sem quarto</option>
+                            {b.unitId && !free.some((u) => u.id === b.unitId) && (
+                              <option value={String(b.unitId)}>{unitCode(b.unitId)}</option>
+                            )}
+                            {free.map((u) => (
+                              <option key={u.id} value={u.id}>
+                                {u.code}
+                              </option>
+                            ))}
+                          </select>
+                          <SubmitButton variant="icon" icon="check" title="Atribuir quarto" />
+                        </form>
                       </Td>
                       <Td className="whitespace-nowrap text-[var(--color-ink-soft)]">
                         {dayMonth.format(new Date(b.checkIn))} →{" "}
@@ -236,7 +271,8 @@ export default async function BookingsAdminPage({
                         </div>
                       </Td>
                     </tr>
-                  ))}
+                    );
+                  }))}
                 </tbody>
               </table>
             </TableWrap>

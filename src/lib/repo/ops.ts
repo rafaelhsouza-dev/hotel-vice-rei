@@ -41,6 +41,8 @@ export type Booking = BookingInput & {
   reference: string;
   status: BookingStatus;
   createdAt: string;
+  /** Physical unit assigned to this stay, if any. */
+  unitId: number | null;
 };
 
 /** Human-friendly, non-sequential reference such as VR-7F3K9Q. */
@@ -114,6 +116,7 @@ function toBooking(r: Record<string, unknown>): Booking {
     locale: r.locale as string,
     status: r.status as BookingStatus,
     createdAt: (r.created_at as Date)?.toISOString?.() ?? String(r.created_at),
+    unitId: (r.unit_id as number) ?? null,
   };
 }
 

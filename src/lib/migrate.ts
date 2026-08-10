@@ -240,6 +240,160 @@ async function seedAdminUser() {
   console.log(`[migrate] seeded admin user ${email}`);
 }
 
+// --- operations -----------------------------------------------------------
+
+/**
+ * Builds the physical unit list from the room categories: floors 1–5, ten
+ * units each, cycling through the published categories so every unit has a
+ * plausible type. Gives the hotel a working floor plan on day one.
+ */
+async function seedUnits() {
+  if (!(await isEmpty("units"))) return;
+
+  const categories = seedRooms.map((r) => r.id);
+  const perFloor = 10;
+  const floors = Math.max(1, Math.ceil(hotel.totalRooms / perFloor));
+
+  await transaction(async (client) => {
+    let made = 0;
+    for (let floor = 1; floor <= floors && made < hotel.totalRooms; floor++) {
+      for (let n = 1; n <= perFloor && made < hotel.totalRooms; n++) {
+        const code = `${floor}${String(n).padStart(2, "0")}`;
+        await client.query(
+          `INSERT INTO units (code, floor, room_id) VALUES ($1,$2,$3)
+           ON CONFLICT (code) DO NOTHING`,
+          [code, floor, categories[made % categories.length]],
+        );
+        made++;
+      }
+    }
+  });
+}
+
+async function seedStaff() {
+  if (!(await isEmpty("staff"))) return;
+  const people = [
+    ["Ana Carvalho", "Chefe de recepção", "reception", "morning"],
+    ["Bruno Matos", "Rececionista", "reception", "night"],
+    ["Cátia Nunes", "Governanta", "housekeeping", "morning"],
+    ["Diogo Pires", "Empregado de andares", "housekeeping", "afternoon"],
+    ["Elsa Moreira", "Empregada de andares", "housekeeping", "morning"],
+    ["FilipeRocha", "Técnico de manutenção", "maintenance", "flexible"],
+    ["Gabriela Sousa", "Chefe de cozinha", "kitchen", "morning"],
+    ["Hugo Antunes", "Diretor de operações", "management", "flexible"],
+  ] as const;
+
+  await transaction(async (client) => {
+    for (const [name, role, department, shift] of people) {
+      await client.query(
+        `INSERT INTO staff (name, role, department, shift, email)
+         VALUES ($1,$2,$3,$4,$5)`,
+        [
+          name,
+          role,
+          department,
+          shift,
+          `${name.split(" ")[0].toLowerCase()}@hotelvicerei.com`,
+        ],
+      );
+    }
+  });
+}
+
+async function seedSuppliers() {
+  if (!(await isEmpty("suppliers"))) return;
+  const list = [
+    ["Distribuidora Douro", "Encomendas", "encomendas@douro.example", "+351 220 000 001"],
+    ["Lavandaria Invicta", "Serviço têxtil", "geral@invicta.example", "+351 220 000 002"],
+    ["Higiene Norte", "Comercial", "vendas@higienenorte.example", "+351 220 000 003"],
+  ];
+  await transaction(async (client) => {
+    for (const [name, contact, email, phone] of list) {
+      await client.query(
+        `INSERT INTO suppliers (name, contact, email, phone) VALUES ($1,$2,$3,$4)
+         ON CONFLICT (name) DO NOTHING`,
+        [name, contact, email, phone],
+      );
+    }
+  });
+}
+
+async function seedInventory() {
+  if (!(await isEmpty("inventory_items"))) return;
+  const items: [string, string, string, number, number, number][] = [
+    ["Toalhas de banho", "linen", "un", 240, 120, 6.5],
+    ["Lençóis de casal", "linen", "un", 160, 80, 12.0],
+    ["Gel de banho 30 ml", "amenities", "un", 900, 300, 0.45],
+    ["Champô 30 ml", "amenities", "un", 850, 300, 0.45],
+    ["Papel higiénico", "cleaning", "rolo", 600, 200, 0.32],
+    ["Detergente multiusos", "cleaning", "L", 45, 20, 2.8],
+    ["Café em grão", "beverage", "kg", 28, 15, 14.5],
+    ["Leite meio-gordo", "food", "L", 60, 40, 0.85],
+    ["Manteiga individual", "food", "un", 400, 200, 0.18],
+    ["Lâmpadas LED E27", "maintenance", "un", 35, 20, 3.2],
+  ];
+
+  await transaction(async (client) => {
+    const { rows } = await client.query<{ id: string; name: string }>(
+      `SELECT id, name FROM suppliers`,
+    );
+    const supplierFor = (category: string) => {
+      const name =
+        category === "linen" ? "Lavandaria Invicta"
+        : category === "cleaning" || category === "amenities" ? "Higiene Norte"
+        : "Distribuidora Douro";
+      return rows.find((s) => s.name === name)?.id ?? null;
+    };
+
+    for (const [name, category, unit, quantity, min, cost] of items) {
+      await client.query(
+        `INSERT INTO inventory_items (name, category, unit, quantity, min_quantity, cost, supplier_id)
+         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [name, category, unit, quantity, min, cost, supplierFor(category)],
+      );
+    }
+  });
+}
+
+async function seedMeals() {
+  if (!(await isEmpty("meals"))) return;
+  const items: [string, string, string, number, string[], boolean][] = [
+    ["breakfast", "Pequeno-almoço continental", "Pão fresco, fruta da época, iogurtes, queijos e charcutaria.", 12, ["glúten", "lactose"], false],
+    ["breakfast", "Pastel de nata", "Clássico português, servido morno.", 1.6, ["glúten", "lactose", "ovo"], true],
+    ["breakfast", "Sumo de laranja natural", "Espremido na hora.", 3.2, [], true],
+    ["lunch", "Sopa do dia", "Preparada diariamente com legumes frescos.", 4.5, [], true],
+    ["lunch", "Bacalhau à Braga", "Com cebola, batata e azeite virgem extra.", 17.5, ["peixe"], false],
+    ["dinner", "Francesinha do Vice-Rei", "A versão da casa, com molho de cerveja preta.", 15.9, ["glúten", "lactose"], false],
+    ["dinner", "Risoto de cogumelos", "Arroz carnaroli, cogumelos silvestres e parmesão.", 14.5, ["lactose"], true],
+    ["room_service", "Tábua de queijos e enchidos", "Seleção regional para dois.", 18, ["lactose"], false],
+    ["room_service", "Clube sandwich", "Frango, bacon, ovo e batata frita.", 11.5, ["glúten", "ovo"], false],
+    ["bar", "Vinho do Porto Tawny", "Copo de 60 ml.", 4.8, ["sulfitos"], true],
+  ];
+
+  await transaction(async (client) => {
+    for (const [i, [service, name, description, price, allergens, vegetarian]] of items.entries()) {
+      await client.query(
+        `INSERT INTO meals (service, name, description, price, allergens, vegetarian, position)
+         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [
+          service,
+          JSON.stringify(trioFromValue(name)),
+          JSON.stringify(trioFromValue(description)),
+          price,
+          JSON.stringify(allergens),
+          vegetarian,
+          i,
+        ],
+      );
+    }
+  });
+}
+
+/** Seeds the same text in every locale — the kitchen translates later. */
+function trioFromValue(value: string) {
+  return Object.fromEntries(locales.map((l) => [l, value])) as Record<Locale, string>;
+}
+
 let migrated = false;
 
 /**
@@ -261,6 +415,11 @@ export async function ensureDatabase(): Promise<boolean> {
     await seedGalleryTable();
     await seedExtrasTable();
     await seedPromoCodes();
+    await seedUnits();
+    await seedStaff();
+    await seedSuppliers();
+    await seedInventory();
+    await seedMeals();
     await seedAdminUser();
     migrated = true;
     console.log("[migrate] database ready");
