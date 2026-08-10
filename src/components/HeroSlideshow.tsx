@@ -106,18 +106,23 @@ export function HeroSlideshow({
           className="absolute bottom-5 right-5 z-20 flex items-center gap-2 sm:bottom-7 sm:right-8"
         >
           {slides.map((slide, i) => (
+            // The visible dot is small by design; the button around it carries
+            // the 24×24 touch target WCAG asks for.
             <button
               key={slide.src}
               type="button"
               onClick={() => setIndex(i)}
               aria-label={slide.alt ?? `Fotografia ${i + 1}`}
               aria-current={i === index}
-              className={`h-2 rounded-full transition-all duration-500 ${
-                i === index
-                  ? "w-7 bg-white"
-                  : "w-2 bg-white/50 hover:bg-white/80"
-              }`}
-            />
+              className="grid h-6 w-6 place-items-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <span
+                aria-hidden
+                className={`block h-2 rounded-full transition-all duration-500 ${
+                  i === index ? "w-6 bg-white" : "w-2 bg-white/60"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}
