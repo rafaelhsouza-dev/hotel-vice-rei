@@ -47,7 +47,7 @@ function loadAframe(): Promise<void> {
 export function Panorama360({
   dict,
   image = DEFAULT_IMAGE,
-  poster = "/images/hero/hero-room.jpg",
+  poster = "/images/rooms/twin-superior.webp",
 }: {
   dict: Dictionary;
   image?: string;

@@ -47,7 +47,7 @@ export default async function BlogPage({ params }: Props) {
         eyebrow={dict.nav.blog}
         title={dict.blog.title}
         subtitle={dict.blog.subtitle}
-        image="/images/hero/hero-porto.jpg"
+        image="/images/hero/porto.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

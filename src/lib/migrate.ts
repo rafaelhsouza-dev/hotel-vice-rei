@@ -394,6 +394,84 @@ function trioFromValue(value: string) {
   return Object.fromEntries(locales.map((l) => [l, value])) as Record<Locale, string>;
 }
 
+/**
+ * Points existing rows at the 2026 photography.
+ *
+ * Only rewrites values that still match a known stock path, so anything already
+ * changed through the backoffice is left alone. Idempotent: after the first run
+ * there are no old paths left to match.
+ */
+async function migrateImagePaths() {
+  const singles: [string, string][] = [
+    ["/images/hero/banner-home.jpg", "/images/hero/home.webp"],
+    ["/images/hero/hero-main.jpg", "/images/hero/gallery.webp"],
+    ["/images/hero/hero-room.jpg", "/images/rooms/twin-superior.webp"],
+    ["/images/hero/hero-porto.jpg", "/images/porto/view-city.webp"],
+    ["/images/hero/featured-lobby.jpg", "/images/hotel/lounge.webp"],
+    ["/images/hero/featured-suite.jpg", "/images/rooms/twin-superior-2.webp"],
+    ["/images/hero/featured-detail.jpg", "/images/porto/view-balcony.webp"],
+    ["/images/hero/featured-bathroom.jpg", "/images/rooms/bathroom-marble.webp"],
+    ["/images/hero/featured-breakfast.jpg", "/images/hotel/breakfast-plate.webp"],
+    ["/images/rooms/room-single.jpg", "/images/rooms/single.webp"],
+    ["/images/rooms/room-superior.jpg", "/images/rooms/single-superior.webp"],
+    ["/images/rooms/room-twin.jpg", "/images/rooms/twin.webp"],
+    ["/images/rooms/room-double.jpg", "/images/rooms/twin-superior.webp"],
+    ["/images/rooms/room-triple.jpg", "/images/rooms/triple.webp"],
+    ["/images/rooms/room-romantic.jpg", "/images/rooms/romantic.webp"],
+    ["/images/rooms/room-detail.jpg", "/images/rooms/bathroom-classic.webp"],
+    ["/images/rooms/room-suite-portrait.jpg", "/images/rooms/triple-2.webp"],
+    ["/images/rooms/hotel-interior.jpg", "/images/hotel/hall.webp"],
+    ["/images/rooms/hotel-lobby.jpg", "/images/hotel/lobby.webp"],
+  ];
+
+  for (const [from, to] of singles) {
+    await query(`UPDATE rooms SET image = $2 WHERE image = $1`, [from, to]);
+    await query(`UPDATE offers SET image = $2 WHERE image = $1`, [from, to]);
+    await query(`UPDATE posts SET image = $2 WHERE image = $1`, [from, to]);
+    await query(`UPDATE gallery_images SET src = $2 WHERE src = $1`, [from, to]);
+    await query(`UPDATE media SET path = $2 WHERE path = $1`, [from, to]);
+  }
+
+  // Room galleries are arrays; replace wholesale when they still look untouched.
+  for (const room of seedRooms) {
+    await query(
+      `UPDATE rooms SET gallery = $2, updated_at = now()
+       WHERE id = $1 AND gallery::text LIKE '%room-%.jpg%'`,
+      [room.id, JSON.stringify(room.gallery)],
+    );
+  }
+
+}
+
+/**
+ * Replaces the stock gallery with the curated 2026 selection.
+ *
+ * Runs before the path rewrites above so it can still recognise stock entries
+ * by their .jpg extension. Rows added through the backoffice are .webp uploads
+ * and survive untouched; if none of the entries are stock, this does nothing.
+ */
+async function migrateGallery() {
+  const stock = await query<{ n: string }>(
+    `SELECT count(*)::text AS n FROM gallery_images WHERE src LIKE '%.jpg'`,
+  );
+  if (stock[0]?.n === "0") return;
+
+  await transaction(async (client) => {
+    await client.query(`DELETE FROM gallery_images WHERE src LIKE '%.jpg'`);
+    const { rows } = await client.query<{ n: string }>(
+      `SELECT coalesce(max(position), -1)::text AS n FROM gallery_images`,
+    );
+    let position = Number(rows[0]?.n ?? -1) + 1;
+    for (const src of seedGallery) {
+      await client.query(
+        `INSERT INTO gallery_images (src, alt, position) VALUES ($1,$2,$3)
+         ON CONFLICT DO NOTHING`,
+        [src, "Hotel Vice-Rei · Porto", position++],
+      );
+    }
+  });
+}
+
 let migrated = false;
 
 /**
@@ -421,6 +499,8 @@ export async function ensureDatabase(): Promise<boolean> {
     await seedInventory();
     await seedMeals();
     await seedAdminUser();
+    await migrateGallery();
+    await migrateImagePaths();
     migrated = true;
     console.log("[migrate] database ready");
     return true;

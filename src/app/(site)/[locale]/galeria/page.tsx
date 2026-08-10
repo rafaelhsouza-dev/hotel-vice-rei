@@ -36,7 +36,7 @@ export default async function GalleryPage({ params }: Props) {
         eyebrow={dict.nav.gallery}
         title={dict.gallery.title}
         subtitle={dict.gallery.subtitle}
-        image="/images/hero/hero-main.jpg"
+        image="/images/hero/gallery.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

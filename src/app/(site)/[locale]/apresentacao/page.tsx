@@ -20,7 +20,7 @@ export default async function AboutPage({ params }: Props) {
       <PageHero
         eyebrow={dict.about.subtitle}
         title={dict.about.title}
-        image="/images/hero/featured-lobby.jpg"
+        image="/images/hero/about.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24 grid gap-12 lg:grid-cols-12">
@@ -39,7 +39,7 @@ export default async function AboutPage({ params }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
               <Image
-                src="/images/hero/featured-detail.jpg"
+                src="/images/hotel/mural.webp"
                 alt=""
                 fill
                 className="object-cover"
@@ -48,7 +48,7 @@ export default async function AboutPage({ params }: Props) {
             </div>
             <div className="relative aspect-[3/4] overflow-hidden rounded-3xl mt-10">
               <Image
-                src="/images/hero/featured-suite.jpg"
+                src="/images/rooms/romantic.webp"
                 alt=""
                 fill
                 className="object-cover"

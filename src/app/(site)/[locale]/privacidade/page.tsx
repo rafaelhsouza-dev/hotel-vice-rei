@@ -26,7 +26,7 @@ export default async function PrivacyPage({ params }: Props) {
         eyebrow={dict.footer.legal}
         title={dict.privacy.title}
         subtitle={dict.privacy.subtitle}
-        image="/images/hero/featured-detail.jpg"
+        image="/images/hero/legal.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

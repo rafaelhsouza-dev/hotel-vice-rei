@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
+    // Next 16 rejects any quality not listed here and silently falls back to
+    // 75, so the lower setting the heroes ask for has to be declared.
+    qualities: [68, 75],
   },
 };
 

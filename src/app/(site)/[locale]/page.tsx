@@ -91,7 +91,7 @@ export default async function HomePage({ params }: Props) {
             <Parallax amount={40}>
               <div className="relative aspect-[4/5] overflow-hidden rounded-3xl group">
                 <Image
-                  src="/images/hero/featured-lobby.jpg"
+                  src="/images/hotel/lobby.webp"
                   alt=""
                   fill
                   className="object-cover transition-transform duration-[1.4s] group-hover:scale-105"
@@ -103,7 +103,7 @@ export default async function HomePage({ params }: Props) {
               <Parallax amount={20}>
                 <div className="relative aspect-[4/3] overflow-hidden rounded-3xl group">
                   <Image
-                    src="/images/hero/featured-suite.jpg"
+                    src="/images/rooms/twin-superior.webp"
                     alt=""
                     fill
                     className="object-cover transition-transform duration-[1.4s] group-hover:scale-105"

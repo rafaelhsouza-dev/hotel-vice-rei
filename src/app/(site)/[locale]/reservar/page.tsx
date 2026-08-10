@@ -66,7 +66,7 @@ export default async function ReservePage({ params, searchParams }: Props) {
         eyebrow={dict.nav.book}
         title={dict.booking_page.title}
         subtitle={dict.booking_page.subtitle}
-        image="/images/hero/featured-suite.jpg"
+        image="/images/hero/booking.webp"
       />
 
       <section className="container-x py-20">

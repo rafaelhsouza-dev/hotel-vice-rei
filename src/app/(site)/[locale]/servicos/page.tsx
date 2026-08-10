@@ -23,7 +23,7 @@ export default async function ServicesPage({ params }: Props) {
         eyebrow={dict.nav.services}
         title={dict.services.title}
         subtitle={dict.services.subtitle}
-        image="/images/hero/featured-detail.jpg"
+        image="/images/hero/services.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

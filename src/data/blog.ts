@@ -16,7 +16,7 @@ export type Post = {
 export const posts: Post[] = [
   {
     slug: "48-horas-no-porto",
-    image: "/images/hero/hero-porto.jpg",
+    image: "/images/porto/view-city.webp",
     date: "2026-06-10",
     readingMinutes: 6,
     category: {
@@ -66,7 +66,7 @@ export const posts: Post[] = [
   },
   {
     slug: "melhor-epoca-visitar-porto",
-    image: "/images/hero/featured-detail.jpg",
+    image: "/images/porto/view-balcony.webp",
     date: "2026-05-22",
     readingMinutes: 4,
     category: {
@@ -112,7 +112,7 @@ export const posts: Post[] = [
   },
   {
     slug: "pequeno-almoco-no-porto",
-    image: "/images/hero/featured-breakfast.jpg",
+    image: "/images/hotel/breakfast-plate.webp",
     date: "2026-04-30",
     readingMinutes: 3,
     category: {

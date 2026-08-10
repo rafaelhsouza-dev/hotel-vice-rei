@@ -25,7 +25,7 @@ export default async function OffersPage({ params }: Props) {
         eyebrow={dict.nav.offers}
         title={dict.offers.title}
         subtitle={dict.offers.subtitle}
-        image="/images/hero/hero-porto.jpg"
+        image="/images/hero/offers.webp"
       />
 
       <Breadcrumbs

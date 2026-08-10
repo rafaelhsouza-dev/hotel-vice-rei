@@ -29,7 +29,7 @@ export default async function AccessibilityPage({ params }: Props) {
         eyebrow={dict.footer.legal}
         title={dict.accessibility.title}
         subtitle={dict.accessibility.subtitle}
-        image="/images/hero/featured-lobby.jpg"
+        image="/images/hero/legal.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

@@ -25,7 +25,7 @@ export default async function RoomsPage({ params }: Props) {
         eyebrow={dict.nav.rooms}
         title={dict.rooms.title}
         subtitle={dict.rooms.subtitle}
-        image="/images/rooms/room-double.jpg"
+        image="/images/hero/rooms.webp"
       />
 
       <Breadcrumbs

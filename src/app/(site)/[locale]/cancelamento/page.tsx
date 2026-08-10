@@ -26,7 +26,7 @@ export default async function CancellationPage({ params }: Props) {
         eyebrow={dict.footer.legal}
         title={dict.cancellation.title}
         subtitle={dict.cancellation.subtitle}
-        image="/images/hero/featured-suite.jpg"
+        image="/images/hero/legal.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

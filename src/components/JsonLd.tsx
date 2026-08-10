@@ -49,7 +49,7 @@ export function JsonLd({
           longitude: hotel.coords.lng,
         },
         hasMap: `https://www.openstreetmap.org/?mlat=${hotel.coords.lat}&mlon=${hotel.coords.lng}`,
-        image: `${SITE_URL}/images/hero/banner-home.jpg`,
+        image: `${SITE_URL}/images/hero/home.webp`,
         logo: `${SITE_URL}/logo-hotel-vice-rei.png`,
         priceRange: minPrice ? `€${minPrice}–€150` : undefined,
         currenciesAccepted: "EUR",

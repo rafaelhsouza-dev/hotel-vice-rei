@@ -24,7 +24,7 @@ export default async function ContactPage({ params }: Props) {
         eyebrow={dict.nav.contact}
         title={dict.contact.title}
         subtitle={dict.contact.subtitle}
-        image="/images/hero/featured-lobby.jpg"
+        image="/images/hero/contact.webp"
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24 grid gap-12 lg:grid-cols-12">

@@ -105,7 +105,7 @@ export function HeroHome({
       className="relative isolate -mt-20 min-h-[100svh] overflow-hidden"
     >
       <KenBurns
-        src="/images/hero/banner-home.jpg"
+        src="/images/hero/home.webp"
         alt=""
         priority
         className="absolute inset-0"
