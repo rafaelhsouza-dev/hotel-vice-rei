@@ -5,7 +5,10 @@
   --color-bg-elev: #ffffff;
   --color-ink: #14110f;
   --color-ink-soft: #4a443e;
-  --color-ink-muted: #8a7f74;
+  /* Darkened from #8a7f74: that only reached 3.3:1 on --color-line-soft,
+     and this token labels small 12px text all over the site. Now 4.7:1
+     there and 5.6:1 on white — WCAG AA for body text. */
+  --color-ink-muted: #6f665c;
   --color-line: #e8e0d4;
   --color-line-soft: #f1ebe1;
   --color-accent: #8a6a3b;
@@ -109,7 +112,8 @@ body {
   to { opacity: 0; }
 }
 .hero-veil {
-  animation: hero-veil 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* Kept short: the veil covers the LCP image while it plays. */
+  animation: hero-veil 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

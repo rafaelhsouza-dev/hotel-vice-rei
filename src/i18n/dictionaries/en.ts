@@ -20,7 +20,7 @@ export const en: Dictionary = {
   cta: {
     bookNow: "Book now",
     bookDirect: "Book direct",
-    learnMore: "Learn more",
+    learnMore: "Learn more about the hotel",
     seeRooms: "View rooms",
     seeOffers: "View offers",
     seeServices: "View services",
@@ -179,6 +179,9 @@ export const en: Dictionary = {
     successTitle: "Message sent",
     successBody: "Thanks for getting in touch. We'll get back to you as soon as possible.",
     metroMap: "Porto Metro map (PDF)",
+    showMap: "Show map",
+    mapConsent: "Opening this loads a map from OpenStreetMap (external service).",
+    error: "We could not send your message. Please try again.",
     callRate: "National landline call",
   },
   booking_page: {
@@ -207,6 +210,10 @@ export const en: Dictionary = {
     selectRoom: "Select this room",
     total: "Estimated total",
     requiredField: "Required field",
+    reference: "Reference",
+    sending: "Sending…",
+    submitError:
+      "We could not register your booking. Please try again or call us.",
   },
   footer: {
     rights: "All rights reserved.",
@@ -229,7 +236,7 @@ export const en: Dictionary = {
       "We use cookies that are essential to run the site and, with your consent, cookies to analyse browsing. You can accept, reject or learn more.",
     accept: "Accept all",
     reject: "Reject non-essential",
-    learnMore: "Learn more",
+    learnMore: "Learn more about cookies",
     settings: "Settings",
   },
   privacy: {
@@ -296,6 +303,7 @@ export const en: Dictionary = {
     placeholder: "Your email",
     button: "Subscribe",
     success: "Subscription confirmed. Welcome!",
+    error: "We could not complete your subscription. Please try again.",
     privacyNote:
       "By subscribing you accept our Privacy Policy. You can unsubscribe at any time.",
   },
@@ -346,6 +354,51 @@ export const en: Dictionary = {
     published: "Published on",
     related: "Related articles",
     latest: "Latest articles",
+  },
+  faq: {
+    eyebrow: "Frequently asked questions",
+    title: "What guests ask before booking",
+    items: [
+      {
+        q: "What are the check-in and check-out times?",
+        a: "Check-in is from 2pm and check-out until noon. Reception is staffed 24 hours, so you can arrive at any time of day or night. We store luggage free of charge before check-in and after check-out.",
+      },
+      {
+        q: "Is breakfast included?",
+        a: "Yes, continental breakfast is included in most rates. In superior rooms and the Romantic package it can be served in your room if you ask the day before.",
+      },
+      {
+        q: "Can I cancel free of charge?",
+        a: "Flexible rates can be cancelled free of charge up to 48 hours before the check-in date. Non-refundable promotions are always flagged before you confirm.",
+      },
+      {
+        q: "Does the hotel have parking?",
+        a: "Yes, we have a covered, monitored garage, subject to availability. You can add it to your booking as an extra for €12 per night.",
+      },
+      {
+        q: "How far is the historic centre and the airport?",
+        a: "We are in Porto's business district, a few minutes' walk from Casa da Música, 5 minutes from the Alfândega Congress Centre, 10 minutes from the Foz beaches and 20 minutes from Francisco Sá Carneiro Airport.",
+      },
+      {
+        q: "Which languages does the team speak?",
+        a: "Our team serves guests in Portuguese, English, Spanish, French and Italian.",
+      },
+    ],
+  },
+  a11y: {
+    skipToContent: "Skip to content",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    changeLanguage: "Change language",
+    previousImage: "Previous image",
+    nextImage: "Next image",
+    closeGallery: "Close gallery",
+  },
+  notFound: {
+    code: "404",
+    title: "Page not found",
+    body: "The page you are looking for does not exist or has moved.",
+    back: "Back to the homepage",
   },
   share: {
     label: "Share",

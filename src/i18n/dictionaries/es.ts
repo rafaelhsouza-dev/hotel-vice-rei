@@ -20,7 +20,7 @@ export const es: Dictionary = {
   cta: {
     bookNow: "Reservar ahora",
     bookDirect: "Reservar directamente",
-    learnMore: "Saber más",
+    learnMore: "Saber más sobre el hotel",
     seeRooms: "Ver habitaciones",
     seeOffers: "Ver ofertas",
     seeServices: "Ver servicios",
@@ -179,6 +179,9 @@ export const es: Dictionary = {
     successTitle: "Mensaje enviado",
     successBody: "Gracias por contactar. Te responderemos lo antes posible.",
     metroMap: "Mapa del Metro de Oporto (PDF)",
+    showMap: "Ver mapa",
+    mapConsent: "Al abrirlo se carga un mapa de OpenStreetMap (servicio externo).",
+    error: "No fue posible enviar el mensaje. Inténtelo de nuevo.",
     callRate: "Llamada a red fija nacional",
   },
   booking_page: {
@@ -207,6 +210,10 @@ export const es: Dictionary = {
     selectRoom: "Elegir esta habitación",
     total: "Total estimado",
     requiredField: "Campo obligatorio",
+    reference: "Referencia",
+    sending: "Enviando…",
+    submitError:
+      "No fue posible registrar la reserva. Inténtelo de nuevo o llámenos.",
   },
   footer: {
     rights: "Todos los derechos reservados.",
@@ -229,7 +236,7 @@ export const es: Dictionary = {
       "Utilizamos cookies esenciales para el funcionamiento del sitio y, con tu consentimiento, cookies para analizar la navegación. Puedes aceptar, rechazar o saber más.",
     accept: "Aceptar todo",
     reject: "Rechazar no esenciales",
-    learnMore: "Saber más",
+    learnMore: "Saber más sobre cookies",
     settings: "Ajustes",
   },
   privacy: {
@@ -296,6 +303,7 @@ export const es: Dictionary = {
     placeholder: "Tu email",
     button: "Suscribirse",
     success: "Suscripción confirmada. ¡Bienvenido!",
+    error: "No fue posible completar la suscripción. Inténtelo de nuevo.",
     privacyNote:
       "Al suscribirte aceptas nuestra Política de Privacidad. Puedes cancelar en cualquier momento.",
   },
@@ -347,6 +355,51 @@ export const es: Dictionary = {
     published: "Publicado el",
     related: "Artículos relacionados",
     latest: "Últimos artículos",
+  },
+  faq: {
+    eyebrow: "Preguntas frecuentes",
+    title: "Lo que preguntan los huéspedes antes de reservar",
+    items: [
+      {
+        q: "¿A qué hora son la entrada y la salida?",
+        a: "La entrada es a partir de las 14h y la salida hasta las 12h. La recepción funciona 24 horas, así que puede llegar a cualquier hora. Guardamos el equipaje sin coste antes de la entrada y después de la salida.",
+      },
+      {
+        q: "¿El desayuno está incluido?",
+        a: "Sí, el desayuno continental está incluido en la mayoría de las tarifas. En las habitaciones superiores y en el paquete Romántico puede servirse en la habitación, solicitándolo la víspera.",
+      },
+      {
+        q: "¿Puedo cancelar sin coste?",
+        a: "En las tarifas flexibles la cancelación es gratuita hasta 48 horas antes de la fecha de entrada. Las promociones no reembolsables se indican siempre antes de confirmar.",
+      },
+      {
+        q: "¿El hotel tiene aparcamiento?",
+        a: "Sí, disponemos de garaje cubierto y vigilado, sujeto a disponibilidad. Puede añadirlo a la reserva como extra por 12 € por noche.",
+      },
+      {
+        q: "¿A qué distancia está del centro histórico y del aeropuerto?",
+        a: "Estamos en el Centro de Negocios de Oporto, a pocos minutos a pie de la Casa da Música, a 5 minutos del Centro de Congresos de la Alfândega, a 10 minutos de las playas de Foz y a 20 minutos del aeropuerto Francisco Sá Carneiro.",
+      },
+      {
+        q: "¿En qué idiomas atienden?",
+        a: "El equipo atiende en portugués, inglés, español, francés e italiano.",
+      },
+    ],
+  },
+  a11y: {
+    skipToContent: "Saltar al contenido",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
+    changeLanguage: "Cambiar de idioma",
+    previousImage: "Imagen anterior",
+    nextImage: "Imagen siguiente",
+    closeGallery: "Cerrar galería",
+  },
+  notFound: {
+    code: "404",
+    title: "Página no encontrada",
+    body: "La página que busca no existe o ha sido movida.",
+    back: "Volver a la página de inicio",
   },
   share: {
     label: "Compartir",

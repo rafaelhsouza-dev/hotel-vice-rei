@@ -18,7 +18,7 @@ export const pt = {
   cta: {
     bookNow: "Reservar agora",
     bookDirect: "Reservar directamente",
-    learnMore: "Saber mais",
+    learnMore: "Saber mais sobre o hotel",
     seeRooms: "Ver quartos",
     seeOffers: "Ver promoções",
     seeServices: "Ver serviços",
@@ -178,6 +178,9 @@ export const pt = {
     successBody:
       "Obrigado pelo seu contacto. Responderemos com a maior brevidade possível.",
     metroMap: "Mapa do Metro do Porto (PDF)",
+    showMap: "Ver mapa",
+    mapConsent: "Ao abrir, carrega um mapa do OpenStreetMap (serviço externo).",
+    error: "Não foi possível enviar a mensagem. Tente novamente.",
     callRate: "Chamada para a rede fixa nacional",
   },
   booking_page: {
@@ -206,6 +209,10 @@ export const pt = {
     selectRoom: "Escolher este quarto",
     total: "Total estimado",
     requiredField: "Campo obrigatório",
+    reference: "Referência",
+    sending: "A enviar…",
+    submitError:
+      "Não foi possível registar a reserva. Tente novamente ou contacte-nos por telefone.",
   },
   footer: {
     rights: "Todos os direitos reservados.",
@@ -228,7 +235,7 @@ export const pt = {
       "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies para analisar a navegação. Pode aceitar, recusar ou saber mais.",
     accept: "Aceitar tudo",
     reject: "Rejeitar não essenciais",
-    learnMore: "Saber mais",
+    learnMore: "Saber mais sobre cookies",
     settings: "Definições",
   },
   privacy: {
@@ -295,6 +302,7 @@ export const pt = {
     placeholder: "O seu email",
     button: "Subscrever",
     success: "Subscrição confirmada. Bem-vindo!",
+    error: "Não foi possível concluir a subscrição. Tente novamente.",
     privacyNote:
       "Ao subscrever aceita a nossa Política de Privacidade. Pode cancelar a qualquer momento.",
   },
@@ -346,6 +354,51 @@ export const pt = {
     published: "Publicado a",
     related: "Artigos relacionados",
     latest: "Últimos artigos",
+  },
+  faq: {
+    eyebrow: "Perguntas frequentes",
+    title: "O que os hóspedes perguntam antes de reservar",
+    items: [
+      {
+        q: "A que horas são o check-in e o check-out?",
+        a: "O check-in é a partir das 14h e o check-out até às 12h. A recepção funciona 24 horas, por isso pode chegar a qualquer hora do dia ou da noite. Guardamos a bagagem sem custo antes do check-in e depois do check-out.",
+      },
+      {
+        q: "O pequeno-almoço está incluído?",
+        a: "Sim, o pequeno-almoço continental está incluído na maioria das tarifas. Nos quartos superiores e no pacote Romântico pode ser servido no quarto, mediante pedido na véspera.",
+      },
+      {
+        q: "Posso cancelar a reserva sem custos?",
+        a: "Nas tarifas flexíveis o cancelamento é gratuito até 48 horas antes da data de check-in. As promoções não reembolsáveis são sempre identificadas antes da confirmação.",
+      },
+      {
+        q: "O hotel tem estacionamento?",
+        a: "Sim, temos garagem coberta e vigiada, sujeita a disponibilidade. Pode adicioná-la à reserva como extra por 12 € por noite.",
+      },
+      {
+        q: "A que distância fica do centro histórico e do aeroporto?",
+        a: "Estamos no Centro de Negócios do Porto, a poucos minutos a pé da Casa da Música, a 5 minutos do Centro de Congressos da Alfândega, a 10 minutos das praias da Foz e a 20 minutos do Aeroporto Francisco Sá Carneiro.",
+      },
+      {
+        q: "Em que idiomas são atendidos os hóspedes?",
+        a: "A equipa atende em português, inglês, espanhol, francês e italiano.",
+      },
+    ],
+  },
+  a11y: {
+    skipToContent: "Saltar para o conteúdo",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
+    changeLanguage: "Mudar de idioma",
+    previousImage: "Imagem anterior",
+    nextImage: "Imagem seguinte",
+    closeGallery: "Fechar galeria",
+  },
+  notFound: {
+    code: "404",
+    title: "Página não encontrada",
+    body: "A página que procura não existe ou foi movida.",
+    back: "Voltar à página inicial",
   },
   share: {
     label: "Partilhar",

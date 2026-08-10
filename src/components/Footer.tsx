@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { hotel } from "@/data/hotel";
+import type { HotelSettings } from "@/lib/repo/content";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
 import { Icon } from "./Icon";
@@ -9,9 +9,11 @@ import { Newsletter } from "./Newsletter";
 export function Footer({
   locale,
   dict,
+  hotel,
 }: {
   locale: Locale;
   dict: Dictionary;
+  hotel: HotelSettings;
 }) {
   return (
     <footer className="mt-32 bg-[var(--color-ink)] text-white">
@@ -35,7 +37,7 @@ export function Footer({
           <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/70">
             {hotel.brandTagline[locale]}.
           </p>
-          <p className="mt-6 text-xs text-white/50">
+          <p className="mt-6 text-xs text-white/70">
             {dict.services.languagesTitle}:{" "}
             <span className="text-white/80">
               {hotel.languages[locale].join(" · ")}
@@ -73,7 +75,7 @@ export function Footer({
         </div>
 
         <div className="lg:col-span-2">
-          <p className="text-xs uppercase tracking-[0.25em] text-white/50">
+          <p className="text-xs uppercase tracking-[0.25em] text-white/70">
             {dict.footer.quickLinks}
           </p>
           <ul className="mt-5 space-y-3">
@@ -100,7 +102,7 @@ export function Footer({
         </div>
 
         <div className="lg:col-span-3">
-          <p className="text-xs uppercase tracking-[0.25em] text-white/50">
+          <p className="text-xs uppercase tracking-[0.25em] text-white/70">
             {dict.footer.contactUs}
           </p>
           <ul className="mt-5 space-y-3 text-sm text-white/80">
@@ -138,7 +140,7 @@ export function Footer({
         </div>
 
         <div className="lg:col-span-3">
-          <p className="text-xs uppercase tracking-[0.25em] text-white/50">
+          <p className="text-xs uppercase tracking-[0.25em] text-white/70">
             {dict.footer.legal}
           </p>
           <ul className="mt-5 space-y-3 text-sm">
@@ -203,7 +205,7 @@ export function Footer({
             <li>
               <Link
                 href={`/${locale}/reservar`}
-                className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-accent-soft)] transition-colors"
+                className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent-soft)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] transition-colors hover:bg-white"
               >
                 {dict.cta.bookDirect}
                 <Icon name="arrow-right" width={14} height={14} />
@@ -214,11 +216,11 @@ export function Footer({
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-x py-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-xs text-white/50">
+        <div className="container-x py-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-xs text-white/70">
           <p>
             © {hotel.legal.copyrightYear}–{new Date().getFullYear()}{" "}
             {hotel.name}. {dict.footer.rights}{" "}
-            <span className="text-white/40">· {hotel.legal.rnet}</span>
+            <span className="text-white/70">· {hotel.legal.rnet}</span>
           </p>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <a

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
-import { rooms } from "@/data/hotel";
+import type { Room } from "@/data/hotel";
 import { Icon } from "./Icon";
 
 function todayPlus(days: number) {
@@ -16,10 +16,13 @@ function todayPlus(days: number) {
 export function BookingWidget({
   locale,
   dict,
+  rooms,
   variant = "card",
 }: {
   locale: Locale;
   dict: Dictionary;
+  /** Passed in rather than imported so the room catalogue stays server-side. */
+  rooms: Room[];
   variant?: "card" | "inline";
 }) {
   const [checkIn, setCheckIn] = useState(todayPlus(1));

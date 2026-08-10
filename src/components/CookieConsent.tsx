@@ -50,6 +50,7 @@ export function CookieConsent({
               {dict.cookies.message}{" "}
               <Link
                 href={`/${locale}/privacidade`}
+                aria-label={`${dict.cookies.learnMore} — ${dict.privacy.title}`}
                 className="text-[var(--color-accent-soft)] underline underline-offset-2 hover:text-white"
               >
                 {dict.cookies.learnMore}

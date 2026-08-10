@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
+import type { Room } from "@/data/hotel";
 import { KenBurns } from "./animations/KenBurns";
 import { BookingWidget } from "./BookingWidget";
 import { Icon } from "./Icon";
@@ -17,9 +18,11 @@ if (typeof window !== "undefined") {
 export function HeroHome({
   locale,
   dict,
+  rooms,
 }: {
   locale: Locale;
   dict: Dictionary;
+  rooms: Room[];
 }) {
   const root = useRef<HTMLElement | null>(null);
   const eyebrowRef = useRef<HTMLDivElement | null>(null);
@@ -178,7 +181,7 @@ export function HeroHome({
           </div>
         </div>
         <div ref={widgetRef} className="mt-8 sm:mt-10 lg:mt-14">
-          <BookingWidget locale={locale} dict={dict} />
+          <BookingWidget locale={locale} dict={dict} rooms={rooms} />
         </div>
       </div>
 

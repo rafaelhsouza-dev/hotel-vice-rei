@@ -72,6 +72,9 @@ export function KenBurns({
           fill
           priority={priority}
           sizes="100vw"
+          // Heroes always sit under a dark gradient, so a lower quality is
+          // indistinguishable here and meaningfully cheaper for LCP.
+          quality={68}
           className="object-cover"
         />
       </div>

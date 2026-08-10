@@ -20,7 +20,7 @@ export const fr: Dictionary = {
   cta: {
     bookNow: "Réserver",
     bookDirect: "Réserver en direct",
-    learnMore: "En savoir plus",
+    learnMore: "En savoir plus sur l'hôtel",
     seeRooms: "Voir les chambres",
     seeOffers: "Voir les offres",
     seeServices: "Voir les services",
@@ -180,6 +180,9 @@ export const fr: Dictionary = {
     successBody:
       "Merci de nous avoir contactés. Nous vous répondrons dans les meilleurs délais.",
     metroMap: "Plan du métro de Porto (PDF)",
+    showMap: "Voir la carte",
+    mapConsent: "L'ouverture charge une carte OpenStreetMap (service externe).",
+    error: "Nous n'avons pas pu envoyer votre message. Réessayez.",
     callRate: "Appel vers le réseau fixe national",
   },
   booking_page: {
@@ -208,6 +211,10 @@ export const fr: Dictionary = {
     selectRoom: "Choisir cette chambre",
     total: "Total estimé",
     requiredField: "Champ obligatoire",
+    reference: "Référence",
+    sending: "Envoi…",
+    submitError:
+      "Nous n'avons pas pu enregistrer votre réservation. Réessayez ou appelez-nous.",
   },
   footer: {
     rights: "Tous droits réservés.",
@@ -230,7 +237,7 @@ export const fr: Dictionary = {
       "Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre consentement, des cookies pour analyser la navigation. Vous pouvez accepter, refuser ou en savoir plus.",
     accept: "Tout accepter",
     reject: "Refuser les non essentiels",
-    learnMore: "En savoir plus",
+    learnMore: "En savoir plus sur les cookies",
     settings: "Paramètres",
   },
   privacy: {
@@ -297,6 +304,7 @@ export const fr: Dictionary = {
     placeholder: "Votre e-mail",
     button: "S'abonner",
     success: "Abonnement confirmé. Bienvenue !",
+    error: "Nous n'avons pas pu finaliser votre abonnement. Réessayez.",
     privacyNote:
       "En vous abonnant, vous acceptez notre Politique de Confidentialité. Vous pouvez vous désabonner à tout moment.",
   },
@@ -348,6 +356,51 @@ export const fr: Dictionary = {
     published: "Publié le",
     related: "Articles liés",
     latest: "Derniers articles",
+  },
+  faq: {
+    eyebrow: "Questions fréquentes",
+    title: "Ce que les clients demandent avant de réserver",
+    items: [
+      {
+        q: "Quels sont les horaires d'arrivée et de départ ?",
+        a: "L'arrivée se fait à partir de 14h et le départ jusqu'à 12h. La réception est ouverte 24h/24, vous pouvez donc arriver à toute heure. Nous gardons vos bagages gratuitement avant l'arrivée et après le départ.",
+      },
+      {
+        q: "Le petit-déjeuner est-il inclus ?",
+        a: "Oui, le petit-déjeuner continental est inclus dans la plupart des tarifs. Dans les chambres supérieures et le forfait Romantique, il peut être servi en chambre sur demande la veille.",
+      },
+      {
+        q: "Puis-je annuler sans frais ?",
+        a: "Les tarifs flexibles sont annulables gratuitement jusqu'à 48 heures avant la date d'arrivée. Les promotions non remboursables sont toujours signalées avant la confirmation.",
+      },
+      {
+        q: "L'hôtel dispose-t-il d'un parking ?",
+        a: "Oui, nous avons un garage couvert et surveillé, selon disponibilité. Vous pouvez l'ajouter à votre réservation en option pour 12 € par nuit.",
+      },
+      {
+        q: "À quelle distance se trouvent le centre historique et l'aéroport ?",
+        a: "Nous sommes dans le quartier d'affaires de Porto, à quelques minutes à pied de la Casa da Música, à 5 minutes du Centre de Congrès de l'Alfândega, à 10 minutes des plages de Foz et à 20 minutes de l'aéroport Francisco Sá Carneiro.",
+      },
+      {
+        q: "Dans quelles langues l'équipe accueille-t-elle ?",
+        a: "L'équipe accueille les clients en portugais, anglais, espagnol, français et italien.",
+      },
+    ],
+  },
+  a11y: {
+    skipToContent: "Aller au contenu",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu",
+    changeLanguage: "Changer de langue",
+    previousImage: "Image précédente",
+    nextImage: "Image suivante",
+    closeGallery: "Fermer la galerie",
+  },
+  notFound: {
+    code: "404",
+    title: "Page introuvable",
+    body: "La page que vous cherchez n'existe pas ou a été déplacée.",
+    back: "Retour à l'accueil",
   },
   share: {
     label: "Partager",

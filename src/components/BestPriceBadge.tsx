@@ -14,7 +14,7 @@ export function BestPriceBadge({
         className ?? ""
       }`}
     >
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-accent)] text-[var(--color-ink)]">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-ink)]">
         <Icon name="shield" width={16} height={16} />
       </span>
       <span className="leading-tight">

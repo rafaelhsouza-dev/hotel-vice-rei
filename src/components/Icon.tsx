@@ -35,7 +35,18 @@ export type IconName =
   | "link"
   | "whatsapp"
   | "twitter"
-  | "bed";
+  | "bed"
+  | "dashboard"
+  | "image"
+  | "tag"
+  | "plus"
+  | "trash"
+  | "edit"
+  | "search"
+  | "upload"
+  | "eye"
+  | "eyeOff"
+  | "inbox";
 
 const paths: Record<IconName, ReactElement> = {
   wifi: (
@@ -190,6 +201,69 @@ const paths: Record<IconName, ReactElement> = {
       <path d="M3 16h18" />
       <path d="M3 12a3 3 0 0 1 3-3h7a4 4 0 0 1 4 4v3" />
       <path d="M8 11v2" />
+    </>
+  ),
+  // --- backoffice ---
+  dashboard: (
+    <>
+      <path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="8.5" cy="9.5" r="1.5" />
+      <path d="m4 17 5-5 4 4 3-2 4 4" />
+    </>
+  ),
+  tag: (
+    <>
+      <path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z" />
+      <circle cx="7.5" cy="7.5" r="1.2" />
+    </>
+  ),
+  plus: <path d="M12 5v14M5 12h14" />,
+  trash: (
+    <>
+      <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+      <path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
+      <path d="M10 11v6M14 11v6" />
+    </>
+  ),
+  edit: (
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </>
+  ),
+  upload: (
+    <>
+      <path d="M12 16V4m0 0L8 8m4-4 4 4" />
+      <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  eyeOff: (
+    <>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 6.2A9.9 9.9 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.3 3.9M6.6 6.7A16.6 16.6 0 0 0 2 12s3.5 6 10 6a9.8 9.8 0 0 0 3.5-.6" />
+    </>
+  ),
+  inbox: (
+    <>
+      <path d="M4 13h4l2 3h4l2-3h4" />
+      <path d="M5 5h14l2 8v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z" />
     </>
   ),
 };

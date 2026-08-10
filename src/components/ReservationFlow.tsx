@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
 import type { Offer, Room } from "@/data/hotel";
+import type { BookingExtra } from "@/lib/repo/content";
+import { checkPromo, submitBooking } from "@/app/(site)/[locale]/reservar/actions";
 import { Icon } from "./Icon";
 
 type Initial = {
@@ -34,12 +36,15 @@ export function ReservationFlow({
   dict,
   rooms,
   offers,
+  extras: extraDefs,
   initial,
 }: {
   locale: Locale;
   dict: Dictionary;
   rooms: Room[];
   offers: Offer[];
+  /** Priced add-ons, managed in the backoffice. */
+  extras: BookingExtra[];
   initial: Initial;
 }) {
   const [step, setStep] = useState(initial.roomId ? 1 : 0);
@@ -59,15 +64,13 @@ export function ReservationFlow({
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
   const [notes, setNotes] = useState("");
-  const [extras, setExtras] = useState({
-    breakfast: false,
-    parking: false,
-    lateCheckout: false,
-    upgrade: false,
-  });
+  const [chosenExtras, setChosenExtras] = useState<string[]>([]);
   const [promoInput, setPromoInput] = useState("");
   const [promo, setPromo] = useState<{ code: string; pct: number } | null>(null);
   const [promoError, setPromoError] = useState(false);
+  const [reference, setReference] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [isPending, startTransition] = useTransition();
   const [payMethod, setPayMethod] = useState<
     "mbway" | "multibanco" | "card" | "hotel"
   >("hotel");
@@ -80,36 +83,32 @@ export function ReservationFlow({
   const nights = nightsBetween(checkIn, checkOut);
   const selectedRoom = rooms.find((r) => r.id === roomId);
 
-  const extraDefs = [
-    { key: "breakfast" as const, price: 8, perNight: true, label: dict.extras.breakfast, desc: dict.extras.breakfastDesc },
-    { key: "parking" as const, price: 12, perNight: true, label: dict.extras.parking, desc: dict.extras.parkingDesc },
-    { key: "lateCheckout" as const, price: 20, perNight: false, label: dict.extras.lateCheckout, desc: dict.extras.lateCheckoutDesc },
-    { key: "upgrade" as const, price: 25, perNight: false, label: dict.extras.upgrade, desc: dict.extras.upgradeDesc },
-  ];
-
-  const base = selectedRoom && nights > 0 ? selectedRoom.priceFrom * nights : 0;
-  const extrasTotal = extraDefs.reduce(
-    (sum, ex) =>
-      extras[ex.key]
-        ? sum + (ex.perNight ? ex.price * Math.max(1, nights) : ex.price)
-        : sum,
-    0,
+  // Mirrors the server pricing in `reservar/actions.ts` for instant feedback;
+  // the persisted figures are always the ones the server recomputes.
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+  const base = selectedRoom && nights > 0 ? round2(selectedRoom.priceFrom * nights) : 0;
+  const extrasTotal = round2(
+    extraDefs
+      .filter((ex) => chosenExtras.includes(ex.id))
+      .reduce(
+        (sum, ex) => sum + (ex.perNight ? ex.price * Math.max(1, nights) : ex.price),
+        0,
+      ),
   );
-  const discount = promo
-    ? Math.round((base + extrasTotal) * promo.pct * 100) / 100
-    : 0;
-  const total = Math.max(0, base + extrasTotal - discount);
+  const discount = promo ? round2((base + extrasTotal) * promo.pct) : 0;
+  const total = Math.max(0, round2(base + extrasTotal - discount));
 
-  const promoCodes: Record<string, number> = { VICEREI10: 0.1, PORTO15: 0.15 };
   function applyPromo() {
-    const code = promoInput.trim().toUpperCase();
-    if (promoCodes[code]) {
-      setPromo({ code, pct: promoCodes[code] });
-      setPromoError(false);
-    } else {
-      setPromo(null);
-      setPromoError(true);
-    }
+    startTransition(async () => {
+      const result = await checkPromo(promoInput);
+      if (result.ok && result.code && result.percent) {
+        setPromo({ code: result.code, pct: result.percent });
+        setPromoError(false);
+      } else {
+        setPromo(null);
+        setPromoError(true);
+      }
+    });
   }
 
   const steps = [
@@ -128,7 +127,34 @@ export function ReservationFlow({
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    setDone(true);
+    setSubmitError("");
+    startTransition(async () => {
+      const result = await submitBooking({
+        firstName: first,
+        lastName: last,
+        email,
+        phone,
+        country,
+        notes,
+        roomId,
+        offerId: initial.offerId,
+        checkIn,
+        checkOut,
+        adults,
+        children,
+        extras: chosenExtras,
+        promoCode: promo?.code ?? "",
+        paymentMethod: payMethod,
+        locale,
+      });
+
+      if (result.ok) {
+        setReference(result.reference);
+        setDone(true);
+      } else {
+        setSubmitError(dict.booking_page.submitError);
+      }
+    });
   }
 
   if (done) {
@@ -142,6 +168,12 @@ export function ReservationFlow({
         </h2>
         <p className="mt-3 text-[var(--color-ink-soft)] leading-relaxed">
           {dict.booking_page.successBody}
+        </p>
+        <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-line-soft)] px-5 py-2.5">
+          <span className="text-xs uppercase tracking-[0.18em] text-[var(--color-ink-muted)]">
+            {dict.booking_page.reference}
+          </span>
+          <span className="font-mono text-base font-medium">{reference}</span>
         </p>
         <dl className="mt-8 grid grid-cols-2 gap-4 text-left text-sm bg-[var(--color-line-soft)] rounded-2xl p-6">
           <div>
@@ -361,7 +393,10 @@ export function ReservationFlow({
               </div>
 
               {/* Extras (upsells) */}
-              <div className="border-t border-[var(--color-line)] pt-6">
+              <div
+                className="border-t border-[var(--color-line)] pt-6"
+                hidden={extraDefs.length === 0}
+              >
                 <h3 className="font-display text-xl tracking-tight">
                   {dict.extras.title}
                 </h3>
@@ -370,10 +405,10 @@ export function ReservationFlow({
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {extraDefs.map((ex) => {
-                    const on = extras[ex.key];
+                    const on = chosenExtras.includes(ex.id);
                     return (
                       <label
-                        key={ex.key}
+                        key={ex.id}
                         className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors ${
                           on
                             ? "border-[var(--color-accent-deep)] bg-[var(--color-line-soft)]"
@@ -384,19 +419,23 @@ export function ReservationFlow({
                           type="checkbox"
                           checked={on}
                           onChange={() =>
-                            setExtras((s) => ({ ...s, [ex.key]: !s[ex.key] }))
+                            setChosenExtras((current) =>
+                              current.includes(ex.id)
+                                ? current.filter((id) => id !== ex.id)
+                                : [...current, ex.id],
+                            )
                           }
                           className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent-deep)]"
                         />
                         <span className="flex-1">
                           <span className="flex items-center justify-between gap-2">
-                            <span className="font-medium">{ex.label}</span>
+                            <span className="font-medium">{ex.label[locale]}</span>
                             <span className="text-sm font-medium text-[var(--color-accent-deep)]">
                               +{ex.price}€
                             </span>
                           </span>
                           <span className="mt-0.5 block text-xs text-[var(--color-ink-muted)]">
-                            {ex.desc} ·{" "}
+                            {ex.description[locale]} ·{" "}
                             {ex.perNight ? dict.extras.perNight : dict.extras.perStay}
                           </span>
                         </span>
@@ -642,6 +681,15 @@ export function ReservationFlow({
             </div>
           )}
 
+          {submitError && (
+            <p
+              role="alert"
+              className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {submitError}
+            </p>
+          )}
+
           <div className="mt-8 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
             <button
               type="button"
@@ -653,10 +701,14 @@ export function ReservationFlow({
             </button>
             <button
               type="submit"
-              disabled={step === 1 && !roomId}
+              disabled={(step === 1 && !roomId) || isPending}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-ink)] px-6 py-3 text-sm font-medium text-white hover:bg-[var(--color-accent-deep)] disabled:opacity-50 disabled:pointer-events-none transition-colors"
             >
-              {step === 2 ? dict.booking_page.confirm : dict.booking_page.next}
+              {isPending
+                ? dict.booking_page.sending
+                : step === 2
+                  ? dict.booking_page.confirm
+                  : dict.booking_page.next}
               <Icon name="arrow-right" width={14} height={14} />
             </button>
           </div>
@@ -671,7 +723,7 @@ export function ReservationFlow({
 
           {offer && (
             <div className="mt-4 rounded-2xl bg-[var(--color-line-soft)] p-4 flex items-start gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-[var(--color-accent)] text-[var(--color-ink)]">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-ink)]">
                 <Icon name="sparkle" width={14} height={14} />
               </span>
               <div>

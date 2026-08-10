@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, locales } from "./i18n/config";
+import { SESSION_COOKIE, verifySession } from "./lib/auth/jwt";
 
 const PUBLIC_FILE = /\.(.*)$/;
+
+/** Paths that live outside the /[locale] tree and must not be prefixed. */
+const UNLOCALISED = ["/admin", "/uploads", "/api"];
 
 function pickLocale(request: NextRequest) {
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
@@ -18,25 +22,40 @@ function pickLocale(request: NextRequest) {
   return defaultLocale;
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/images") ||
     pathname === "/favicon.ico" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
+    pathname === "/llms.txt" ||
+    pathname === "/manifest.webmanifest" ||
+    pathname.startsWith("/images") ||
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
   }
 
+  // --- backoffice ---------------------------------------------------------
+  if (UNLOCALISED.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    if (pathname === "/admin/login" || !pathname.startsWith("/admin")) {
+      return NextResponse.next();
+    }
+    const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
+    if (session) return NextResponse.next();
+
+    const login = request.nextUrl.clone();
+    login.pathname = "/admin/login";
+    login.search = pathname === "/admin" ? "" : `?next=${encodeURIComponent(pathname)}`;
+    return NextResponse.redirect(login);
+  }
+
+  // --- locale prefix ------------------------------------------------------
   const pathnameHasLocale = locales.some(
     (l) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`,
   );
-
   if (pathnameHasLocale) return NextResponse.next();
 
   const locale = pickLocale(request);
@@ -46,5 +65,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|images|favicon.ico|robots.txt|sitemap.xml).*)"],
+  matcher: ["/((?!_next|images|favicon.ico|robots.txt|sitemap.xml).*)"],
 };

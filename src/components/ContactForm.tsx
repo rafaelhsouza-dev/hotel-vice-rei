@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import type { Dictionary } from "@/i18n";
+import type { Locale } from "@/i18n/config";
+import { sendContactMessage } from "@/app/actions/public";
 import { Icon } from "./Icon";
 
-export function ContactForm({ dict }: { dict: Dictionary }) {
+export function ContactForm({
+  dict,
+  locale,
+}: {
+  dict: Dictionary;
+  locale: Locale;
+}) {
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   if (sent) {
     return (
@@ -34,16 +44,35 @@ export function ContactForm({ dict }: { dict: Dictionary }) {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        setSent(true);
+        setError(false);
+        const data = new FormData(e.currentTarget);
+        startTransition(async () => {
+          const result = await sendContactMessage({
+            name: String(data.get("name") ?? ""),
+            email: String(data.get("email") ?? ""),
+            subject: String(data.get("subject") ?? ""),
+            message: String(data.get("message") ?? ""),
+            website: String(data.get("website") ?? ""),
+            locale,
+          });
+          if (result.ok) setSent(true);
+          else setError(true);
+        });
       }}
       className="mt-8 grid gap-5"
     >
+      {/* Honeypot: hidden from users, irresistible to bots. */}
+      <div aria-hidden className="absolute h-0 w-0 overflow-hidden">
+        <label htmlFor="cf-website">Website</label>
+        <input id="cf-website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
           <label className={label} htmlFor="cf-name">
             {dict.contact.name}
           </label>
-          <input id="cf-name" name="name" required className={field} />
+          <input id="cf-name" name="name" required autoComplete="name" className={field} />
         </div>
         <div>
           <label className={label} htmlFor="cf-email">
@@ -54,6 +83,7 @@ export function ContactForm({ dict }: { dict: Dictionary }) {
             name="email"
             type="email"
             required
+            autoComplete="email"
             className={field}
           />
         </div>
@@ -68,20 +98,22 @@ export function ContactForm({ dict }: { dict: Dictionary }) {
         <label className={label} htmlFor="cf-message">
           {dict.contact.message}
         </label>
-        <textarea
-          id="cf-message"
-          name="message"
-          rows={6}
-          required
-          className={field}
-        />
+        <textarea id="cf-message" name="message" rows={6} required className={field} />
       </div>
+
+      {error && (
+        <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          {dict.contact.error}
+        </p>
+      )}
+
       <div className="flex items-center justify-end">
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-full bg-[var(--color-ink)] px-6 py-3 text-sm font-medium text-white hover:bg-[var(--color-accent-deep)] transition-colors"
+          disabled={isPending}
+          className="inline-flex items-center gap-2 rounded-full bg-[var(--color-ink)] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-deep)] disabled:opacity-60"
         >
-          {dict.contact.send}
+          {isPending ? dict.booking_page.sending : dict.contact.send}
           <Icon name="arrow-right" width={14} height={14} />
         </button>
       </div>
