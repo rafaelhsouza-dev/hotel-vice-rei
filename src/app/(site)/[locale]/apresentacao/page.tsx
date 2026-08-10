@@ -6,6 +6,8 @@ import { getDictionary } from "@/i18n";
 import { PageHero } from "@/components/PageHero";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/animations/Reveal";
+import { MapEmbed } from "@/components/MapEmbed";
+import { getHotel } from "@/lib/repo/content";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -14,6 +16,7 @@ export default async function AboutPage({ params }: Props) {
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const dict = getDictionary(locale);
+  const hotel = await getHotel();
 
   return (
     <div>
@@ -88,7 +91,31 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="container-x py-16 sm:py-20 lg:py-24">
+      <section className="container-x grid gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:py-24">
+        <div>
+          <span className="eyebrow">{dict.home.location.eyebrow}</span>
+          <h2 className="mt-4 font-display text-3xl leading-tight tracking-tight sm:text-4xl">
+            {dict.home.location.title}
+          </h2>
+          <p className="mt-4 text-lg leading-relaxed text-[var(--color-ink-soft)]">
+            {dict.home.location.body}
+          </p>
+          <p className="mt-6 font-medium">
+            {hotel.address.street}
+            <br />
+            {hotel.address.postalCode} {hotel.address.city}
+          </p>
+        </div>
+        <MapEmbed
+          lat={hotel.coords.lat}
+          lng={hotel.coords.lng}
+          dict={dict}
+          label={`${hotel.name} — ${hotel.address.street}`}
+          address={`${hotel.name}, ${hotel.address.street}, ${hotel.address.postalCode} ${hotel.address.city}`}
+        />
+      </section>
+
+      <section className="container-x pb-16 sm:pb-20 lg:pb-24">
         <div className="rounded-3xl bg-[var(--color-ink)] text-white p-10 sm:p-14 flex flex-col lg:flex-row items-start lg:items-center gap-8 justify-between">
           <div className="max-w-xl">
             <h2 className="font-display text-3xl sm:text-4xl leading-tight tracking-tight">

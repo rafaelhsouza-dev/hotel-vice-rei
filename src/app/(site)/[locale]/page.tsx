@@ -430,6 +430,7 @@ export default async function HomePage({ params }: Props) {
               lng={hotel.coords.lng}
               dict={dict}
               label={`${hotel.name} — ${hotel.address.street}`}
+              address={`${hotel.name}, ${hotel.address.street}, ${hotel.address.postalCode} ${hotel.address.city}`}
             />
           </Reveal>
         </div>

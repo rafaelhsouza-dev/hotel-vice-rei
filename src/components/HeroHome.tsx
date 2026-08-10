@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
 import type { Room } from "@/data/hotel";
-import { KenBurns } from "./animations/KenBurns";
+import { HeroSlideshow } from "./HeroSlideshow";
 import { BookingWidget } from "./BookingWidget";
 import { Icon } from "./Icon";
 
@@ -104,12 +104,15 @@ export function HeroHome({
       ref={root}
       className="relative isolate -mt-20 min-h-[100svh] overflow-hidden"
     >
-      <KenBurns
-        src="/images/hero/home.webp"
-        alt=""
-        priority
+      <HeroSlideshow
         className="absolute inset-0"
-        intensity={1}
+        label={dict.a11y.chooseHeroPhoto}
+        slides={[
+          { src: "/images/hero/home.webp", alt: dict.a11y.heroRoom },
+          { src: "/images/hero/home-2.webp", alt: dict.a11y.heroFacade },
+          { src: "/images/hero/home-3.webp", alt: dict.a11y.heroBreakfast },
+          { src: "/images/hero/home-4.webp", alt: dict.a11y.heroView },
+        ]}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/75" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,0,0,0)_0%,rgba(0,0,0,0.35)_75%)]" />

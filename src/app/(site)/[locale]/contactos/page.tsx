@@ -109,6 +109,7 @@ export default async function ContactPage({ params }: Props) {
             lng={hotel.coords.lng}
             dict={dict}
             label={`${hotel.name} — ${hotel.address.street}`}
+            address={`${hotel.name}, ${hotel.address.street}, ${hotel.address.postalCode} ${hotel.address.city}`}
           />
         </aside>
 
