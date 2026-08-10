@@ -18,11 +18,14 @@ export type Slide = { src: string; alt?: string };
 export function HeroSlideshow({
   slides,
   intervalMs = 6500,
+  startDelayMs = 9000,
   className,
   label,
 }: {
   slides: Slide[];
   intervalMs?: number;
+  /** How long the opening photograph holds before the first change. */
+  startDelayMs?: number;
   className?: string;
   label: string;
 }) {
@@ -54,16 +57,28 @@ export function HeroSlideshow({
   }, []);
 
   // Advance the slide. Held still for anyone who asked for reduced motion.
+  //
+  // The first change waits `startDelayMs`. A cross-fade counts as a visual
+  // change, so rotating early tanks Speed Index — and it also gives the opening
+  // photograph time to land before anything moves.
   useEffect(() => {
     if (slides.length < 2) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduced.matches) return;
 
-    const id = window.setInterval(() => {
+    let interval = 0;
+    const start = window.setTimeout(() => {
       setIndex((current) => (current + 1) % slides.length);
-    }, intervalMs);
-    return () => window.clearInterval(id);
-  }, [slides.length, intervalMs]);
+      interval = window.setInterval(() => {
+        setIndex((current) => (current + 1) % slides.length);
+      }, intervalMs);
+    }, startDelayMs);
+
+    return () => {
+      window.clearTimeout(start);
+      window.clearInterval(interval);
+    };
+  }, [slides.length, intervalMs, startDelayMs]);
 
   // Start fetching the next slide a little before it is needed.
   useEffect(() => {
@@ -80,7 +95,7 @@ export function HeroSlideshow({
           <div
             key={slide.src}
             aria-hidden={i !== index}
-            className="absolute inset-0 transition-opacity duration-[1400ms] ease-in-out"
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
             style={{ opacity: i === index ? 1 : 0 }}
           >
             {(i === 0 || ready[i]) && (
