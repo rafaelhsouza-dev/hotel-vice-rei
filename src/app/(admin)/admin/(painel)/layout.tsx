@@ -38,6 +38,7 @@ export default async function PainelLayout({
         { href: "/admin/reservas", label: "Reservas", icon: "calendar", badge: pending },
         { href: "/admin/mensagens", label: "Mensagens", icon: "inbox", badge: unread },
         { href: "/admin/newsletter", label: "Newsletter", icon: "users" },
+        { href: "/admin/disponibilidade", label: "Disponibilidade", icon: "calendar" },
       ],
     },
     {
@@ -67,6 +68,7 @@ export default async function PainelLayout({
       items: [
         { href: "/admin/tarifas", label: "Extras e códigos", icon: "tag" },
         { href: "/admin/media", label: "Ficheiros", icon: "upload" },
+        { href: "/admin/integracoes", label: "Integrações", icon: "plug" },
         { href: "/admin/definicoes", label: "Definições", icon: "shield" },
       ],
     },

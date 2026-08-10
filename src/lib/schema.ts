@@ -326,6 +326,93 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS unit_id integer REFERENCES units(i
 -- so the client can change them without a redeploy.
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS analytics jsonb NOT NULL DEFAULT '{}'::jsonb;
 
+-- Secret in the public iCal feed URL. Channels cannot send headers when they
+-- poll a calendar, so the URL itself has to carry the authorisation.
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS ical_token text NOT NULL DEFAULT '';
+
+-- ===========================================================================
+-- Channel connectivity
+-- ===========================================================================
+
+-- One row per connected channel. 'provider' selects the adapter; 'kind'
+-- says whether it talks iCal or a REST API.
+CREATE TABLE IF NOT EXISTS channels (
+  id           text        PRIMARY KEY,
+  provider     text        NOT NULL
+               CHECK (provider IN ('ical','beds24','booking','expedia','manual')),
+  kind         text        NOT NULL DEFAULT 'ical' CHECK (kind IN ('ical','api')),
+  name         text        NOT NULL,
+  enabled      boolean     NOT NULL DEFAULT false,
+  -- Secrets are stored encrypted (AES-256-GCM); see lib/crypto.ts.
+  credentials  text        NOT NULL DEFAULT '',
+  settings     jsonb       NOT NULL DEFAULT '{}'::jsonb,
+  status       text        NOT NULL DEFAULT 'never'
+               CHECK (status IN ('never','ok','error','disabled')),
+  last_sync_at timestamptz,
+  last_error   text        NOT NULL DEFAULT '',
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+
+-- Maps our room categories to whatever the channel calls them.
+CREATE TABLE IF NOT EXISTS channel_room_map (
+  channel_id       text NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+  room_id          text NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+  external_room_id text NOT NULL DEFAULT '',
+  external_rate_id text NOT NULL DEFAULT '',
+  ical_url         text NOT NULL DEFAULT '',
+  PRIMARY KEY (channel_id, room_id)
+);
+
+-- Per-day inventory. 'units_total' is what we sell, 'units_booked' comes from
+-- our own reservations and 'units_blocked' from channels or manual closures.
+CREATE TABLE IF NOT EXISTS availability (
+  room_id       text    NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+  date          date    NOT NULL,
+  units_total   integer NOT NULL DEFAULT 0,
+  units_booked  integer NOT NULL DEFAULT 0,
+  units_blocked integer NOT NULL DEFAULT 0,
+  min_stay      integer NOT NULL DEFAULT 1,
+  closed        boolean NOT NULL DEFAULT false,
+  rate          numeric(10,2),
+  updated_at    timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (room_id, date)
+);
+CREATE INDEX IF NOT EXISTS availability_date_idx ON availability (date);
+
+-- Reservations pulled in from a channel, before/after mapping to a booking.
+CREATE TABLE IF NOT EXISTS channel_reservations (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  channel_id  text        NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+  external_id text        NOT NULL,
+  room_id     text        REFERENCES rooms(id) ON DELETE SET NULL,
+  guest_name  text        NOT NULL DEFAULT '',
+  check_in    date        NOT NULL,
+  check_out   date        NOT NULL,
+  status      text        NOT NULL DEFAULT 'confirmed'
+              CHECK (status IN ('confirmed','cancelled')),
+  raw         jsonb       NOT NULL DEFAULT '{}'::jsonb,
+  booking_id  uuid        REFERENCES bookings(id) ON DELETE SET NULL,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  updated_at  timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (channel_id, external_id)
+);
+CREATE INDEX IF NOT EXISTS channel_res_dates_idx ON channel_reservations (check_in, check_out);
+
+-- Append-only audit of every sync attempt, in either direction.
+CREATE TABLE IF NOT EXISTS sync_log (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  channel_id  text        REFERENCES channels(id) ON DELETE CASCADE,
+  direction   text        NOT NULL CHECK (direction IN ('in','out')),
+  action      text        NOT NULL DEFAULT '',
+  status      text        NOT NULL DEFAULT 'ok' CHECK (status IN ('ok','error','skipped')),
+  items       integer     NOT NULL DEFAULT 0,
+  message     text        NOT NULL DEFAULT '',
+  duration_ms integer     NOT NULL DEFAULT 0,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS sync_log_created_idx ON sync_log (created_at DESC);
+
 CREATE TABLE IF NOT EXISTS admin_users (
   id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
   email         text        NOT NULL UNIQUE,

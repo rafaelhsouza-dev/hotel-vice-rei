@@ -88,9 +88,56 @@ Sem `DATABASE_URL` o site continua a funcionar: serve os dados de seed.
 | `NEXT_PUBLIC_SITE_URL` | Origem canónica (metadata, sitemap, JSON-LD) |
 | `UPLOADS_DIR` | Pasta dos ficheiros carregados; em produção é o volume |
 | `NEXT_PUBLIC_GA_ID` | Opcional. GA4 só carrega com consentimento de cookies |
+| `SYNC_SECRET` | Autoriza `POST /api/channels/sync`. Mínimo 16 caracteres; sem ela o endpoint responde 401 |
 
 `NEXT_PUBLIC_*` são inlined no bundle durante o build, por isso têm de existir
 como *build args* — o EasyPanel encaminha todas as variáveis automaticamente.
+
+---
+
+## Integrações com plataformas
+
+O módulo em **/admin/integracoes** é agnóstico ao canal: um adaptador por
+plataforma, um motor de sincronização comum e um registo auditável.
+
+| Canal | Situação | O que faz |
+|---|---|---|
+| **iCal** (Airbnb, Vrbo, Google) | Ligar já, sem contrato | Importa datas ocupadas; exporta o nosso calendário |
+| **Beds24** | Ligar já, com conta Beds24 | API REST v2: reservas, disponibilidade, preços e restrições |
+| **Expedia QuickConnect** | Credenciais do Partner Central | XML sobre HTTPS: reservas e *availability & rates* |
+| **Booking.com direto** | Indisponível | API só para parceiros certificados, com registo encerrado |
+
+O Booking.com merece uma nota, porque é a plataforma que mais importa a este
+hotel. A API de conectividade exige certificação como parceiro e o registo está
+fechado; o calendário iCal gratuito exige **uma unidade por tipologia** e o
+Vice-Rei tem 55 unidades em 6 tipologias. O caminho realista é um channel
+manager certificado — daí o adaptador Beds24, que alcança Booking.com, Airbnb,
+Expedia e Vrbo através de uma única integração documentada.
+
+O TripAdvisor não está na lista: o *Instant Book* deixou de aceitar novas
+propriedades em 11 de novembro de 2025.
+
+### Como corre
+
+Os nossos calendários são publicados em `/api/ical/<tipologia>?token=…` (e
+`/api/ical/todos`). O segredo vive no URL porque é o único sítio onde uma
+plataforma que sonda um calendário o consegue transportar; pode ser rodado no
+painel, o que invalida todas as subscrições.
+
+A sincronização periódica é um POST autenticado:
+
+```bash
+curl -X POST https://hotelvicerei.com/api/channels/sync   -H "x-sync-secret: $SYNC_SECRET"
+```
+
+De 15 em 15 ou 30 em 30 minutos é suficiente — os feeds iCal do lado das
+plataformas atualizam devagar (no Booking.com até 12 horas) e sondar mais vezes
+só gasta limite de pedidos.
+
+Duas invariantes protegem contra *overbooking*: a disponibilidade é **derivada**
+das unidades, das reservas próprias e das importadas, nunca de um contador
+guardado; e se a importação de um canal falhar, o envio da disponibilidade
+desse canal é ignorado em vez de publicar números que sabemos estar velhos.
 
 ---
 

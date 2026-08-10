@@ -1,3 +1,4 @@
+import { randomToken } from "./crypto";
 import { query, transaction, isDbConfigured } from "./db";
 import { SCHEMA_SQL } from "./schema";
 import { hashPassword } from "./auth/password";
@@ -538,6 +539,47 @@ let migrated = false;
  * Runs schema + seed once per process. Never throws: a database that is
  * unreachable (e.g. during `docker build`) must not fail the render.
  */
+/**
+ * Creates the channel rows the hotel is expected to use, all disabled.
+ *
+ * Seeding them means the integrations page opens with something to configure
+ * rather than an empty state, and each row carries the honest note about how
+ * obtainable that connection is. Nothing syncs until an operator enables it.
+ */
+async function seedChannels() {
+  if (!(await isEmpty("channels"))) return;
+
+  const defaults: [string, string, string, "ical" | "api"][] = [
+    ["airbnb-ical", "ical", "Airbnb (iCal)", "ical"],
+    ["vrbo-ical", "ical", "Vrbo / Expedia (iCal)", "ical"],
+    ["beds24", "beds24", "Beds24 (channel manager)", "api"],
+    ["expedia", "expedia", "Expedia QuickConnect", "api"],
+    ["booking", "booking", "Booking.com (ligação direta)", "api"],
+  ];
+
+  for (const [id, provider, name, kind] of defaults) {
+    await query(
+      `INSERT INTO channels (id, provider, kind, name, enabled)
+       VALUES ($1, $2, $3, $4, false)
+       ON CONFLICT (id) DO NOTHING`,
+      [id, provider, kind, name],
+    );
+  }
+}
+
+/**
+ * Generates the iCal feed secret on first boot so the URLs are ready to copy.
+ *
+ * Generated in Node rather than in SQL: gen_random_bytes() lives in pgcrypto,
+ * which is not installed on a stock Postgres image, and node:crypto is both
+ * always present and the same source of randomness the rest of the app uses.
+ */
+async function seedIcalToken() {
+  await query(`UPDATE settings SET ical_token = $1 WHERE id = 1 AND ical_token = ''`, [
+    randomToken(),
+  ]);
+}
+
 export async function ensureDatabase(): Promise<boolean> {
   if (migrated) return true;
   if (!isDbConfigured()) return false;
@@ -559,6 +601,8 @@ export async function ensureDatabase(): Promise<boolean> {
     await seedInventory();
     await seedMeals();
     await seedAdminUser();
+    await seedChannels();
+    await seedIcalToken();
     await migrateGallery();
     await migrateImagePaths();
     await migrateRoomAmenities();

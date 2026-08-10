@@ -46,7 +46,10 @@ export type IconName =
   | "upload"
   | "eye"
   | "eyeOff"
-  | "inbox";
+  | "inbox"
+  | "alert"
+  | "sync"
+  | "plug";
 
 const paths: Record<IconName, ReactElement> = {
   wifi: (
@@ -264,6 +267,26 @@ const paths: Record<IconName, ReactElement> = {
     <>
       <path d="M4 13h4l2 3h4l2-3h4" />
       <path d="M5 5h14l2 8v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z" />
+    </>
+  ),
+  alert: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v6M12 16.5v.5" />
+    </>
+  ),
+  sync: (
+    <>
+      <path d="M20 11a8 8 0 0 0-13.7-5.6L4 7.6" />
+      <path d="M4 13a8 8 0 0 0 13.7 5.6L20 16.4" />
+      <path d="M4 4v3.6h3.6M20 20v-3.6h-3.6" />
+    </>
+  ),
+  plug: (
+    <>
+      <path d="M9 3v6M15 3v6" />
+      <path d="M6 9h12v3a6 6 0 0 1-12 0z" />
+      <path d="M12 18v3" />
     </>
   ),
 };

@@ -99,6 +99,29 @@ export function Badge({
   );
 }
 
+/**
+ * Result banner for server actions that redirect back with `?ok=` or `?erro=`.
+ * `role="status"` on success and `role="alert"` on failure so a screen reader
+ * hears the outcome without the operator hunting for it.
+ */
+export function Flash({ ok, error }: { ok?: string; error?: string }) {
+  if (!ok && !error) return null;
+  const isError = Boolean(error);
+  return (
+    <div
+      role={isError ? "alert" : "status"}
+      className={`mb-6 flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm ${
+        isError
+          ? "border-red-200 bg-red-50 text-red-800"
+          : "border-[var(--color-success)]/25 bg-[var(--color-success)]/8 text-[var(--color-success)]"
+      }`}
+    >
+      <Icon name={isError ? "alert" : "check"} width={16} height={16} className="mt-0.5 shrink-0" />
+      <p>{error ?? ok}</p>
+    </div>
+  );
+}
+
 /** Scrollable wrapper so wide tables never push the page sideways. */
 export function TableWrap({ children }: { children: React.ReactNode }) {
   return (
