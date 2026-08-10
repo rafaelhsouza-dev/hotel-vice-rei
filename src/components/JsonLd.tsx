@@ -54,21 +54,17 @@ export function JsonLd({
         priceRange: minPrice ? `€${minPrice}–€150` : undefined,
         currenciesAccepted: "EUR",
         paymentAccepted: hotel.paymentMethods.join(", "),
-        starRating: { "@type": "Rating", ratingValue: "3" },
+        // Official classification: 2 stars (Booking.com and Tripadvisor).
+        starRating: { "@type": "Rating", ratingValue: "2" },
         numberOfRooms: hotel.totalRooms,
         availableLanguage: hotel.languages.en,
-        checkinTime: "14:00",
+        checkinTime: "15:00",
         checkoutTime: "12:00",
         petsAllowed: false,
-        aggregateRating: hotel.rating.count
-          ? {
-              "@type": "AggregateRating",
-              ratingValue: hotel.rating.score,
-              reviewCount: hotel.rating.count,
-              bestRating: 5,
-              worstRating: 1,
-            }
-          : undefined,
+        // No aggregateRating until the real Google reviews are connected:
+        // publishing placeholder scores as structured data would be a false
+        // claim to search engines, and is the kind of thing that earns a
+        // manual action. The figures still show in the page for the demo.
         amenityFeature: [
           "Free Wi-Fi",
           "24h reception",

@@ -9,7 +9,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Analytics } from "@/components/Analytics";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
-import { getHotel, getRooms } from "@/lib/repo/content";
+import { getHotel, getRooms, getAnalytics } from "@/lib/repo/content";
 import { SITE_URL, OG_IMAGE } from "@/lib/site";
 
 /**
@@ -67,9 +67,13 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
+  const analytics = await getAnalytics();
 
   return {
     metadataBase: new URL(SITE_URL),
+    ...(analytics.searchConsole
+      ? { verification: { google: analytics.searchConsole } }
+      : {}),
     title: { default: dict.meta.title, template: "%s · Hotel Vice-Rei" },
     description: dict.meta.description,
     applicationName: "Hotel Vice-Rei",
@@ -113,7 +117,11 @@ export default async function SiteLayout({ children, params }: Props) {
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const dict = getDictionary(locale);
-  const [hotel, rooms] = await Promise.all([getHotel(), getRooms()]);
+  const [hotel, rooms, analytics] = await Promise.all([
+    getHotel(),
+    getRooms(),
+    getAnalytics(),
+  ]);
 
   return (
     <html
@@ -134,7 +142,7 @@ export default async function SiteLayout({ children, params }: Props) {
         </main>
         <Footer locale={locale} dict={dict} hotel={hotel} />
         <CookieConsent locale={locale} dict={dict} />
-        <Analytics />
+        <Analytics ga4={analytics.ga4} gtm={analytics.gtm} />
       </body>
     </html>
   );

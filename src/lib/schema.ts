@@ -322,6 +322,10 @@ CREATE INDEX IF NOT EXISTS meals_service_idx ON meals (service, position);
 -- Link a booking to the physical unit it was assigned.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS unit_id integer REFERENCES units(id) ON DELETE SET NULL;
 
+-- Measurement IDs are configured in the backoffice, not baked into the build,
+-- so the client can change them without a redeploy.
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS analytics jsonb NOT NULL DEFAULT '{}'::jsonb;
+
 CREATE TABLE IF NOT EXISTS admin_users (
   id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
   email         text        NOT NULL UNIQUE,

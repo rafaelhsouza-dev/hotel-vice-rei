@@ -339,6 +339,19 @@ export async function removeSubscriber(formData: FormData) {
   revalidatePath("/admin/newsletter");
 }
 
+export async function saveAnalytics(formData: FormData) {
+  await requireSession();
+
+  await repo.updateAnalytics({
+    ga4: str(formData, "ga4"),
+    gtm: str(formData, "gtm"),
+    searchConsole: str(formData, "searchConsole"),
+  });
+
+  refresh(TAGS.analytics);
+  redirect("/admin/definicoes");
+}
+
 // --- settings --------------------------------------------------------------
 
 export async function saveSettings(formData: FormData) {

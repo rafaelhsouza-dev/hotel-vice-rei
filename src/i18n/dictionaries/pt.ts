@@ -363,7 +363,7 @@ export const pt = {
     items: [
       {
         q: "A que horas são o check-in e o check-out?",
-        a: "O check-in é a partir das 14h e o check-out até às 12h. A recepção funciona 24 horas, por isso pode chegar a qualquer hora do dia ou da noite. Guardamos a bagagem sem custo antes do check-in e depois do check-out.",
+        a: "O check-in é das 15h às 21h30 e o check-out até às 12h. A recepção funciona 24 horas, por isso pode chegar a qualquer hora do dia ou da noite. Guardamos a bagagem sem custo antes do check-in e depois do check-out.",
       },
       {
         q: "O pequeno-almoço está incluído?",
@@ -380,6 +380,10 @@ export const pt = {
       {
         q: "A que distância fica do centro histórico e do aeroporto?",
         a: "Estamos no Centro de Negócios do Porto, a poucos minutos a pé da Casa da Música, a 5 minutos do Centro de Congressos da Alfândega, a 10 minutos das praias da Foz e a 20 minutos do Aeroporto Francisco Sá Carneiro.",
+      },
+      {
+        q: "São aceites animais de estimação?",
+        a: "Não, o hotel não aceita animais de estimação, com excepção de cães-guia devidamente identificados. Se viajar com um animal, contacte-nos antes de reservar para o ajudarmos a encontrar alternativa nas imediações.",
       },
       {
         q: "Em que idiomas são atendidos os hóspedes?",

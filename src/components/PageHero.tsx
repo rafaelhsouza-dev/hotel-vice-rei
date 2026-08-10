@@ -48,7 +48,7 @@ export function PageHero({
   const words = title.split(" ");
 
   return (
-    <section className="relative isolate -mt-20 h-[68vh] min-h-[460px] overflow-hidden">
+    <section className="relative isolate -mt-20 h-[68vh] min-h-[460px] overflow-hidden bg-[var(--color-ink)]">
       <KenBurns
         src={image}
         priority

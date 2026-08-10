@@ -25,6 +25,15 @@ import type { Locale } from "@/i18n/config";
  */
 
 export type HotelSettings = typeof seedHotel;
+
+export type AnalyticsSettings = {
+  /** GA4 measurement ID, e.g. G-XXXXXXX. Empty disables analytics. */
+  ga4: string;
+  /** Google Tag Manager container, e.g. GTM-XXXXXXX. */
+  gtm: string;
+  /** Google Search Console HTML verification token. */
+  searchConsole: string;
+};
 export type GalleryImage = { id: number; src: string; alt: string };
 
 export const TAGS = {
@@ -36,6 +45,7 @@ export const TAGS = {
   posts: "posts",
   gallery: "gallery",
   extras: "extras",
+  analytics: "analytics",
 } as const;
 
 const CACHE_SECONDS = 300;
@@ -325,6 +335,22 @@ export type BookingExtra = {
   price: number;
   perNight: boolean;
 };
+
+export const getAnalytics = unstable_cache(
+  async (): Promise<AnalyticsSettings> => {
+    const rows = await safeQuery<{ analytics: Partial<AnalyticsSettings> }>(
+      `SELECT analytics FROM settings WHERE id = 1`,
+    );
+    const a = rows?.[0]?.analytics ?? {};
+    return {
+      ga4: (a.ga4 ?? "").trim(),
+      gtm: (a.gtm ?? "").trim(),
+      searchConsole: (a.searchConsole ?? "").trim(),
+    };
+  },
+  ["analytics"],
+  { tags: [TAGS.analytics], revalidate: CACHE_SECONDS },
+);
 
 export const getExtras = unstable_cache(
   async (): Promise<BookingExtra[]> => {

@@ -364,7 +364,7 @@ export const es: Dictionary = {
     items: [
       {
         q: "¿A qué hora son la entrada y la salida?",
-        a: "La entrada es a partir de las 14h y la salida hasta las 12h. La recepción funciona 24 horas, así que puede llegar a cualquier hora. Guardamos el equipaje sin coste antes de la entrada y después de la salida.",
+        a: "La entrada es de 15h a 21:30 y la salida hasta las 12h. La recepción funciona 24 horas, así que puede llegar a cualquier hora. Guardamos el equipaje sin coste antes de la entrada y después de la salida.",
       },
       {
         q: "¿El desayuno está incluido?",
@@ -381,6 +381,10 @@ export const es: Dictionary = {
       {
         q: "¿A qué distancia está del centro histórico y del aeropuerto?",
         a: "Estamos en el Centro de Negocios de Oporto, a pocos minutos a pie de la Casa da Música, a 5 minutos del Centro de Congresos de la Alfândega, a 10 minutos de las playas de Foz y a 20 minutos del aeropuerto Francisco Sá Carneiro.",
+      },
+      {
+        q: "¿Se admiten mascotas?",
+        a: "No, el hotel no admite mascotas, salvo perros guía debidamente identificados. Si viaja con un animal, contáctenos antes de reservar y le ayudaremos a encontrar una alternativa cercana.",
       },
       {
         q: "¿En qué idiomas atienden?",

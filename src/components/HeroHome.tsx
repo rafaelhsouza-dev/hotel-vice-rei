@@ -102,7 +102,7 @@ export function HeroHome({
   return (
     <section
       ref={root}
-      className="relative isolate -mt-20 min-h-[100svh] overflow-hidden"
+      className="relative isolate -mt-20 min-h-[100svh] overflow-hidden bg-[var(--color-ink)]"
     >
       <HeroSlideshow
         className="absolute inset-0"

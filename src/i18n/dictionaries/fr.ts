@@ -365,7 +365,7 @@ export const fr: Dictionary = {
     items: [
       {
         q: "Quels sont les horaires d'arrivée et de départ ?",
-        a: "L'arrivée se fait à partir de 14h et le départ jusqu'à 12h. La réception est ouverte 24h/24, vous pouvez donc arriver à toute heure. Nous gardons vos bagages gratuitement avant l'arrivée et après le départ.",
+        a: "L'arrivée se fait de 15h à 21h30 et le départ jusqu'à 12h. La réception est ouverte 24h/24, vous pouvez donc arriver à toute heure. Nous gardons vos bagages gratuitement avant l'arrivée et après le départ.",
       },
       {
         q: "Le petit-déjeuner est-il inclus ?",
@@ -382,6 +382,10 @@ export const fr: Dictionary = {
       {
         q: "À quelle distance se trouvent le centre historique et l'aéroport ?",
         a: "Nous sommes dans le quartier d'affaires de Porto, à quelques minutes à pied de la Casa da Música, à 5 minutes du Centre de Congrès de l'Alfândega, à 10 minutes des plages de Foz et à 20 minutes de l'aéroport Francisco Sá Carneiro.",
+      },
+      {
+        q: "Les animaux sont-ils acceptés ?",
+        a: "Non, l'hôtel n'accepte pas les animaux, à l'exception des chiens-guides dûment identifiés. Si vous voyagez avec un animal, contactez-nous avant de réserver : nous vous aiderons à trouver une solution à proximité.",
       },
       {
         q: "Dans quelles langues l'équipe accueille-t-elle ?",

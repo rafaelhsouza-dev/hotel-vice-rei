@@ -363,7 +363,7 @@ export const en: Dictionary = {
     items: [
       {
         q: "What are the check-in and check-out times?",
-        a: "Check-in is from 2pm and check-out until noon. Reception is staffed 24 hours, so you can arrive at any time of day or night. We store luggage free of charge before check-in and after check-out.",
+        a: "Check-in is from 3pm to 9.30pm and check-out until noon. Reception is staffed 24 hours, so you can arrive at any time of day or night. We store luggage free of charge before check-in and after check-out.",
       },
       {
         q: "Is breakfast included?",
@@ -380,6 +380,10 @@ export const en: Dictionary = {
       {
         q: "How far is the historic centre and the airport?",
         a: "We are in Porto's business district, a few minutes' walk from Casa da Música, 5 minutes from the Alfândega Congress Centre, 10 minutes from the Foz beaches and 20 minutes from Francisco Sá Carneiro Airport.",
+      },
+      {
+        q: "Are pets allowed?",
+        a: "No, the hotel does not accept pets, other than clearly identified guide dogs. If you are travelling with an animal, contact us before booking and we will help you find an alternative nearby.",
       },
       {
         q: "Which languages does the team speak?",

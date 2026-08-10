@@ -472,6 +472,66 @@ async function migrateGallery() {
   });
 }
 
+/**
+ * Brings existing rooms up to the full amenity list published on the hotel's
+ * own site (minibar, safe, hairdryer, soundproofing, fire detection…), which
+ * the prototype had trimmed to six lines.
+ *
+ * Keyed off the absence of "Minibar", so it applies once and leaves rooms whose
+ * amenities were edited in the backoffice — those already list it — untouched.
+ */
+async function migrateRoomAmenities() {
+  for (const room of seedRooms) {
+    await query(
+      `UPDATE rooms
+       SET amenities = $2, updated_at = now()
+       WHERE id = $1 AND NOT (amenities::text ILIKE '%minibar%')`,
+      [room.id, JSON.stringify(room.amenities)],
+    );
+  }
+}
+
+/**
+ * Refreshes seeded service copy that has not been edited in the backoffice.
+ *
+ * Matches on the exact previous wording, so a row someone rewrote keeps their
+ * text; anything still carrying the original sentence gets the fuller one
+ * (soundproofing, balconies, lift) taken from the hotel's own site.
+ */
+async function migrateLegalNumber() {
+  // The prototype carried an invented RNET number; the real licence is 1533.
+  await query(
+    `UPDATE settings
+     SET legal = jsonb_set(legal, '{rnet}', to_jsonb($1::text)), updated_at = now()
+     WHERE id = 1 AND legal->>'rnet' = 'RNET 4286'`,
+    [hotel.legal.rnet],
+  );
+}
+
+async function migrateServiceCopy() {
+  const updates: [string, string, string][] = [
+    ["rooms-count", "pt", "Os quartos dividem-se em individuais, duplos, twin e triplos."],
+    ["rooms-count", "en", "Rooms come as single, double, twin and triple."],
+    ["rooms-count", "es", "Las habitaciones se dividen en individuales, dobles, twin y triples."],
+    ["rooms-count", "fr", "Les chambres se déclinent en simples, doubles, twin et triples."],
+    ["other", "pt", "Cofre na recepção, lavandaria, engomadoria e garagem coberta."],
+    ["other", "en", "Safe at reception, laundry, ironing and covered garage."],
+    ["other", "es", "Caja fuerte en recepción, lavandería, planchado y garaje cubierto."],
+    ["other", "fr", "Coffre-fort à la réception, blanchisserie, repassage et garage couvert."],
+  ];
+
+  for (const [id, locale, previous] of updates) {
+    const seeded = seedServices.find((s) => s.id === id)?.description[locale as Locale];
+    if (!seeded) continue;
+    await query(
+      `UPDATE services
+       SET description = jsonb_set(description, $2, to_jsonb($3::text)), updated_at = now()
+       WHERE id = $1 AND description->>$4 = $5`,
+      [id, `{${locale}}`, seeded, locale, previous],
+    );
+  }
+}
+
 let migrated = false;
 
 /**
@@ -501,6 +561,9 @@ export async function ensureDatabase(): Promise<boolean> {
     await seedAdminUser();
     await migrateGallery();
     await migrateImagePaths();
+    await migrateRoomAmenities();
+    await migrateServiceCopy();
+    await migrateLegalNumber();
     migrated = true;
     console.log("[migrate] database ready");
     return true;

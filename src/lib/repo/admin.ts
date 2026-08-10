@@ -456,6 +456,17 @@ export async function findPromoCode(
 
 // --- settings --------------------------------------------------------------
 
+export async function updateAnalytics(values: {
+  ga4: string;
+  gtm: string;
+  searchConsole: string;
+}): Promise<void> {
+  await query(
+    `UPDATE settings SET analytics = $1, updated_at = now() WHERE id = 1`,
+    [JSON.stringify(values)],
+  );
+}
+
 export async function updateSettings(values: {
   name: string;
   totalRooms: number;
