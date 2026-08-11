@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { JsonLd } from "@/components/JsonLd";
 import { Analytics } from "@/components/Analytics";
+import { StaleBuildRecovery } from "@/components/StaleBuildRecovery";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
 import { getHotel, getRooms, getAnalytics } from "@/lib/repo/content";
@@ -143,6 +144,7 @@ export default async function SiteLayout({ children, params }: Props) {
         <Footer locale={locale} dict={dict} hotel={hotel} />
         <CookieConsent locale={locale} dict={dict} />
         <Analytics ga4={analytics.ga4} gtm={analytics.gtm} />
+        <StaleBuildRecovery />
       </body>
     </html>
   );

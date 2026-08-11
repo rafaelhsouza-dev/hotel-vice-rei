@@ -1,3 +1,4 @@
+import { StaleBuildRecovery } from "@/components/StaleBuildRecovery";
 import type { Metadata, Viewport } from "next";
 import { Inter, Fraunces } from "next/font/google";
 import "@/app/globals.css";
@@ -38,7 +39,10 @@ export default function AdminRootLayout({
       lang="pt"
       className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[var(--color-bg)]">{children}</body>
+      <body className="min-h-full bg-[var(--color-bg)]">
+        {children}
+        <StaleBuildRecovery />
+      </body>
     </html>
   );
 }
