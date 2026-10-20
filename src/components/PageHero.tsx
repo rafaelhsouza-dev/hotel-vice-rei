@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { KenBurns } from "./animations/KenBurns";
+import { MOTION_OK } from "./animations/motion";
 
 export function PageHero({
   eyebrow,
@@ -18,43 +19,30 @@ export function PageHero({
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
+  // Transform-only entrance: the server-rendered text is never hidden after it
+  // has painted (no opacity reset), and nothing moves under reduced motion.
   useEffect(() => {
-    if (!titleRef.current) return;
+    if (!titleRef.current || !wrapRef.current) return;
     const words = titleRef.current.querySelectorAll("[data-word] > span");
-    const ctx = gsap.context(() => {
-      gsap.set(words, { yPercent: 110, opacity: 0 });
-      gsap.set(wrapRef.current, { opacity: 0, y: 12 });
-      const tl = gsap.timeline({ delay: 0.15 });
-      tl.to(wrapRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-      }).to(
-        words,
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 1.0,
-          stagger: 0.06,
-          ease: "power4.out",
-        },
-        0.1,
-      );
-    }, wrapRef);
-    return () => ctx.revert();
+    const mm = gsap.matchMedia(wrapRef.current);
+    mm.add(MOTION_OK, () => {
+      gsap
+        .timeline({ delay: 0.05 })
+        .from(wrapRef.current, { y: 12, duration: 0.8, ease: "power3.out" })
+        .from(
+          words,
+          { y: "0.25em", duration: 0.9, stagger: 0.05, ease: "power4.out" },
+          0.05,
+        );
+    });
+    return () => mm.revert();
   }, []);
 
   const words = title.split(" ");
 
   return (
     <section className="relative isolate -mt-20 h-[68vh] min-h-[460px] overflow-hidden bg-[var(--color-ink)]">
-      <KenBurns
-        src={image}
-        priority
-        className="absolute inset-0"
-        intensity={1}
-      />
+      <KenBurns src={image} preload className="absolute inset-0" intensity={1} />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/35 to-black/70" />
       <div
         aria-hidden
@@ -66,31 +54,30 @@ export function PageHero({
       />
       <div
         ref={wrapRef}
-        className="relative container-x flex h-full flex-col justify-end pb-14 pt-36 text-white"
+        className="relative container-x flex h-full flex-col justify-end pb-12 pt-32 text-white sm:pb-14 sm:pt-36"
       >
         {eyebrow && (
           <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90">
             <span aria-hidden className="h-px w-6 bg-white/70" />
-            {eyebrow}
+            <span className="min-w-0 truncate">{eyebrow}</span>
           </span>
         )}
         <h1
           ref={titleRef}
-          aria-label={title}
-          className="mt-3 font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight text-balance max-w-3xl"
+          className="mt-3 max-w-3xl font-display text-[2.5rem] leading-[1] tracking-tight text-balance break-words hyphens-auto sm:text-6xl sm:leading-[0.95] lg:text-7xl"
         >
+          {/* Real spaces between words, so assistive tech reads the title as text. */}
           {words.map((w, i) => (
-            <span
-              key={i}
-              data-word
-              className="inline-block overflow-hidden align-baseline mr-[0.18em]"
-            >
-              <span className="inline-block will-change-transform">{w}</span>
-            </span>
+            <Fragment key={i}>
+              {i > 0 && " "}
+              <span data-word className="inline-block align-baseline">
+                <span className="inline-block will-change-transform">{w}</span>
+              </span>
+            </Fragment>
           ))}
         </h1>
         {subtitle && (
-          <p className="mt-5 max-w-xl text-lg text-white/85">{subtitle}</p>
+          <p className="mt-5 max-w-xl text-base text-white/85 sm:text-lg">{subtitle}</p>
         )}
       </div>
     </section>

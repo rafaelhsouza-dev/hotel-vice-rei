@@ -5,6 +5,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
 import { Icon } from "./Icon";
 import { Newsletter } from "./Newsletter";
+import { CookiePrefsButton } from "./site/CookiePrefsButton";
 
 export function Footer({
   locale,
@@ -74,11 +75,11 @@ export function Footer({
           </div>
         </div>
 
-        <div className="lg:col-span-2">
+        <nav aria-label={dict.a11y.footerNav} className="lg:col-span-2">
           <p className="text-xs uppercase tracking-[0.25em] text-white/70">
             {dict.footer.quickLinks}
           </p>
-          <ul className="mt-5 space-y-3">
+          <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-1">
             {[
               { href: "", k: "home" as const },
               { href: "/apresentacao", k: "about" as const },
@@ -92,14 +93,14 @@ export function Footer({
               <li key={it.k}>
                 <Link
                   href={`/${locale}${it.href}`}
-                  className="text-sm text-white/80 hover:text-white transition-colors"
+                  className="inline-block py-0.5 text-sm text-white/80 hover:text-white transition-colors"
                 >
                   {dict.nav[it.k]}
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
         <div className="lg:col-span-3">
           <p className="text-xs uppercase tracking-[0.25em] text-white/70">
@@ -113,7 +114,7 @@ export function Footer({
                 height={16}
                 className="mt-0.5 text-white/60"
               />
-              <span>
+              <span className="min-w-0 break-words">
                 {hotel.address.street}
                 <br />
                 {hotel.address.postalCode} {hotel.address.city}
@@ -132,14 +133,14 @@ export function Footer({
             ))}
             <li className="flex items-center gap-3">
               <Icon name="mail" width={16} height={16} className="text-white/60" />
-              <a href={`mailto:${hotel.email}`} className="hover:text-white">
+              <a href={`mailto:${hotel.email}`} className="min-w-0 break-all hover:text-white">
                 {hotel.email}
               </a>
             </li>
           </ul>
         </div>
 
-        <div className="lg:col-span-3">
+        <nav aria-label={dict.a11y.legalNav} className="lg:col-span-3">
           <p className="text-xs uppercase tracking-[0.25em] text-white/70">
             {dict.footer.legal}
           </p>
@@ -203,6 +204,12 @@ export function Footer({
               </Link>
             </li>
             <li>
+              <CookiePrefsButton
+                label={dict.cookies.preferences}
+                className="text-left text-white/80 hover:text-white transition-colors"
+              />
+            </li>
+            <li>
               <Link
                 href={`/${locale}/reservar`}
                 className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent-soft)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] transition-colors hover:bg-white"
@@ -212,7 +219,7 @@ export function Footer({
               </Link>
             </li>
           </ul>
-        </div>
+        </nav>
       </div>
 
       <div className="border-t border-white/10">
@@ -239,15 +246,6 @@ export function Footer({
               className="hover:text-white/80"
             >
               {dict.footer.cleanSafe}
-            </a>
-            <span aria-hidden>·</span>
-            <a
-              href={hotel.legal.euODR}
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white/80"
-            >
-              ODR (UE)
             </a>
           </p>
         </div>

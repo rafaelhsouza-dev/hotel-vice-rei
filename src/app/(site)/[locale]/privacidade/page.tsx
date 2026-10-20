@@ -1,17 +1,28 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { PageHero } from "@/components/PageHero";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 import { Reveal } from "@/components/animations/Reveal";
 
 type Props = { params: Promise<{ locale: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
-  return { title: dict.privacy.title, description: dict.privacy.subtitle };
+  return pageMeta({
+    locale,
+    path: "/privacidade",
+    title: dict.privacy.meta.title,
+    description: dict.privacy.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
 }
 
 export default async function PrivacyPage({ params }: Props) {
@@ -27,6 +38,13 @@ export default async function PrivacyPage({ params }: Props) {
         title={dict.privacy.title}
         subtitle={dict.privacy.subtitle}
         image="/images/hero/legal.webp"
+      />
+
+      <PageBreadcrumbs
+        locale={locale}
+        dict={dict}
+        path="/privacidade"
+        crumbs={[{ label: dict.privacy.title }]}
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

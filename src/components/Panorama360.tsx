@@ -5,8 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n";
 import { Icon } from "./Icon";
 
-const DEFAULT_IMAGE =
-  "https://mike-henderson.github.io/vrview/examples/gallery/R0010164-post.jpg";
 const AFRAME_SRC = "https://aframe.io/releases/1.5.0/aframe.min.js";
 
 declare global {
@@ -39,18 +37,19 @@ function loadAframe(): Promise<void> {
 }
 
 /**
- * Immersive, drag-to-rotate 360º photo viewer powered by self-hosted A-Frame
+ * Immersive, drag-to-rotate 360º photo viewer powered by A-Frame (fetched from aframe.io on click)
  * (WebGL) — no third-party iframe. Click-to-load: the (heavy) A-Frame library
  * is only fetched after the user interacts, which keeps the page fast and is
  * friendlier for RGPD/GDPR.
  */
 export function Panorama360({
   dict,
-  image = DEFAULT_IMAGE,
+  image,
   poster = "/images/rooms/twin-superior.webp",
 }: {
   dict: Dictionary;
-  image?: string;
+  /** The room's own equirectangular photo. Callers render nothing without one. */
+  image: string;
   poster?: string;
 }) {
   const [active, setActive] = useState(false);

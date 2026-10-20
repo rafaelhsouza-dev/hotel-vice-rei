@@ -78,7 +78,12 @@ export async function createDeskBooking(form: FormData) {
   const lastName = str(form, "lastName", "", 80);
   const email = str(form, "email", "", 160);
   const channelId = source === "extranet" ? str(form, "channelId") || null : null;
-  const base = "/admin/reservas/nova";
+  // On error, come back to the same dates and room type instead of a blank form.
+  const base = `/admin/reservas/nova?${new URLSearchParams({
+    checkIn: str(form, "checkIn"),
+    checkOut: str(form, "checkOut"),
+    room: str(form, "roomId"),
+  })}`;
   if (!checkInDate || !checkOutDate) back(base, "erro", "Datas inválidas.");
   if (!firstName || !lastName) back(base, "erro", "Indique nome e apelido do hóspede.");
   if (email && !isEmail(email)) back(base, "erro", "Email inválido.");

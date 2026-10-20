@@ -21,17 +21,20 @@ export function MapEmbed({
   dict,
   label,
   address,
+  locale = "pt",
 }: {
   lat: number;
   lng: number;
   dict: Dictionary;
   label: string;
   address: string;
+  /** Interface language of the embedded map. */
+  locale?: string;
 }) {
   const [active, setActive] = useState(false);
 
   const query = encodeURIComponent(address);
-  const embed = `https://maps.google.com/maps?q=${lat},${lng}&hl=pt&z=16&output=embed`;
+  const embed = `https://maps.google.com/maps?q=${lat},${lng}&hl=${encodeURIComponent(locale)}&z=16&output=embed`;
   const open = `https://www.google.com/maps/search/?api=1&query=${query}`;
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 
@@ -80,7 +83,7 @@ export function MapEmbed({
           href={directions}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-[var(--color-ink)] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--color-accent-deep)]"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--color-ink)] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--color-accent-deep)]"
         >
           <Icon name="map" width={13} height={13} />
           {dict.contact.directions}
@@ -89,7 +92,7 @@ export function MapEmbed({
           href={open}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-[var(--color-line)] px-4 py-2 text-xs text-[var(--color-ink-soft)] transition-colors hover:bg-[var(--color-line-soft)]"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--color-line)] px-4 py-2 text-xs text-[var(--color-ink-soft)] transition-colors hover:bg-[var(--color-line-soft)]"
         >
           {dict.contact.openInMaps}
           <Icon name="arrow-right" width={12} height={12} />

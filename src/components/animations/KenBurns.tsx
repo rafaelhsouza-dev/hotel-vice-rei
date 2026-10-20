@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { MOTION_OK } from "./motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,7 +13,8 @@ if (typeof window !== "undefined") {
 type Props = {
   src: string;
   alt?: string;
-  priority?: boolean;
+  /** Preload as the LCP image (page heroes only). */
+  preload?: boolean;
   className?: string;
   parallax?: boolean;
   intensity?: number;
@@ -21,7 +23,7 @@ type Props = {
 export function KenBurns({
   src,
   alt = "",
-  priority,
+  preload,
   className,
   parallax = true,
   intensity = 1,
@@ -34,7 +36,10 @@ export function KenBurns({
     const img = imgRef.current;
     if (!wrap || !img) return;
 
-    const ctx = gsap.context(() => {
+    // Ken Burns and parallax only when reduced motion is not requested;
+    // matchMedia reverts them live if the preference changes.
+    const mm = gsap.matchMedia(wrap);
+    mm.add(MOTION_OK, () => {
       gsap.set(img, { scale: 1.05, xPercent: -1, yPercent: -1 });
       gsap.to(img, {
         scale: 1.18 * intensity,
@@ -58,9 +63,9 @@ export function KenBurns({
           },
         });
       }
-    }, wrap);
+    });
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, [parallax, intensity]);
 
   return (
@@ -70,7 +75,7 @@ export function KenBurns({
           src={src}
           alt={alt}
           fill
-          priority={priority}
+          preload={preload}
           sizes="100vw"
           // Heroes always sit under a dark gradient, so a lower quality is
           // indistinguishable here and meaningfully cheaper for LCP.

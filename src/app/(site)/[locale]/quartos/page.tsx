@@ -1,14 +1,32 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { getRooms } from "@/lib/repo/content";
 import { PageHero } from "@/components/PageHero";
 import { Icon } from "@/components/Icon";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 
 type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = getDictionary(locale);
+  return pageMeta({
+    locale,
+    path: "/quartos",
+    title: dict.rooms.meta.title,
+    description: dict.rooms.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
+}
 
 export const revalidate = 300;
 
@@ -28,9 +46,10 @@ export default async function RoomsPage({ params }: Props) {
         image="/images/hero/rooms.webp"
       />
 
-      <Breadcrumbs
+      <PageBreadcrumbs
         locale={locale}
-        homeLabel={dict.nav.home}
+        dict={dict}
+        path="/quartos"
         crumbs={[{ label: dict.nav.rooms }]}
       />
 
@@ -58,13 +77,13 @@ export default async function RoomsPage({ params }: Props) {
               <span className="eyebrow">
                 {room.size}m² · {room.capacity} {dict.rooms.people}
               </span>
-              <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+              <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
                 {room.name[locale]}
               </h2>
               <p className="mt-4 text-lg text-[var(--color-ink-soft)] leading-relaxed">
                 {room.shortDescription[locale]}
               </p>
-              <ul className="mt-6 grid grid-cols-2 gap-y-2 gap-x-6 text-sm text-[var(--color-ink-soft)]">
+              <ul className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6 text-sm text-[var(--color-ink-soft)] min-[400px]:grid-cols-2">
                 {room.amenities[locale].slice(0, 6).map((a) => (
                   <li key={a} className="flex items-center gap-2">
                     <Icon name="check" width={14} height={14} className="text-[var(--color-accent-deep)]" />

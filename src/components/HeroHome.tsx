@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Locale } from "@/i18n/config";
@@ -10,6 +10,7 @@ import type { Room } from "@/data/hotel";
 import { HeroSlideshow } from "./HeroSlideshow";
 import { BookingWidget } from "./BookingWidget";
 import { Icon } from "./Icon";
+import { MOTION_OK } from "./animations/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -34,53 +35,20 @@ export function HeroHome({
   useEffect(() => {
     if (!root.current) return;
 
-    const ctx = gsap.context(() => {
-      const title = titleRef.current!;
-      const words = title.querySelectorAll("[data-word] > span");
+    // Transform-only entrance: the server-rendered hero text (often the LCP
+    // element) is never hidden after it has painted, and nothing moves at all
+    // under reduced motion.
+    const mm = gsap.matchMedia(root.current);
+    mm.add(MOTION_OK, () => {
+      const words = titleRef.current!.querySelectorAll("[data-word] > span");
+      const tl = gsap.timeline({ delay: 0.05, defaults: { ease: "power4.out" } });
+      tl.from(eyebrowRef.current, { y: 14, duration: 0.8 }, 0)
+        .from(words, { y: "0.25em", duration: 0.9, stagger: 0.06 }, 0.05)
+        .from(subRef.current, { y: 18, duration: 0.9 }, 0.3)
+        .from(ctaRef.current, { y: 18, duration: 0.9 }, 0.4)
+        .from(widgetRef.current, { y: 24, duration: 1.0 }, 0.5);
 
-      gsap.set(words, { yPercent: 110, opacity: 0 });
-      gsap.set(eyebrowRef.current, { opacity: 0, y: 14 });
-      gsap.set(subRef.current, { opacity: 0, y: 18 });
-      gsap.set(ctaRef.current, { opacity: 0, y: 18 });
-      gsap.set(widgetRef.current, { opacity: 0, y: 30 });
-
-      const tl = gsap.timeline({
-        delay: 0.2,
-        defaults: { ease: "power4.out" },
-      });
-
-      tl.to(
-          eyebrowRef.current,
-          { opacity: 1, y: 0, duration: 0.8 },
-          0.2,
-        )
-        .to(
-          words,
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 1.0,
-            stagger: 0.07,
-          },
-          0.3,
-        )
-        .to(
-          subRef.current,
-          { opacity: 1, y: 0, duration: 0.9 },
-          0.7,
-        )
-        .to(
-          ctaRef.current,
-          { opacity: 1, y: 0, duration: 0.9 },
-          0.85,
-        )
-        .to(
-          widgetRef.current,
-          { opacity: 1, y: 0, duration: 1.0 },
-          0.95,
-        );
-
-      // Subtle fade on scroll for text
+      // Subtle fade on scroll for the text.
       gsap.to([eyebrowRef.current, titleRef.current, subRef.current, ctaRef.current], {
         y: -40,
         opacity: 0.2,
@@ -92,9 +60,9 @@ export function HeroHome({
           scrub: true,
         },
       });
-    }, root);
+    });
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
   const titleWords = dict.hero.title.split(" ");
@@ -107,6 +75,7 @@ export function HeroHome({
       <HeroSlideshow
         className="absolute inset-0"
         label={dict.a11y.chooseHeroPhoto}
+        photoLabel={dict.a11y.photo}
         slides={[
           { src: "/images/hero/home.webp", alt: dict.a11y.heroRoom },
           { src: "/images/hero/home-2.webp", alt: dict.a11y.heroFacade },
@@ -125,7 +94,7 @@ export function HeroHome({
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.8 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
-      <div className="relative container-x flex min-h-[100svh] flex-col justify-end pb-10 pt-28 sm:pt-32 lg:pt-44 text-white">
+      <div className="relative container-x flex min-h-[100svh] flex-col justify-end pb-10 pt-40 sm:pt-44 lg:pt-44 text-white">
         <div className="max-w-3xl">
           <div ref={eyebrowRef}>
             <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90">
@@ -135,19 +104,15 @@ export function HeroHome({
           </div>
           <h1
             ref={titleRef}
-            aria-label={dict.hero.title}
-            className="mt-4 sm:mt-5 font-display text-[2.5rem] sm:text-6xl lg:text-7xl leading-[1] sm:leading-[0.95] tracking-tight text-balance"
+            className="mt-4 sm:mt-5 font-display text-[2.4rem] sm:text-6xl lg:text-7xl leading-[1] sm:leading-[0.95] tracking-tight text-balance break-words"
           >
             {titleWords.map((w, i) => (
-              <span
-                key={i}
-                data-word
-                className="inline-block overflow-hidden align-baseline mr-[0.18em]"
-              >
-                <span className="inline-block will-change-transform">
-                  {w}
+              <Fragment key={i}>
+                {i > 0 && " "}
+                <span data-word className="inline-block align-baseline">
+                  <span className="inline-block will-change-transform">{w}</span>
                 </span>
-              </span>
+              </Fragment>
             ))}
           </h1>
           <p
@@ -170,7 +135,7 @@ export function HeroHome({
             >
               {dict.cta.seeRooms}
             </Link>
-            <span className="inline-flex items-center gap-2 text-xs text-white/80 ml-2">
+            <span className="inline-flex items-center gap-2 text-xs text-white/80 sm:ml-2">
               <Icon name="shield" width={14} height={14} />
               {dict.hero.badge}
             </span>

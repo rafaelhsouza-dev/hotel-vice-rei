@@ -1,11 +1,13 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { getPosts } from "@/lib/repo/content";
 import { PageHero } from "@/components/PageHero";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 import { Reveal } from "@/components/animations/Reveal";
 import { Icon } from "@/components/Icon";
 
@@ -18,11 +20,20 @@ const BCP47: Record<Locale, string> = {
 
 type Props = { params: Promise<{ locale: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
-  return { title: dict.blog.title, description: dict.blog.subtitle };
+  return pageMeta({
+    locale,
+    path: "/blog",
+    title: dict.blog.meta.title,
+    description: dict.blog.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
 }
 
 export const revalidate = 300;
@@ -48,6 +59,13 @@ export default async function BlogPage({ params }: Props) {
         title={dict.blog.title}
         subtitle={dict.blog.subtitle}
         image="/images/hero/porto.webp"
+      />
+
+      <PageBreadcrumbs
+        locale={locale}
+        dict={dict}
+        path="/blog"
+        crumbs={[{ label: dict.nav.blog }]}
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

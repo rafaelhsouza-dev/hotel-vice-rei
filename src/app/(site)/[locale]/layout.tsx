@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Fraunces } from "next/font/google";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 import "@/app/globals.css";
 import { Header } from "@/components/Header";
@@ -8,14 +9,21 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { JsonLd } from "@/components/JsonLd";
 import { Analytics } from "@/components/Analytics";
 import { StaleBuildRecovery } from "@/components/StaleBuildRecovery";
+import { CONSENT_DEFAULT_SCRIPT } from "@/components/site/consent";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
-import { getHotel, getRooms, getAnalytics } from "@/lib/repo/content";
-import { SITE_URL, OG_IMAGE } from "@/lib/site";
+import { getHotel, getAnalytics, getSeo } from "@/lib/repo/content";
+import { getFacts } from "@/lib/facts";
+import { SITE_URL } from "@/lib/site";
+import { BCP47, OG_LOCALE } from "@/lib/seo";
 
 /**
  * Root layout for the public site. It owns <html>, so `lang` can follow the
  * locale segment — the backoffice has its own root layout under (admin).
+ *
+ * Canonical, hreflang, og:url and the Twitter card are page-specific and live
+ * in each page's generateMetadata (src/lib/seo.ts), so no page inherits the
+ * home page's canonical. The share image comes from ./opengraph-image.tsx.
  */
 
 const inter = Inter({
@@ -45,21 +53,6 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-/** Maps each locale to its canonical URL, plus x-default for Portuguese. */
-function alternateLanguages(path = "") {
-  const languages: Record<string, string> = {};
-  for (const l of locales) languages[l] = `${SITE_URL}/${l}${path}`;
-  languages["x-default"] = `${SITE_URL}/pt${path}`;
-  return languages;
-}
-
-const OG_LOCALE: Record<Locale, string> = {
-  pt: "pt_PT",
-  en: "en_GB",
-  es: "es_ES",
-  fr: "fr_FR",
-};
-
 export async function generateMetadata({
   params,
 }: {
@@ -68,13 +61,21 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
-  const analytics = await getAnalytics();
+  const [analytics, seo] = await Promise.all([getAnalytics(), getSeo()]);
+
+  // Ownership tokens for the other search engines and platforms, only when set.
+  const other: Record<string, string> = {};
+  if (seo.bing) other["msvalidate.01"] = seo.bing;
+  if (seo.yandex) other["yandex-verification"] = seo.yandex;
+  if (seo.facebookDomain) other["facebook-domain-verification"] = seo.facebookDomain;
+  if (seo.pinterest) other["p:domain_verify"] = seo.pinterest;
 
   return {
     metadataBase: new URL(SITE_URL),
     ...(analytics.searchConsole
       ? { verification: { google: analytics.searchConsole } }
       : {}),
+    ...(Object.keys(other).length ? { other } : {}),
     title: { default: dict.meta.title, template: "%s · Hotel Vice-Rei" },
     description: dict.meta.description,
     applicationName: "Hotel Vice-Rei",
@@ -86,24 +87,12 @@ export async function generateMetadata({
       ],
       apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
     },
-    alternates: {
-      canonical: `${SITE_URL}/${locale}`,
-      languages: alternateLanguages(),
-    },
     openGraph: {
       type: "website",
       siteName: "Hotel Vice-Rei",
       title: dict.meta.title,
       description: dict.meta.description,
-      url: `${SITE_URL}/${locale}`,
       locale: OG_LOCALE[locale],
-      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: dict.meta.title }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: dict.meta.title,
-      description: dict.meta.description,
-      images: [OG_IMAGE],
     },
     robots: {
       index: true,
@@ -118,32 +107,45 @@ export default async function SiteLayout({ children, params }: Props) {
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const dict = getDictionary(locale);
-  const [hotel, rooms, analytics] = await Promise.all([
+  const [hotel, facts, analytics, seo] = await Promise.all([
     getHotel(),
-    getRooms(),
+    getFacts(),
     getAnalytics(),
+    getSeo(),
   ]);
 
   return (
     <html
-      lang={locale}
+      lang={BCP47[locale]}
       className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        {/* Consent Mode v2 defaults: must run before any Google tag. */}
+        <Script id="consent-default" strategy="beforeInteractive">
+          {CONSENT_DEFAULT_SCRIPT}
+        </Script>
         <a
           href="#conteudo"
           className="sr-only rounded-full bg-[var(--color-ink)] px-5 py-3 text-sm text-white focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100]"
         >
           {dict.a11y.skipToContent}
         </a>
-        <JsonLd hotel={hotel} rooms={rooms} locale={locale} />
+        <JsonLd facts={facts} locale={locale} />
         <Header locale={locale} dict={dict} />
         <main id="conteudo" className="flex-1">
           {children}
         </main>
         <Footer locale={locale} dict={dict} hotel={hotel} />
         <CookieConsent locale={locale} dict={dict} />
-        <Analytics ga4={analytics.ga4} gtm={analytics.gtm} />
+        <Analytics
+          ga4={analytics.ga4}
+          gtm={analytics.gtm}
+          clarity={seo.clarity}
+          hotjar={seo.hotjar}
+          metaPixel={seo.metaPixel}
+          googleAdsId={seo.googleAdsId}
+          googleAdsLabel={seo.googleAdsLabel}
+        />
         <StaleBuildRecovery />
       </body>
     </html>

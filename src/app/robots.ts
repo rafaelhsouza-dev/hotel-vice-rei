@@ -7,9 +7,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // The backoffice is behind auth; keeping it out of robots avoids
-        // wasted crawl budget on a permanent redirect to the login page.
-        disallow: ["/admin", "/admin/"],
+        disallow: [
+          // Backoffice: behind auth, a crawl only hits the login redirect.
+          "/admin",
+          // Route handlers (forms, webhooks, iCal) are not pages.
+          "/api/",
+          // A guest's own booking page (/pt/reserva/<token>) — private, also
+          // sent with X-Robots-Tag: noindex. /reservar stays crawlable.
+          "/*/reserva/",
+        ],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

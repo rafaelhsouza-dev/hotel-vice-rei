@@ -2,7 +2,7 @@ export const pt = {
   meta: {
     title: "Hotel Vice-Rei · Porto — Elegância, conforto e qualidade",
     description:
-      "Hotel Vice-Rei no Porto. 55 quartos, recepção 24h, Wi-Fi grátis e localização privilegiada na Rua Júlio Dinis. Reserve directamente com o melhor preço garantido.",
+      "Hotel Vice-Rei, 2 estrelas no Porto: 55 quartos na Rua Júlio Dinis, junto à Casa da Música, com Wi-Fi gratuito. Reserve directamente no site oficial.",
   },
   nav: {
     home: "Início",
@@ -51,6 +51,11 @@ export const pt = {
     bestPrice: "Melhor preço garantido",
   },
   home: {
+    meta: {
+      title: "Hotel Vice-Rei Porto · Hotel de 2 estrelas na Rua Júlio Dinis",
+      description:
+        "Hotel Vice-Rei, 2 estrelas no Porto: 55 quartos na Rua Júlio Dinis, junto à Casa da Música, com Wi-Fi gratuito. Reserve directamente no site oficial.",
+    },
     intro: {
       eyebrow: "Apresentação",
       title: "Um clássico do Porto com quase 50 anos.",
@@ -75,7 +80,7 @@ export const pt = {
       title: "Pacotes para aproveitar o Porto",
     },
     testimonials: {
-      eyebrow: "Hóspedes",
+      eyebrow: "Testemunhos de hóspedes",
       title: "O que dizem sobre nós",
     },
     location: {
@@ -85,6 +90,13 @@ export const pt = {
     },
   },
   rooms: {
+    meta: {
+      title: "Quartos no Porto: Single, Twin, Duplo e Triplo",
+      description:
+        "Seis tipologias de quarto no Hotel Vice-Rei, no Porto: Single, Twin/Duplo, Superior, Triplo e Romântico, com casa de banho privada e Wi-Fi gratuito.",
+    },
+    roomTitle: "{name} — {size} m², até {n} pessoas",
+    roomTitleOne: "{name} — {size} m², 1 pessoa",
     title: "Os nossos quartos",
     subtitle:
       "55 quartos divididos em individuais, duplos, twin e triplos. Todos com casa de banho privada, ar condicionado, TV por cabo e Wi-Fi gratuito.",
@@ -100,6 +112,11 @@ export const pt = {
     breakfastIncluded: "Pequeno-almoço incluído na tarifa",
   },
   services: {
+    meta: {
+      title: "Serviços e comodidades do hotel",
+      description:
+        "Serviços e comodidades do Hotel Vice-Rei no Porto: Wi-Fi gratuito, quartos climatizados e atendimento em cinco idiomas. Veja o que o espera.",
+    },
     title: "Serviços do hotel",
     subtitle:
       "Pequenos cuidados e grandes facilidades para tornar a sua estadia memorável.",
@@ -107,6 +124,14 @@ export const pt = {
     languagesTitle: "Atendimento em",
   },
   about: {
+    meta: {
+      title: "Apresentação do hotel no Porto",
+      description:
+        "Conheça o Hotel Vice-Rei: hotel clássico de 2 estrelas na Rua Júlio Dinis, no Porto, com quase 50 anos de atendimento personalizado ao hóspede.",
+    },
+    ctaTitle: "Reserve directamente connosco",
+    ctaBody:
+      "No site oficial vê as tarifas disponíveis, escolhe o quarto e recebe a confirmação por email.",
     title: "Apresentação",
     subtitle: "Hotel Vice-Rei · Porto",
     intro: "Bem-vindos ao Hotel Vice-Rei",
@@ -139,6 +164,11 @@ export const pt = {
     ],
   },
   offers: {
+    meta: {
+      title: "Promoções e pacotes de estadia no Porto",
+      description:
+        "Promoções e pacotes do Hotel Vice-Rei no Porto para escapadinhas, estadias mais longas e ocasiões especiais. Reserve directamente no site oficial.",
+    },
     title: "Promoções e pacotes",
     subtitle:
       "Tarifas pensadas para diferentes estadias e ocasiões. Reservar directamente garante sempre o melhor preço.",
@@ -150,6 +180,12 @@ export const pt = {
     bookOffer: "Reservar pacote",
   },
   gallery: {
+    meta: {
+      title: "Galeria de fotografias do hotel",
+      description:
+        "Fotografias do Hotel Vice-Rei no Porto: quartos, zonas comuns, sala de pequeno-almoço e a cidade em redor. Veja o hotel antes de reservar.",
+    },
+    photoAlt: "Hotel Vice-Rei, Porto — fotografia {n}",
     title: "Galeria",
     subtitle: "Um vislumbre do que o espera no Hotel Vice-Rei.",
     panoramaEyebrow: "Multimédia · 360º",
@@ -162,6 +198,11 @@ export const pt = {
       "Ao iniciar carrega uma biblioteca 3D externa (A-Frame). Só é carregada depois de clicar.",
   },
   contact: {
+    meta: {
+      title: "Contactos, morada e como chegar",
+      description:
+        "Contactos do Hotel Vice-Rei: Rua Júlio Dinis, 779, 4050-326 Porto. Telefone, email, formulário e mapa com os pontos de interesse por perto.",
+    },
     title: "Contactos",
     subtitle:
       "Estamos aqui para o ajudar. Fale connosco por telefone, email ou através do formulário.",
@@ -234,13 +275,29 @@ export const pt = {
   cookies: {
     title: "A sua privacidade",
     message:
-      "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies para analisar a navegação. Pode aceitar, recusar ou saber mais.",
+      "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies de análise e de marketing. Pode aceitar, recusar ou escolher.",
     accept: "Aceitar tudo",
     reject: "Rejeitar não essenciais",
     learnMore: "Saber mais sobre cookies",
     settings: "Definições",
+    preferences: "Preferências de cookies",
+    customize: "Personalizar",
+    save: "Guardar escolhas",
+    necessary: "Essenciais",
+    necessaryDesc: "Necessários ao funcionamento do site.",
+    analytics: "Análise",
+    analyticsDesc:
+      "Medem visitas e utilização do site (Google Analytics, Microsoft Clarity, Hotjar) para o melhorarmos.",
+    marketing: "Marketing",
+    marketingDesc: "Medem a eficácia dos nossos anúncios (Google Ads, Meta Pixel).",
+    alwaysOn: "Sempre activos",
   },
   privacy: {
+    meta: {
+      title: "Política de Privacidade e cookies",
+      description:
+        "Como o Hotel Vice-Rei recolhe, utiliza e protege os seus dados pessoais e que cookies utiliza, em conformidade com o RGPD. Conheça os seus direitos.",
+    },
     title: "Política de Privacidade",
     subtitle:
       "Como o Hotel Vice-Rei recolhe, utiliza e protege os seus dados pessoais, em conformidade com o RGPD.",
@@ -268,11 +325,16 @@ export const pt = {
       },
       {
         heading: "6. Cookies",
-        body: "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies analíticos. Pode gerir as suas preferências a qualquer momento através do banner de cookies ou das definições do seu navegador.",
+        body: "Utilizamos cookies essenciais ao funcionamento do site e, com o seu consentimento, cookies de análise (Google Analytics, Microsoft Clarity, Hotjar) e de marketing (Google Ads, Meta Pixel). Pode alterar a sua escolha a qualquer momento na ligação «Preferências de cookies» no rodapé ou nas definições do seu navegador.",
       },
     ],
   },
   accessibility: {
+    meta: {
+      title: "Declaração de acessibilidade do site",
+      description:
+        "O compromisso do Hotel Vice-Rei com a acessibilidade do site: medidas implementadas, limitações conhecidas e como nos contactar se encontrar barreiras.",
+    },
     title: "Acessibilidade",
     subtitle:
       "Estamos empenhados em tornar o site do Hotel Vice-Rei utilizável por todas as pessoas, independentemente das suas capacidades.",
@@ -314,12 +376,21 @@ export const pt = {
     basedOn: "com base em",
     reviewsWord: "avaliações",
     viewOnTripadvisor: "Ver no TripAdvisor",
+    publicRatings: "Avaliações públicas",
+    viewProfile: "Ver avaliações em",
+    testimonialsNote:
+      "Testemunhos partilhados por hóspedes. As classificações públicas estão nas plataformas indicadas acima.",
   },
   bestPrice: {
     title: "Melhor preço garantido",
     subtitle: "Reservando diretamente no nosso site.",
   },
   cancellation: {
+    meta: {
+      title: "Política de cancelamento e tarifas",
+      description:
+        "Condições de cancelamento do Hotel Vice-Rei no Porto: tarifas flexíveis e não reembolsáveis, alterações, não comparência e reembolsos.",
+    },
     title: "Cancelamento e tarifas flexíveis",
     subtitle: "Condições claras para reservar com tranquilidade.",
     updated: "Última atualização: junho de 2026",
@@ -347,6 +418,11 @@ export const pt = {
     ],
   },
   blog: {
+    meta: {
+      title: "Blog: dicas e roteiros para visitar o Porto",
+      description:
+        "Dicas, roteiros e novidades do Hotel Vice-Rei para aproveitar o Porto ao máximo: cultura, gastronomia, passeios e eventos perto do hotel.",
+    },
     title: "Blog & Porto",
     subtitle:
       "Dicas, roteiros e novidades para aproveitar a cidade ao máximo.",
@@ -363,33 +439,80 @@ export const pt = {
     items: [
       {
         q: "A que horas são o check-in e o check-out?",
-        a: "O check-in é das 15h às 21h30 e o check-out até às 12h. A recepção funciona 24 horas, por isso pode chegar a qualquer hora do dia ou da noite. Guardamos a bagagem sem custo antes do check-in e depois do check-out.",
+        a: "O check-in é das 15h00 às 21h30 e o check-out até às 12h00. Se prevê chegar depois das 21h30, avise-nos com antecedência para combinarmos a sua chegada. Check-in antecipado e check-out tardio podem ser pedidos e ficam sujeitos a disponibilidade.",
       },
       {
         q: "O pequeno-almoço está incluído?",
-        a: "Sim, o pequeno-almoço continental está incluído na maioria das tarifas. Nos quartos superiores e no pacote Romântico pode ser servido no quarto, mediante pedido na véspera.",
+        a: "Depende da tarifa. Ao escolher o quarto no site, cada tarifa indica se inclui pequeno-almoço; essa informação consta também da confirmação da reserva.",
       },
       {
         q: "Posso cancelar a reserva sem custos?",
-        a: "Nas tarifas flexíveis o cancelamento é gratuito até 48 horas antes da data de check-in. As promoções não reembolsáveis são sempre identificadas antes da confirmação.",
+        a: "Nas tarifas flexíveis o cancelamento é gratuito até 48 horas antes da data de check-in. As tarifas não reembolsáveis são sempre identificadas antes da confirmação.",
       },
       {
         q: "O hotel tem estacionamento?",
-        a: "Sim, temos garagem coberta e vigiada, sujeita a disponibilidade. Pode adicioná-la à reserva como extra por 12 € por noite.",
+        a: "Contacte-nos antes da chegada para saber as opções de estacionamento disponíveis.",
       },
       {
-        q: "A que distância fica do centro histórico e do aeroporto?",
-        a: "Estamos no Centro de Negócios do Porto, a poucos minutos a pé da Casa da Música, a 5 minutos do Centro de Congressos da Alfândega, a 10 minutos das praias da Foz e a 20 minutos do Aeroporto Francisco Sá Carneiro.",
+        q: "Onde fica o hotel?",
+        a: "Na Rua Júlio Dinis, 779, no Centro de Negócios do Porto, perto da Casa da Música. O Centro Histórico e o Aeroporto Francisco Sá Carneiro são acessíveis de metro, autocarro ou táxi.",
+      },
+      {
+        q: "O hotel tem Wi-Fi?",
+        a: "Sim, o Wi-Fi é gratuito para os hóspedes.",
+      },
+      {
+        q: "Há berços ou camas extra?",
+        a: "Não. O hotel não dispõe de berços nem de camas extra. Para três pessoas, o quarto Triplo tem três camas individuais.",
+      },
+      {
+        q: "Posso viajar com crianças?",
+        a: "Sim. Indique o número e a idade das crianças ao reservar: contam para a capacidade máxima do quarto, já que não há berços nem camas extra.",
+      },
+      {
+        q: "Há taxa turística?",
+        a: "Sim. A taxa municipal turística do Porto é cobrada por hóspede e por noite, nos termos e com as isenções definidos pelo município, e é paga no hotel.",
       },
       {
         q: "São aceites animais de estimação?",
-        a: "Não, o hotel não aceita animais de estimação, com excepção de cães-guia devidamente identificados. Se viajar com um animal, contacte-nos antes de reservar para o ajudarmos a encontrar alternativa nas imediações.",
+        a: "Não, o hotel não aceita animais de estimação, com excepção de cães de assistência.",
+      },
+      {
+        q: "É permitido fumar?",
+        a: "Não. Não é permitido fumar nos quartos nem nas zonas interiores do hotel.",
       },
       {
         q: "Em que idiomas são atendidos os hóspedes?",
         a: "A equipa atende em português, inglês, espanhol, francês e italiano.",
       },
     ],
+  },
+  map: {
+    eyebrow: "À volta do hotel",
+    title: "O que há por perto",
+    show: "Mostrar mapa",
+    hint: "O mapa interactivo usa serviços externos (mosaicos do OpenFreeMap e o motor do mapa via jsDelivr) e só é carregado depois de clicar.",
+    loading: "A carregar o mapa…",
+    error: "Não foi possível carregar o mapa. Use a lista abaixo ou abra no Google Maps.",
+    hotel: "Hotel Vice-Rei",
+    legend: "Legenda",
+    all: "Todos",
+    filter: "Filtrar por categoria",
+    listTitle: "Pontos de interesse",
+    walk: "{n} min a pé",
+    website: "Saber mais",
+    showOnMap: "Ver no mapa",
+    mapLabel: "Mapa interactivo com o hotel e os pontos de interesse",
+    categories: {
+      sight: "Monumentos",
+      museum: "Museus",
+      food: "Restaurantes",
+      shopping: "Compras",
+      transport: "Transportes",
+      nature: "Jardins e natureza",
+      nightlife: "Vida nocturna",
+      other: "Outros",
+    },
   },
   a11y: {
     skipToContent: "Saltar para o conteúdo",
@@ -404,8 +527,19 @@ export const pt = {
     previousImage: "Imagem anterior",
     nextImage: "Imagem seguinte",
     closeGallery: "Fechar galeria",
+    breadcrumb: "Caminho de navegação",
+    mainNav: "Navegação principal",
+    mobileNav: "Menu de navegação",
+    footerNav: "Acesso rápido",
+    legalNav: "Informação legal",
+    photo: "Fotografia {n}",
+    openImage: "Abrir imagem {n}",
   },
   notFound: {
+    meta: {
+      title: "Página não encontrada",
+      description: "A página que procura não existe ou foi movida.",
+    },
     code: "404",
     title: "Página não encontrada",
     body: "A página que procura não existe ou foi movida.",

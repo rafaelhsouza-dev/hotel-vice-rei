@@ -21,7 +21,6 @@ export type GridBooking = {
   paid: boolean;
 };
 
-const DAY_PX = 44;
 const WEEK = ["D", "S", "T", "Q", "Q", "S", "S"];
 
 function plus(date: string, n: number) {
@@ -74,6 +73,8 @@ export function OccupancyGrid({
   today: string;
   canMove: boolean;
 }) {
+  // Wider days for short windows so the grid fills a laptop screen.
+  const DAY_PX = days <= 7 ? 120 : days <= 14 ? 76 : days <= 21 ? 54 : 42;
   const router = useRouter();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [dragging, setDragging] = useState<GridBooking | null>(null);

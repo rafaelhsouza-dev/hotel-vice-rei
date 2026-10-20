@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { MOTION_OK } from "./animations/motion";
 
 export type Slide = { src: string; alt?: string };
 
@@ -11,7 +12,7 @@ export type Slide = { src: string; alt?: string };
  *
  * One Ken Burns transform drives the whole stack — the slides sit inside it and
  * only their opacity changes, so adding images costs no extra animation work.
- * The first slide is eager and priority (it is the LCP element); the rest load
+ * The first slide is preloaded (it is the LCP element); the rest load
  * lazily and are only faded in once decoded, so a slow image never shows as a
  * blank frame.
  */
@@ -21,6 +22,7 @@ export function HeroSlideshow({
   startDelayMs = 9000,
   className,
   label,
+  photoLabel = "{n}",
 }: {
   slides: Slide[];
   intervalMs?: number;
@@ -28,6 +30,8 @@ export function HeroSlideshow({
   startDelayMs?: number;
   className?: string;
   label: string;
+  /** Fallback dot label for slides without alt, with "{n}" for the number. */
+  photoLabel?: string;
 }) {
   const [index, setIndex] = useState(0);
   const [ready, setReady] = useState<boolean[]>(() => slides.map((_, i) => i === 0));
@@ -40,7 +44,9 @@ export function HeroSlideshow({
     const img = imgRef.current;
     if (!wrap || !img) return;
 
-    const ctx = gsap.context(() => {
+    // Stopped entirely under reduced motion.
+    const mm = gsap.matchMedia(wrap);
+    mm.add(MOTION_OK, () => {
       gsap.set(img, { scale: 1.05, xPercent: -1, yPercent: -1 });
       gsap.to(img, {
         scale: 1.16,
@@ -51,9 +57,9 @@ export function HeroSlideshow({
         repeat: -1,
         yoyo: true,
       });
-    }, wrap);
+    });
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
   // Advance the slide. Held still for anyone who asked for reduced motion.
@@ -103,8 +109,8 @@ export function HeroSlideshow({
                 src={slide.src}
                 alt=""
                 fill
-                priority={i === 0}
-                loading={i === 0 ? "eager" : "lazy"}
+                preload={i === 0}
+                loading={i === 0 ? undefined : "lazy"}
                 sizes="100vw"
                 quality={68}
                 className="object-cover"
@@ -127,8 +133,8 @@ export function HeroSlideshow({
               key={slide.src}
               type="button"
               onClick={() => setIndex(i)}
-              aria-label={slide.alt ?? `Fotografia ${i + 1}`}
-              aria-current={i === index}
+              aria-label={slide.alt || photoLabel.replace("{n}", String(i + 1))}
+              aria-pressed={i === index}
               className="grid h-6 w-6 place-items-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <span

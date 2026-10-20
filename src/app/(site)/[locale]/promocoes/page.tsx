@@ -1,14 +1,35 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { getOffers } from "@/lib/repo/content";
+import { SITE_URL } from "@/lib/site";
+import { jsonLdScript } from "@/lib/seo";
+import { HOTEL_ID } from "@/components/JsonLd";
 import { PageHero } from "@/components/PageHero";
 import { Icon } from "@/components/Icon";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 
 type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = getDictionary(locale);
+  return pageMeta({
+    locale,
+    path: "/promocoes",
+    title: dict.offers.meta.title,
+    description: dict.offers.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
+}
 
 export const revalidate = 300;
 
@@ -18,6 +39,25 @@ export default async function OffersPage({ params }: Props) {
   const locale = raw as Locale;
   const dict = getDictionary(locale);
   const offers = await getOffers();
+  const pageUrl = `${SITE_URL}/${locale}/promocoes`;
+  const offersLd = {
+    "@context": "https://schema.org",
+    "@graph": offers.map((offer) => ({
+      "@type": "Offer",
+      "@id": `${pageUrl}#${offer.slug}`,
+      name: offer.title[locale],
+      description: offer.description[locale],
+      url: `${pageUrl}#${offer.slug}`,
+      image: `${SITE_URL}${offer.image}`,
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        minPrice: offer.priceFrom,
+        priceCurrency: "EUR",
+        description: offer.priceLabel[locale],
+      },
+      offeredBy: { "@id": HOTEL_ID },
+    })),
+  };
 
   return (
     <div>
@@ -28,17 +68,21 @@ export default async function OffersPage({ params }: Props) {
         image="/images/hero/offers.webp"
       />
 
-      <Breadcrumbs
+      <PageBreadcrumbs
         locale={locale}
-        homeLabel={dict.nav.home}
+        dict={dict}
+        path="/promocoes"
         crumbs={[{ label: dict.nav.offers }]}
       />
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(offersLd)} />
 
       <section className="container-x py-12 sm:py-16 lg:py-20 flex flex-col gap-12">
         {offers.map((offer, i) => (
           <article
             key={offer.id}
-            className={`grid gap-8 lg:gap-14 lg:grid-cols-2 items-center ${
+            id={offer.slug}
+            className={`scroll-mt-28 grid gap-8 lg:gap-14 lg:grid-cols-2 items-center ${
               i % 2 === 1 ? "lg:[&>div:first-child]:order-2" : ""
             }`}
           >
@@ -55,7 +99,7 @@ export default async function OffersPage({ params }: Props) {
               </span>
             </div>
             <div>
-              <h2 className="font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+              <h2 className="font-display text-3xl sm:text-5xl leading-tight tracking-tight">
                 {offer.title[locale]}
               </h2>
               <p className="mt-5 text-lg text-[var(--color-ink-soft)] leading-relaxed">

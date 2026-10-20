@@ -56,7 +56,7 @@ export function BookingWidget({
     <form
       action={`/${locale}/reservar`}
       method="get"
-      className={wrapper}
+      className={`${wrapper} text-[var(--color-ink)]`}
     >
       <input type="hidden" name="checkIn" value={checkIn} />
       <input type="hidden" name="checkOut" value={checkOut} />
@@ -67,7 +67,7 @@ export function BookingWidget({
       {variant === "card" && (
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="font-display text-lg leading-tight">
+            <p className="font-display text-lg leading-tight text-[var(--color-ink)]">
               {dict.booking.title}
             </p>
             <p className="text-xs text-[var(--color-ink-muted)] mt-0.5">

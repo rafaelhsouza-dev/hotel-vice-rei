@@ -18,7 +18,7 @@ export type Room = {
   amenities: Trio<string[]>;
   romantic?: boolean;
   /** Equirectangular 360º photo for the room's immersive viewer.
-   *  When omitted, the viewer falls back to the demo panorama. */
+   *  When omitted, the room page shows no 360º section. */
   panorama360?: string;
 };
 
@@ -99,14 +99,14 @@ export const hotel = {
       "https://www.tripadvisor.com/Hotel_Review-g189180-d952655-Reviews-Hotel_Vice_Rei-Porto_Porto_District_Northern_Portugal.html",
   },
   coords: { lat: 41.158, lng: -8.628 },
+  // DEMO figures kept only for the admin form. Never shown on the site nor in
+  // JSON-LD — the real public scores come from getSeo() (Tripadvisor, Booking).
   rating: { score: 4.6, count: 1280 },
   legal: {
     complaintsBook: "https://www.livroreclamacoes.pt/Inicio/",
     cleanSafe: "https://portugalcleanandsafe.pt/pt",
     // Licence number as registered on the property's Booking.com listing.
     rnet: "Licença n.º 1533",
-    // EU Online Dispute Resolution platform
-    euODR: "https://ec.europa.eu/consumers/odr",
     copyrightYear: 2016,
   },
   paymentMethods: ["Visa", "Mastercard", "American Express", "Diners"],
@@ -636,10 +636,10 @@ export const rooms: Room[] = [
     capacity: 3,
     size: 26,
     bed: {
-      pt: "2 camas single + 1 cama extra",
-      en: "2 single beds + 1 extra bed",
-      es: "2 camas individuales + 1 cama extra",
-      fr: "2 lits simples + 1 lit d'appoint",
+      pt: "3 camas individuais",
+      en: "3 single beds",
+      es: "3 camas individuales",
+      fr: "3 lits simples",
     },
     bathroom: {
       pt: "Casa de banho privada com banheira",
@@ -655,32 +655,32 @@ export const rooms: Room[] = [
       fr: "Triple",
     },
     shortDescription: {
-      pt: "Quarto amplo com duas camas single e cama extra, perfeito para famílias ou amigos.",
-      en: "Spacious room with two single beds and an extra bed — perfect for families or friends.",
-      es: "Habitación amplia con dos camas individuales y cama extra, ideal para familias o amigos.",
-      fr: "Chambre spacieuse avec deux lits simples et un lit d'appoint, parfaite pour les familles ou les amis.",
+      pt: "Quarto amplo com três camas individuais, perfeito para famílias ou amigos.",
+      en: "Spacious room with three single beds — perfect for families or friends.",
+      es: "Habitación amplia con tres camas individuales, ideal para familias o amigos.",
+      fr: "Chambre spacieuse avec trois lits simples, parfaite pour les familles ou les amis.",
     },
     longDescription: {
       pt: [
-        "Quarto triplo amplo com duas camas single e uma cama extra, casa de banho privada com banheira. Pensado para famílias ou grupos de amigos que viajam juntos.",
+        "Quarto triplo amplo com três camas individuais, casa de banho privada com banheira. Pensado para famílias ou grupos de amigos que viajam juntos.",
         "Pequeno-almoço incluído, ar condicionado, TV por cabo, Wi-Fi gratuito e telefone com acesso directo ao exterior.",
       ],
       en: [
-        "Spacious triple room with two single beds and an extra bed, private bathroom with bathtub. Designed for families or groups of friends travelling together.",
+        "Spacious triple room with three single beds, private bathroom with bathtub. Designed for families or groups of friends travelling together.",
         "Breakfast included, air conditioning, cable TV, free Wi-Fi and direct-dial telephone.",
       ],
       es: [
-        "Habitación triple amplia con dos camas individuales y una cama extra, baño privado con bañera. Pensada para familias o grupos de amigos.",
+        "Habitación triple amplia con tres camas individuales, baño privado con bañera. Pensada para familias o grupos de amigos.",
         "Desayuno incluido, aire acondicionado, TV por cable, Wi-Fi gratuito y teléfono con línea directa.",
       ],
       fr: [
-        "Chambre triple spacieuse avec deux lits simples et un lit d'appoint, salle de bain privative avec baignoire. Pensée pour les familles ou les groupes d'amis voyageant ensemble.",
+        "Chambre triple spacieuse avec trois lits simples, salle de bain privative avec baignoire. Pensée pour les familles ou les groupes d'amis voyageant ensemble.",
         "Petit-déjeuner inclus, climatisation, TV par câble, Wi-Fi gratuit et téléphone avec ligne directe vers l'extérieur.",
       ],
     },
     amenities: {
       pt: [
-        "3 camas (2 single + extra)",
+        "3 camas individuais",
         "Pequeno-almoço incluído",
         "Ar condicionado",
         "TV por cabo",
@@ -697,7 +697,7 @@ export const rooms: Room[] = [
         "Casa de banho privada com banheira",
       ],
       en: [
-        "3 beds (2 single + extra)",
+        "3 single beds",
         "Breakfast included",
         "Air conditioning",
         "Cable TV",
@@ -714,7 +714,7 @@ export const rooms: Room[] = [
         "Private bathroom with bathtub",
       ],
       es: [
-        "3 camas (2 individuales + extra)",
+        "3 camas individuales",
         "Desayuno incluido",
         "Aire acondicionado",
         "TV por cable",
@@ -731,7 +731,7 @@ export const rooms: Room[] = [
         "Baño privado con bañera",
       ],
       fr: [
-        "3 lits (2 simples + appoint)",
+        "3 lits simples",
         "Petit-déjeuner inclus",
         "Climatisation",
         "TV par câble",
@@ -1361,10 +1361,10 @@ export const testimonials: Testimonial[] = [
     origin: { pt: "Milão, IT", en: "Milan, IT", es: "Milán, IT", fr: "Milan, IT" },
     rating: 4,
     quote: {
-      pt: "Excelente relação qualidade/preço para uma estadia a trabalho. Garagem coberta foi uma ajuda enorme.",
-      en: "Great value for a business trip. The covered garage was a huge help.",
-      es: "Excelente relación calidad/precio para un viaje de negocios. El garaje cubierto fue una gran ayuda.",
-      fr: "Excellent rapport qualité/prix pour un séjour professionnel. Le garage couvert a été d'une grande aide.",
+      pt: "Excelente relação qualidade/preço para uma estadia a trabalho. A localização foi uma ajuda enorme.",
+      en: "Great value for a business trip. The location was a huge help.",
+      es: "Excelente relación calidad/precio para un viaje de negocios. La ubicación fue una gran ayuda.",
+      fr: "Excellent rapport qualité/prix pour un séjour professionnel. L'emplacement a été d'une grande aide.",
     },
   },
 ];

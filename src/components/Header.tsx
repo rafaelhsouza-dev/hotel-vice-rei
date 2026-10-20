@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
 import { Icon } from "./Icon";
@@ -30,6 +30,8 @@ export function Header({
   const pathname = usePathname() ?? "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const menuId = useId();
+  const toggleRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -42,6 +44,19 @@ export function Header({
     setOpen(false);
   }, [pathname]);
 
+  // Escape closes the mobile menu and returns focus to its button.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const light = !scrolled; // light = white text over hero
 
   return (
@@ -53,7 +68,7 @@ export function Header({
           : "bg-gradient-to-b from-black/40 via-black/15 to-transparent"
       }`}
     >
-      <div className="container-x flex h-20 items-center justify-between gap-6">
+      <div className="container-x flex h-20 items-center justify-between gap-3 sm:gap-6">
         <Link
           href={`/${locale}`}
           className="group shrink-0"
@@ -77,7 +92,7 @@ export function Header({
               alt=""
               aria-hidden
               fill
-              priority
+              loading="eager"
               sizes="160px"
               className={`object-contain object-left transition-opacity duration-500 ${
                 light ? "opacity-100" : "opacity-0"
@@ -86,7 +101,10 @@ export function Header({
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm">
+        <nav
+          aria-label={dict.a11y.mainNav}
+          className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm"
+        >
           {navItems.map((item) => {
             const href = `/${locale}${item.href}`;
             const active =
@@ -102,6 +120,7 @@ export function Header({
               <Link
                 key={item.labelKey}
                 href={href}
+                aria-current={active ? "page" : undefined}
                 className={`relative py-2 transition-colors duration-300 ${
                   active ? activeCls : `${base} ${hover}`
                 }`}
@@ -117,8 +136,8 @@ export function Header({
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <LocaleSwitcher current={locale} light={light} />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LocaleSwitcher current={locale} light={light} label={dict.a11y.changeLanguage} />
           <Link
             href={`/${locale}/reservar`}
             className={`hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-500 hover:gap-3 ${
@@ -131,14 +150,17 @@ export function Header({
             <Icon name="arrow-right" width={14} height={14} />
           </Link>
           <button
+            ref={toggleRef}
             type="button"
-            className={`lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-500 ${
+            className={`lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-500 ${
               light
                 ? "border border-white/30 text-white hover:bg-white/10"
                 : "hairline bg-white/70 text-[var(--color-ink)]"
             }`}
             onClick={() => setOpen((v) => !v)}
-            aria-label="Menu"
+            aria-label={open ? dict.a11y.closeMenu : dict.a11y.openMenu}
+            aria-expanded={open}
+            aria-controls={menuId}
           >
             <Icon name={open ? "close" : "menu"} />
           </button>
@@ -146,8 +168,11 @@ export function Header({
       </div>
 
       {open && (
-        <div className="lg:hidden border-t border-[var(--color-line)] bg-white">
-          <nav className="container-x flex flex-col py-3">
+        <div
+          id={menuId}
+          className="lg:hidden max-h-[calc(100svh-5rem)] overflow-y-auto overscroll-contain border-t border-[var(--color-line)] bg-white"
+        >
+          <nav aria-label={dict.a11y.mobileNav} className="container-x flex flex-col py-3">
             {navItems.map((item) => (
               <Link
                 key={item.labelKey}

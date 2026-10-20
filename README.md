@@ -1,6 +1,7 @@
 # Hotel Vice-Rei · Porto
 
-Site institucional e motor de reservas do Hotel Vice-Rei, com backoffice próprio.
+Site institucional, motor de reservas e PMS do Hotel Vice-Rei, geridos a partir
+de um backoffice próprio.
 
 - **Produção:** https://weboost-hotelvicerei.ejf97x.easypanel.host
 - **Backoffice:** `/admin`
@@ -42,6 +43,28 @@ onde o Postgres não é alcançável.
 **O schema e o seed correm no arranque** (`src/instrumentation.ts`), de forma
 idempotente — um deploy novo sobe já com conteúdo, sem passos manuais.
 
+## O que o backoffice faz
+
+| Área | Módulos |
+|---|---|
+| **Receção** | Hoje (chegadas, partidas, em casa) · Reservas (site, balcão, telefone, extranets) · ficha da reserva com conta do quarto, pagamentos, hóspedes/SIBA, faturas e e-mails · Mapa de ocupação quarto × dia com arrastar e largar · SIBA · Pagamentos · Faturas |
+| **Vendas** | Disponibilidade e preços (alteração em massa, por dia da semana, estadia mín./máx., sem chegadas/partidas, fecho) · Planos de tarifa (regime, ajuste de preço, cancelamento, sinal ou pagamento total) · Extras e códigos · Relatórios (ocupação, ADR, RevPAR, por origem e tipologia, CSV) |
+| **Hotel** | Quartos · Tarefas · Avarias e ordens de reparação (fotografia, custo, fornecedor, peças do stock) · Inspeções · Equipa · Insumos · Fornecedores · Refeições |
+| **Configuração** | Ligações (Stripe, ifthenpay, SMTP, InvoiceXpress/Moloni/Vendus, SIBA) · Canais e extranets com contingente · SEO e monitorização · Regras de reserva · Utilizadores e funções · Auditoria · Estado do sistema |
+
+**Regras que não se podem quebrar**
+
+- Cada reserva é escrita com um *advisory lock* por tipologia e a disponibilidade
+  é relida dentro da transação — dois pedidos simultâneos nunca vendem o último
+  quarto duas vezes (`tests/booking.integration.test.ts` prova-o).
+- A disponibilidade é derivada (unidades − reservas − importações − bloqueios −
+  contingentes de extranet), nunca um contador.
+- Alterar o preço de um período não mexe nas restrições, e vice-versa.
+- O PMS não emite faturas: entrega as linhas ao programa certificado pela AT.
+- As credenciais ficam cifradas (AES-256-GCM) e nunca voltam ao browser.
+- Cada página e ação do admin verifica a função do utilizador na base de dados;
+  mudar a função ou a palavra-passe termina as sessões abertas.
+
 ---
 
 ## Desenvolvimento
@@ -55,6 +78,8 @@ docker run -d --name vicerei-pg \
   -p 5440:5432 postgres:16-alpine
 
 npm run dev
+npm test          # unitários + integração (usa o Postgres do .env.local)
+npm run typecheck
 ```
 
 Crie um `.env.local` (ignorado pelo git):
@@ -87,8 +112,9 @@ Sem `DATABASE_URL` o site continua a funcionar: serve os dados de seed.
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` / `ADMIN_NAME` | Primeiro utilizador do backoffice |
 | `NEXT_PUBLIC_SITE_URL` | Origem canónica (metadata, sitemap, JSON-LD) |
 | `UPLOADS_DIR` | Pasta dos ficheiros carregados; em produção é o volume |
-| `NEXT_PUBLIC_GA_ID` | Opcional. GA4 só carrega com consentimento de cookies |
-| `SYNC_SECRET` | Autoriza `POST /api/channels/sync`. Mínimo 16 caracteres; sem ela o endpoint responde 401 |
+| `CREDENTIALS_KEY` | **Recomendada.** Chave própria (32+ caracteres) para cifrar as credenciais guardadas no admin. Ao defini-la, as existentes são cifradas de novo no arranque |
+| `SYNC_SECRET` | Autoriza `POST /api/cron` e `POST /api/channels/sync`. Mínimo 16 caracteres; sem ela respondem 401 |
+| `DISABLE_JOBS` | `1` desliga as tarefas automáticas no processo (use então `/api/cron`) |
 
 `NEXT_PUBLIC_*` são inlined no bundle durante o build, por isso têm de existir
 como *build args* — o EasyPanel encaminha todas as variáveis automaticamente.
@@ -104,15 +130,18 @@ plataforma, um motor de sincronização comum e um registo auditável.
 |---|---|---|
 | **iCal** (Airbnb, Vrbo, Google) | Ligar já, sem contrato | Importa datas ocupadas; exporta o nosso calendário |
 | **Beds24** | Ligar já, com conta Beds24 | API REST v2: reservas, disponibilidade, preços e restrições |
-| **Expedia QuickConnect** | Credenciais do Partner Central | XML sobre HTTPS: reservas e *availability & rates* |
+| **Expedia QuickConnect** | Exige certificação da Expedia | XML sobre HTTPS: reservas e *availability & rates* |
+| **Extranet (manual)** | Ligar já | Contingente por tipologia retido para a plataforma |
 | **Booking.com direto** | Indisponível | API só para parceiros certificados, com registo encerrado |
 
 O Booking.com merece uma nota, porque é a plataforma que mais importa a este
 hotel. A API de conectividade exige certificação como parceiro e o registo está
 fechado; o calendário iCal gratuito exige **uma unidade por tipologia** e o
 Vice-Rei tem 55 unidades em 6 tipologias. O caminho realista é um channel
-manager certificado — daí o adaptador Beds24, que alcança Booking.com, Airbnb,
-Expedia e Vrbo através de uma única integração documentada.
+manager certificado, que fica para a fase 2 (Zodomus ou Channex; o Beds24 foi
+descartado por custo). Até lá, as OTAs geram-se nas extranets com um
+**contingente de quartos** definido em /admin/integracoes/extranets, que o motor
+desconta à venda no site e no balcão.
 
 O TripAdvisor não está na lista: o *Instant Book* deixou de aceitar novas
 propriedades em 11 de novembro de 2025.
@@ -138,6 +167,17 @@ Duas invariantes protegem contra *overbooking*: a disponibilidade é **derivada*
 das unidades, das reservas próprias e das importadas, nunca de um contador
 guardado; e se a importação de um canal falhar, o envio da disponibilidade
 desse canal é ignorado em vez de publicar números que sabemos estar velhos.
+
+### Tarefas automáticas
+
+Correm dentro da aplicação, de 5 em 5 minutos, com um *advisory lock* por tarefa
+(seguro com várias réplicas): expirar pagamentos e libertar quartos não pagos,
+lembretes com o link de check-in online, envio ao SIBA, sincronização de canais
+e limpeza de registos. O estado de cada uma está em **/admin/sistema**.
+
+Pagamentos: Stripe chama `/api/payments/stripe` (webhook assinado) e a
+ifthenpay `/api/payments/ifthenpay` (callback com chave anti-phishing).
+Monitorização: `/api/health`.
 
 ---
 

@@ -1,15 +1,34 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { PageHero } from "@/components/PageHero";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/animations/Reveal";
 import { MapEmbed } from "@/components/MapEmbed";
 import { getHotel } from "@/lib/repo/content";
 
 type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = getDictionary(locale);
+  return pageMeta({
+    locale,
+    path: "/apresentacao",
+    title: dict.about.meta.title,
+    description: dict.about.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
+}
 
 export default async function AboutPage({ params }: Props) {
   const { locale: raw } = await params;
@@ -26,10 +45,17 @@ export default async function AboutPage({ params }: Props) {
         image="/images/hero/about.webp"
       />
 
+      <PageBreadcrumbs
+        locale={locale}
+        dict={dict}
+        path="/apresentacao"
+        crumbs={[{ label: dict.nav.about }]}
+      />
+
       <section className="container-x py-16 sm:py-20 lg:py-24 grid gap-12 lg:grid-cols-12">
         <Reveal className="lg:col-span-7" stagger y={20}>
           <span className="eyebrow">{dict.about.intro}</span>
-          <p className="mt-4 font-display text-3xl sm:text-4xl leading-tight tracking-tight text-[var(--color-ink)]">
+          <p className="mt-4 font-display text-2xl sm:text-4xl leading-tight tracking-tight text-[var(--color-ink)]">
             {dict.about.tagline}
           </p>
           <div className="mt-8 space-y-6 text-lg text-[var(--color-ink-soft)] leading-relaxed">
@@ -39,7 +65,7 @@ export default async function AboutPage({ params }: Props) {
           </div>
         </Reveal>
         <aside className="lg:col-span-5">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
               <Image
                 src="/images/hotel/mural.webp"
@@ -66,7 +92,7 @@ export default async function AboutPage({ params }: Props) {
         <div className="container-x py-16 sm:py-20 lg:py-24">
           <div className="max-w-2xl">
             <span className="eyebrow">Hotel Vice-Rei</span>
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+            <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
               {dict.about.highlightsTitle}
             </h2>
           </div>
@@ -110,18 +136,19 @@ export default async function AboutPage({ params }: Props) {
           lat={hotel.coords.lat}
           lng={hotel.coords.lng}
           dict={dict}
+          locale={locale}
           label={`${hotel.name} — ${hotel.address.street}`}
           address={`${hotel.name}, ${hotel.address.street}, ${hotel.address.postalCode} ${hotel.address.city}`}
         />
       </section>
 
       <section className="container-x pb-16 sm:pb-20 lg:pb-24">
-        <div className="rounded-3xl bg-[var(--color-ink)] text-white p-10 sm:p-14 flex flex-col lg:flex-row items-start lg:items-center gap-8 justify-between">
+        <div className="rounded-3xl bg-[var(--color-ink)] text-white p-6 sm:p-14 flex flex-col lg:flex-row items-start lg:items-center gap-8 justify-between">
           <div className="max-w-xl">
             <h2 className="font-display text-3xl sm:text-4xl leading-tight tracking-tight">
-              {dict.home.location.title}
+              {dict.about.ctaTitle}
             </h2>
-            <p className="mt-3 text-white/75">{dict.home.location.body}</p>
+            <p className="mt-3 text-white/75">{dict.about.ctaBody}</p>
           </div>
           <Link
             href={`/${locale}/reservar`}

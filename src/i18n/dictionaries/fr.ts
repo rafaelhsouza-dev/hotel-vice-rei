@@ -4,7 +4,7 @@ export const fr: Dictionary = {
   meta: {
     title: "Hotel Vice-Rei · Porto — Élégance, confort et qualité",
     description:
-      "Hotel Vice-Rei à Porto. 55 chambres, réception 24h, Wi-Fi gratuit et emplacement privilégié sur la Rua Júlio Dinis. Réservez en direct au meilleur prix garanti.",
+      "Hotel Vice-Rei, 2 étoiles à Porto : 55 chambres sur la Rua Júlio Dinis, près de la Casa da Música, Wi-Fi gratuit. Réservez en direct sur le site officiel.",
   },
   nav: {
     home: "Accueil",
@@ -53,6 +53,11 @@ export const fr: Dictionary = {
     bestPrice: "Meilleur prix garanti",
   },
   home: {
+    meta: {
+      title: "Hotel Vice-Rei Porto · Hôtel 2 étoiles rue Júlio Dinis",
+      description:
+        "Hotel Vice-Rei, 2 étoiles à Porto : 55 chambres sur la Rua Júlio Dinis, près de la Casa da Música, Wi-Fi gratuit. Réservez en direct sur le site officiel.",
+    },
     intro: {
       eyebrow: "Présentation",
       title: "Un classique de Porto depuis près de 50 ans.",
@@ -77,7 +82,7 @@ export const fr: Dictionary = {
       title: "Des forfaits pour profiter de Porto",
     },
     testimonials: {
-      eyebrow: "Clients",
+      eyebrow: "Témoignages de clients",
       title: "Ce qu'ils disent de nous",
     },
     location: {
@@ -87,6 +92,13 @@ export const fr: Dictionary = {
     },
   },
   rooms: {
+    meta: {
+      title: "Chambres à Porto : simple, double, twin et triple",
+      description:
+        "Six types de chambres à l'Hotel Vice-Rei de Porto : Simple, Twin/Double, Supérieure, Triple et Romantique, avec salle de bain privée et Wi-Fi gratuit.",
+    },
+    roomTitle: "{name} — {size} m², jusqu'à {n} personnes",
+    roomTitleOne: "{name} — {size} m², 1 personne",
     title: "Nos chambres",
     subtitle:
       "55 chambres réparties en individuelles, doubles, twin et triples. Toutes avec salle de bain privative, climatisation, TV par câble et Wi-Fi gratuit.",
@@ -102,6 +114,11 @@ export const fr: Dictionary = {
     breakfastIncluded: "Petit-déjeuner inclus dans le tarif",
   },
   services: {
+    meta: {
+      title: "Services et équipements de l'hôtel",
+      description:
+        "Services et équipements de l'Hotel Vice-Rei à Porto : Wi-Fi gratuit, chambres climatisées et accueil en cinq langues. Découvrez ce qui vous attend.",
+    },
     title: "Services de l'hôtel",
     subtitle:
       "De petites attentions et de grandes commodités pour rendre votre séjour mémorable.",
@@ -109,6 +126,14 @@ export const fr: Dictionary = {
     languagesTitle: "Accueil en",
   },
   about: {
+    meta: {
+      title: "Présentation de l'hôtel à Porto",
+      description:
+        "Découvrez l'Hotel Vice-Rei : un hôtel classique 2 étoiles sur la Rua Júlio Dinis à Porto, avec près de 50 ans de service attentionné et personnalisé.",
+    },
+    ctaTitle: "Réservez en direct avec nous",
+    ctaBody:
+      "Sur le site officiel, vous voyez les tarifs disponibles, choisissez votre chambre et recevez la confirmation par email.",
     title: "Présentation",
     subtitle: "Hotel Vice-Rei · Porto",
     intro: "Bienvenue à l'Hotel Vice-Rei",
@@ -141,6 +166,11 @@ export const fr: Dictionary = {
     ],
   },
   offers: {
+    meta: {
+      title: "Offres et forfaits de séjour à Porto",
+      description:
+        "Offres et forfaits de l'Hotel Vice-Rei à Porto pour les courts séjours, les séjours plus longs et les occasions spéciales. Réservez sur le site officiel.",
+    },
     title: "Offres et forfaits",
     subtitle:
       "Des tarifs pensés pour différents séjours et occasions. Réserver en direct garantit toujours le meilleur prix.",
@@ -152,6 +182,12 @@ export const fr: Dictionary = {
     bookOffer: "Réserver le forfait",
   },
   gallery: {
+    meta: {
+      title: "Galerie photos de l'hôtel",
+      description:
+        "Photos de l'Hotel Vice-Rei à Porto : chambres, espaces communs, salle du petit-déjeuner et la ville tout autour. Découvrez l'hôtel avant de réserver.",
+    },
+    photoAlt: "Hotel Vice-Rei, Porto — photo {n}",
     title: "Galerie",
     subtitle: "Un aperçu de ce qui vous attend à l'Hotel Vice-Rei.",
     panoramaEyebrow: "Multimédia · 360º",
@@ -164,6 +200,11 @@ export const fr: Dictionary = {
       "Le lancement charge une bibliothèque 3D externe (A-Frame). Elle n'est chargée qu'après votre clic.",
   },
   contact: {
+    meta: {
+      title: "Contact, adresse et accès",
+      description:
+        "Contacter l'Hotel Vice-Rei : Rua Júlio Dinis, 779, 4050-326 Porto. Téléphone, email, formulaire et carte avec les lieux d'intérêt à proximité.",
+    },
     title: "Contact",
     subtitle:
       "Nous sommes là pour vous aider. Joignez-nous par téléphone, e-mail ou via le formulaire.",
@@ -236,13 +277,28 @@ export const fr: Dictionary = {
   cookies: {
     title: "Votre vie privée",
     message:
-      "Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre consentement, des cookies pour analyser la navigation. Vous pouvez accepter, refuser ou en savoir plus.",
+      "Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre accord, des cookies d'analyse et de marketing. Vous pouvez accepter, refuser ou choisir.",
     accept: "Tout accepter",
     reject: "Refuser les non essentiels",
     learnMore: "En savoir plus sur les cookies",
     settings: "Paramètres",
+    preferences: "Préférences de cookies",
+    customize: "Personnaliser",
+    save: "Enregistrer mes choix",
+    necessary: "Essentiels",
+    necessaryDesc: "Nécessaires au fonctionnement du site.",
+    analytics: "Analyse",
+    analyticsDesc: "Mesurent les visites et l'utilisation du site (Google Analytics, Microsoft Clarity, Hotjar) pour l'améliorer.",
+    marketing: "Marketing",
+    marketingDesc: "Mesurent l'efficacité de nos publicités (Google Ads, Meta Pixel).",
+    alwaysOn: "Toujours actifs",
   },
   privacy: {
+    meta: {
+      title: "Politique de confidentialité et cookies",
+      description:
+        "Comment l'Hotel Vice-Rei collecte, utilise et protège vos données personnelles et quels cookies il utilise, conformément au RGPD. Vos droits.",
+    },
     title: "Politique de Confidentialité",
     subtitle:
       "Comment l'Hotel Vice-Rei collecte, utilise et protège vos données personnelles, conformément au RGPD.",
@@ -270,11 +326,16 @@ export const fr: Dictionary = {
       },
       {
         heading: "6. Cookies",
-        body: "Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre consentement, des cookies d'analyse. Vous pouvez gérer vos préférences à tout moment via le bandeau de cookies ou les paramètres de votre navigateur.",
+        body: "Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre consentement, des cookies d'analyse (Google Analytics, Microsoft Clarity, Hotjar) et de marketing (Google Ads, Meta Pixel). Vous pouvez modifier votre choix à tout moment via le lien « Préférences de cookies » en bas de page ou les paramètres de votre navigateur.",
       },
     ],
   },
   accessibility: {
+    meta: {
+      title: "Déclaration d'accessibilité du site",
+      description:
+        "L'engagement de l'Hotel Vice-Rei pour un site accessible : mesures mises en place, limites connues et comment nous joindre en cas de difficulté.",
+    },
     title: "Accessibilité",
     subtitle:
       "Nous nous engageons à rendre le site de l'Hotel Vice-Rei utilisable par tous, quelles que soient leurs capacités.",
@@ -316,12 +377,20 @@ export const fr: Dictionary = {
     basedOn: "sur la base de",
     reviewsWord: "avis",
     viewOnTripadvisor: "Voir sur TripAdvisor",
+    publicRatings: "Avis publics",
+    viewProfile: "Voir les avis sur",
+    testimonialsNote: "Témoignages partagés par des clients. Les notes publiques figurent sur les plateformes indiquées ci-dessus.",
   },
   bestPrice: {
     title: "Meilleur prix garanti",
     subtitle: "En réservant directement sur notre site.",
   },
   cancellation: {
+    meta: {
+      title: "Politique d'annulation et tarifs",
+      description:
+        "Conditions d'annulation de l'Hotel Vice-Rei à Porto : tarifs flexibles et non remboursables, modifications, non-présentation et remboursements.",
+    },
     title: "Annulation et tarifs flexibles",
     subtitle: "Des conditions claires pour réserver en toute tranquillité.",
     updated: "Dernière mise à jour : juin 2026",
@@ -349,6 +418,11 @@ export const fr: Dictionary = {
     ],
   },
   blog: {
+    meta: {
+      title: "Blog : conseils et itinéraires pour visiter Porto",
+      description:
+        "Conseils, itinéraires et actualités de l'Hotel Vice-Rei pour profiter pleinement de Porto : culture, gastronomie, balades et événements près de l'hôtel.",
+    },
     title: "Blog & Porto",
     subtitle:
       "Conseils, itinéraires et actualités pour profiter au maximum de la ville.",
@@ -364,34 +438,81 @@ export const fr: Dictionary = {
     title: "Ce que les clients demandent avant de réserver",
     items: [
       {
-        q: "Quels sont les horaires d'arrivée et de départ ?",
-        a: "L'arrivée se fait de 15h à 21h30 et le départ jusqu'à 12h. La réception est ouverte 24h/24, vous pouvez donc arriver à toute heure. Nous gardons vos bagages gratuitement avant l'arrivée et après le départ.",
+        q: "À quelle heure sont l'arrivée et le départ ?",
+        a: "L'arrivée se fait de 15h00 à 21h30 et le départ jusqu'à 12h00. Si vous pensez arriver après 21h30, prévenez-nous à l'avance afin d'organiser votre arrivée. Une arrivée anticipée ou un départ tardif peuvent être demandés, sous réserve de disponibilité.",
       },
       {
         q: "Le petit-déjeuner est-il inclus ?",
-        a: "Oui, le petit-déjeuner continental est inclus dans la plupart des tarifs. Dans les chambres supérieures et le forfait Romantique, il peut être servi en chambre sur demande la veille.",
+        a: "Cela dépend du tarif. En choisissant la chambre sur le site, chaque tarif indique si le petit-déjeuner est inclus ; l'information figure aussi dans la confirmation de réservation.",
       },
       {
         q: "Puis-je annuler sans frais ?",
-        a: "Les tarifs flexibles sont annulables gratuitement jusqu'à 48 heures avant la date d'arrivée. Les promotions non remboursables sont toujours signalées avant la confirmation.",
+        a: "Avec les tarifs flexibles, l'annulation est gratuite jusqu'à 48 heures avant la date d'arrivée. Les tarifs non remboursables sont toujours signalés avant la confirmation.",
       },
       {
         q: "L'hôtel dispose-t-il d'un parking ?",
-        a: "Oui, nous avons un garage couvert et surveillé, selon disponibilité. Vous pouvez l'ajouter à votre réservation en option pour 12 € par nuit.",
+        a: "Contactez-nous avant votre arrivée pour connaître les solutions de stationnement disponibles.",
       },
       {
-        q: "À quelle distance se trouvent le centre historique et l'aéroport ?",
-        a: "Nous sommes dans le quartier d'affaires de Porto, à quelques minutes à pied de la Casa da Música, à 5 minutes du Centre de Congrès de l'Alfândega, à 10 minutes des plages de Foz et à 20 minutes de l'aéroport Francisco Sá Carneiro.",
+        q: "Où se trouve l'hôtel ?",
+        a: "Rua Júlio Dinis, 779, dans le quartier d'affaires de Porto, près de la Casa da Música. Le centre historique et l'aéroport Francisco Sá Carneiro sont accessibles en métro, en bus ou en taxi.",
+      },
+      {
+        q: "Y a-t-il le Wi-Fi ?",
+        a: "Oui, le Wi-Fi est gratuit pour les clients.",
+      },
+      {
+        q: "Y a-t-il des lits bébé ou des lits d'appoint ?",
+        a: "Non. L'hôtel ne dispose ni de lits bébé ni de lits d'appoint. Pour trois personnes, la chambre Triple dispose de trois lits simples.",
+      },
+      {
+        q: "Puis-je voyager avec des enfants ?",
+        a: "Oui. Indiquez le nombre et l'âge des enfants lors de la réservation : ils comptent dans la capacité maximale de la chambre, car il n'y a ni lits bébé ni lits d'appoint.",
+      },
+      {
+        q: "Y a-t-il une taxe de séjour ?",
+        a: "Oui. La taxe de séjour municipale de Porto est perçue par client et par nuit, selon les conditions et exonérations fixées par la ville, et se règle à l'hôtel.",
       },
       {
         q: "Les animaux sont-ils acceptés ?",
-        a: "Non, l'hôtel n'accepte pas les animaux, à l'exception des chiens-guides dûment identifiés. Si vous voyagez avec un animal, contactez-nous avant de réserver : nous vous aiderons à trouver une solution à proximité.",
+        a: "Non, les animaux ne sont pas acceptés, à l'exception des chiens d'assistance.",
       },
       {
-        q: "Dans quelles langues l'équipe accueille-t-elle ?",
-        a: "L'équipe accueille les clients en portugais, anglais, espagnol, français et italien.",
+        q: "Peut-on fumer ?",
+        a: "Non. Il est interdit de fumer dans les chambres et dans les espaces intérieurs de l'hôtel.",
+      },
+      {
+        q: "Dans quelles langues l'équipe vous accueille-t-elle ?",
+        a: "L'équipe parle portugais, anglais, espagnol, français et italien.",
       },
     ],
+  },
+  map: {
+    eyebrow: "Autour de l'hôtel",
+    title: "À proximité",
+    show: "Afficher la carte",
+    hint: "La carte interactive utilise des services externes (tuiles d'OpenFreeMap, moteur de carte via jsDelivr) et ne se charge qu'après votre clic.",
+    loading: "Chargement de la carte…",
+    error: "Impossible de charger la carte. Utilisez la liste ci-dessous ou ouvrez Google Maps.",
+    hotel: "Hotel Vice-Rei",
+    legend: "Légende",
+    all: "Tous",
+    filter: "Filtrer par catégorie",
+    listTitle: "Lieux d'intérêt",
+    walk: "{n} min à pied",
+    website: "En savoir plus",
+    showOnMap: "Voir sur la carte",
+    mapLabel: "Carte interactive avec l'hôtel et les lieux d'intérêt",
+    categories: {
+      sight: "Monuments",
+      museum: "Musées",
+      food: "Restaurants",
+      shopping: "Shopping",
+      transport: "Transports",
+      nature: "Parcs et nature",
+      nightlife: "Vie nocturne",
+      other: "Autres",
+    },
   },
   a11y: {
     skipToContent: "Aller au contenu",
@@ -406,8 +527,20 @@ export const fr: Dictionary = {
     previousImage: "Image précédente",
     nextImage: "Image suivante",
     closeGallery: "Fermer la galerie",
+    breadcrumb: "Fil d'Ariane",
+    mainNav: "Navigation principale",
+    mobileNav: "Menu de navigation",
+    footerNav: "Accès rapide",
+    legalNav: "Informations légales",
+    photo: "Photo {n}",
+    openImage: "Ouvrir l'image {n}",
   },
   notFound: {
+    meta: {
+      title: "Page introuvable",
+      description:
+        "La page que vous recherchez n'existe pas ou a été déplacée.",
+    },
     code: "404",
     title: "Page introuvable",
     body: "La page que vous cherchez n'existe pas ou a été déplacée.",

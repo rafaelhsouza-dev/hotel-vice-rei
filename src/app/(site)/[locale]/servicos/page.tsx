@@ -1,12 +1,31 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { getServices, getHotel } from "@/lib/repo/content";
 import { PageHero } from "@/components/PageHero";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/animations/Reveal";
 
 type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = getDictionary(locale);
+  return pageMeta({
+    locale,
+    path: "/servicos",
+    title: dict.services.meta.title,
+    description: dict.services.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
+}
 
 export const revalidate = 300;
 
@@ -24,6 +43,13 @@ export default async function ServicesPage({ params }: Props) {
         title={dict.services.title}
         subtitle={dict.services.subtitle}
         image="/images/hero/services.webp"
+      />
+
+      <PageBreadcrumbs
+        locale={locale}
+        dict={dict}
+        path="/servicos"
+        crumbs={[{ label: dict.nav.services }]}
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

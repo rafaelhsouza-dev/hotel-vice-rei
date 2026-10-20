@@ -583,6 +583,58 @@ async function seedIcalToken() {
 }
 
 /**
+ * The triple room was described with an "extra bed", which contradicts the
+ * hotel's listing (no extra beds). Rewrites the copy only where it is still
+ * the original seed text, so anything the hotel edited in the admin stays.
+ */
+const OLD_AMENITY: Record<Locale, string> = {
+  pt: "3 camas (2 single + extra)",
+  en: "3 beds (2 single + extra)",
+  es: "3 camas (2 individuales + extra)",
+  fr: "3 lits (2 simples + appoint)",
+};
+const OLD_LONG: Record<Locale, string> = {
+  pt: "Quarto triplo amplo com duas camas single e uma cama extra, casa de banho privada com banheira. Pensado para famílias ou grupos de amigos que viajam juntos.",
+  en: "Spacious triple room with two single beds and an extra bed, private bathroom with bathtub. Designed for families or groups of friends travelling together.",
+  es: "Habitación triple amplia con dos camas individuales y una cama extra, baño privado con bañera. Pensada para familias o grupos de amigos.",
+  fr: "Chambre triple spacieuse avec deux lits simples et un lit d'appoint, salle de bain privative avec baignoire. Pensée pour les familles ou les groupes d'amis voyageant ensemble.",
+};
+
+async function migrateTripleBeds() {
+  const triple = seedRooms.find((r) => r.id === "triple");
+  if (!triple) return;
+  const old: Record<Locale, { bed: string; short: string }> = {
+    pt: { bed: "2 camas single + 1 cama extra", short: "Quarto amplo com duas camas single e cama extra, perfeito para famílias ou amigos." },
+    en: { bed: "2 single beds + 1 extra bed", short: "Spacious room with two single beds and an extra bed — perfect for families or friends." },
+    es: { bed: "2 camas individuales + 1 cama extra", short: "Habitación amplia con dos camas individuales y cama extra, ideal para familias o amigos." },
+    fr: { bed: "2 lits simples + 1 lit d'appoint", short: "Chambre spacieuse avec deux lits simples et un lit d'appoint, parfaite pour les familles ou les amis." },
+  };
+  for (const l of locales) {
+    await query(
+      `UPDATE rooms SET bed = jsonb_set(bed, $1, to_jsonb($2::text)), updated_at = now()
+       WHERE id = 'triple' AND bed->>$3 = $4`,
+      [`{${l}}`, triple.bed[l], l, old[l].bed],
+    );
+    await query(
+      `UPDATE rooms SET short_description = jsonb_set(short_description, $1, to_jsonb($2::text)), updated_at = now()
+       WHERE id = 'triple' AND short_description->>$3 = $4`,
+      [`{${l}}`, triple.shortDescription[l], l, old[l].short],
+    );
+    // Amenities and the long description: each only when still the seed text.
+    await query(
+      `UPDATE rooms SET amenities = jsonb_set(amenities, $1, $2::jsonb), updated_at = now()
+       WHERE id = 'triple' AND amenities->$3->>0 = $4`,
+      [`{${l}}`, JSON.stringify(triple.amenities[l]), l, OLD_AMENITY[l]],
+    );
+    await query(
+      `UPDATE rooms SET long_description = jsonb_set(long_description, $1, $2::jsonb), updated_at = now()
+       WHERE id = 'triple' AND long_description->$3->>0 = $4`,
+      [`{${l}}`, JSON.stringify(triple.longDescription[l]), l, OLD_LONG[l]],
+    );
+  }
+}
+
+/**
  * The booking engine needs at least one rate plan. The first one mirrors what
  * the site promised before plans existed: free cancellation up to 48 h,
  * payment at the hotel, the room's own nightly price.
@@ -666,6 +718,7 @@ export async function ensureDatabase(): Promise<boolean> {
     await migrateRoomAmenities();
     await migrateServiceCopy();
     await migrateLegalNumber();
+    await migrateTripleBeds();
     await seedRatePlan();
     await seedChecklist();
     await reencryptCredentials();

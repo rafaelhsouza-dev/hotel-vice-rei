@@ -12,6 +12,23 @@ type LightboxProps = {
   index: number;
   onClose: () => void;
   onIndexChange: (i: number) => void;
+  labels?: LightboxLabels;
+};
+
+export type LightboxLabels = {
+  gallery: string;
+  close: string;
+  previous: string;
+  next: string;
+  open: string;
+};
+
+const DEFAULT_LABELS: LightboxLabels = {
+  gallery: "Image gallery",
+  close: "Close",
+  previous: "Previous",
+  next: "Next",
+  open: "Open image {n}",
 };
 
 export function Lightbox({
@@ -20,6 +37,7 @@ export function Lightbox({
   index,
   onClose,
   onIndexChange,
+  labels = DEFAULT_LABELS,
 }: LightboxProps) {
   const root = useRef<HTMLDivElement | null>(null);
   const backdrop = useRef<HTMLDivElement | null>(null);
@@ -113,7 +131,7 @@ export function Lightbox({
       className="fixed inset-0 z-[100]"
       role="dialog"
       aria-modal="true"
-      aria-label="Image gallery"
+      aria-label={labels.gallery}
     >
       <div
         ref={backdrop}
@@ -129,7 +147,7 @@ export function Lightbox({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={labels.close}
           className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:border-white/40 hover:bg-white/10 transition-colors"
         >
           <Icon name="close" />
@@ -152,7 +170,7 @@ export function Lightbox({
               src={current.src}
               alt={current.alt ?? ""}
               fill
-              priority
+              loading="eager"
               sizes="100vw"
               className="object-contain"
             />
@@ -164,7 +182,7 @@ export function Lightbox({
       <button
         type="button"
         onClick={prev}
-        aria-label="Previous"
+        aria-label={labels.previous}
         className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-10 grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-full border border-white/20 bg-black/30 text-white hover:bg-black/60 hover:border-white/40 transition-colors"
       >
         <Icon name="chevron-right" className="rotate-180" />
@@ -172,7 +190,7 @@ export function Lightbox({
       <button
         type="button"
         onClick={next}
-        aria-label="Next"
+        aria-label={labels.next}
         className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-10 grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-full border border-white/20 bg-black/30 text-white hover:bg-black/60 hover:border-white/40 transition-colors"
       >
         <Icon name="chevron-right" />

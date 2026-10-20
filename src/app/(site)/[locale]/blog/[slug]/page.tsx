@@ -3,21 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { BCP47, jsonLdScript, pageMeta } from "@/lib/seo";
 import { getDictionary } from "@/i18n";
 import { getPosts, getPostBySlug } from "@/lib/repo/content";
 import { SITE_URL } from "@/lib/site";
 import { PageHero } from "@/components/PageHero";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Icon } from "@/components/Icon";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 import { getHotel } from "@/lib/repo/content";
-
-const BCP47: Record<Locale, string> = {
-  pt: "pt-PT",
-  en: "en-GB",
-  es: "es-ES",
-  fr: "fr-FR",
-};
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -38,26 +32,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(slug);
   if (!post) return {};
 
-  const path = `/blog/${post.slug}`;
-  return {
+  return pageMeta({
+    locale,
+    path: `/blog/${post.slug}`,
     title: post.title[locale],
     description: post.excerpt[locale],
-    alternates: {
-      canonical: `${SITE_URL}/${locale}${path}`,
-      languages: Object.fromEntries([
-        ...locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
-        ["x-default", `${SITE_URL}/pt${path}`],
-      ]),
-    },
-    openGraph: {
-      type: "article",
-      title: post.title[locale],
-      description: post.excerpt[locale],
-      url: `${SITE_URL}/${locale}${path}`,
-      publishedTime: post.date,
-      images: [{ url: `${SITE_URL}${post.image}`, width: 1200, height: 630, alt: post.title[locale] }],
-    },
-  };
+    image: post.image,
+    imageAlt: post.title[locale],
+    type: "article",
+    publishedTime: post.date,
+  });
 }
 
 export default async function ArticlePage({ params }: Props) {
@@ -89,9 +73,10 @@ export default async function ArticlePage({ params }: Props) {
         image={post.image}
       />
 
-      <Breadcrumbs
+      <PageBreadcrumbs
         locale={locale}
-        homeLabel={dict.nav.home}
+        dict={dict}
+        path={`/blog/${post.slug}`}
         crumbs={[
           { label: dict.nav.blog, href: `/${locale}/blog` },
           { label: post.title[locale] },
@@ -100,30 +85,27 @@ export default async function ArticlePage({ params }: Props) {
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: post.title[locale],
-            description: post.excerpt[locale],
-            image: `${SITE_URL}${post.image}`,
-            datePublished: post.date,
-            dateModified: post.date,
-            inLanguage: locale,
-            articleSection: post.category[locale],
-            wordCount: post.body[locale].join(" ").split(/\s+/).length,
-            mainEntityOfPage: { "@type": "WebPage", "@id": url },
-            author: { "@type": "Organization", name: hotel.name, url: SITE_URL },
-            publisher: {
-              "@type": "Organization",
-              name: hotel.name,
-              logo: {
-                "@type": "ImageObject",
-                url: `${SITE_URL}/logo-hotel-vice-rei.png`,
-              },
-            },
-          }).replace(/</g, "\\u003c"),
-        }}
+        dangerouslySetInnerHTML={jsonLdScript({
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          headline: post.title[locale],
+          description: post.excerpt[locale],
+          image: [`${SITE_URL}${post.image}`],
+          datePublished: post.date,
+          dateModified: post.date,
+          inLanguage: BCP47[locale],
+          articleSection: post.category[locale],
+          wordCount: post.body[locale].join(" ").split(/\s+/).length,
+          url,
+          mainEntityOfPage: { "@type": "WebPage", "@id": url },
+          author: { "@type": "Organization", name: hotel.name, url: SITE_URL },
+          publisher: {
+            "@type": "Organization",
+            name: hotel.name,
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/logo-hotel-vice-rei.png` },
+          },
+          about: { "@id": `${SITE_URL}/#hotel` },
+        })}
       />
 
       <section className="container-x py-12 sm:py-16">

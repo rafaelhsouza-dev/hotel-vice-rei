@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Lightbox } from "./Lightbox";
+import { Lightbox, type LightboxLabels } from "./Lightbox";
 
 type Img = string | { src: string; alt?: string; caption?: string };
 
@@ -18,12 +18,14 @@ export function LightboxGallery({
   layoutClass,
   aspectClass,
   caption,
+  labels,
 }: {
   images: Img[];
   className?: string;
   layoutClass?: string[];
   aspectClass?: string;
   caption?: string;
+  labels?: LightboxLabels;
 }) {
   const items = normalize(images);
   const [open, setOpen] = useState(false);
@@ -42,7 +44,10 @@ export function LightboxGallery({
             key={img.src + i}
             type="button"
             onClick={() => openAt(i)}
-            aria-label={`Open image ${i + 1}`}
+            aria-label={
+              (labels?.open ?? "Open image {n}").replace("{n}", String(i + 1)) +
+              (img.alt ? ` — ${img.alt}` : "")
+            }
             className={`group relative overflow-hidden rounded-2xl cursor-zoom-in ${
               layoutClass?.[i] ?? ""
             } ${aspectClass ?? ""}`}
@@ -88,6 +93,7 @@ export function LightboxGallery({
         index={index}
         onClose={() => setOpen(false)}
         onIndexChange={setIndex}
+        labels={labels}
       />
     </>
   );

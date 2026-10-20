@@ -4,7 +4,7 @@ export const en: Dictionary = {
   meta: {
     title: "Hotel Vice-Rei · Porto — Elegance, comfort and quality",
     description:
-      "Hotel Vice-Rei in Porto. 55 rooms, 24h reception, free Wi-Fi and prime location on Rua Júlio Dinis. Book direct with our best price guarantee.",
+      "Hotel Vice-Rei, a 2-star hotel in Porto: 55 rooms on Rua Júlio Dinis, near Casa da Música, with free Wi-Fi. Book direct on the official website.",
   },
   nav: {
     home: "Home",
@@ -53,6 +53,11 @@ export const en: Dictionary = {
     bestPrice: "Best price guaranteed",
   },
   home: {
+    meta: {
+      title: "Hotel Vice-Rei Porto · 2-star hotel on Rua Júlio Dinis",
+      description:
+        "Hotel Vice-Rei, a 2-star hotel in Porto: 55 rooms on Rua Júlio Dinis, near Casa da Música, with free Wi-Fi. Book direct on the official website.",
+    },
     intro: {
       eyebrow: "About",
       title: "A Porto classic, almost 50 years young.",
@@ -77,7 +82,7 @@ export const en: Dictionary = {
       title: "Packages to enjoy Porto",
     },
     testimonials: {
-      eyebrow: "Guests",
+      eyebrow: "Guest testimonials",
       title: "What they say about us",
     },
     location: {
@@ -87,6 +92,13 @@ export const en: Dictionary = {
     },
   },
   rooms: {
+    meta: {
+      title: "Rooms in Porto: Single, Twin, Double and Triple",
+      description:
+        "Six room types at Hotel Vice-Rei in Porto: Single, Twin/Double, Superior, Triple and Romantic, all with private bathroom and free Wi-Fi included.",
+    },
+    roomTitle: "{name} — {size} m², up to {n} guests",
+    roomTitleOne: "{name} — {size} m², 1 guest",
     title: "Our rooms",
     subtitle:
       "55 rooms split between single, double, twin and triple. All with private bathroom, air conditioning, cable TV and free Wi-Fi.",
@@ -102,6 +114,11 @@ export const en: Dictionary = {
     breakfastIncluded: "Breakfast included in the rate",
   },
   services: {
+    meta: {
+      title: "Hotel services and amenities",
+      description:
+        "Services and amenities at Hotel Vice-Rei in Porto: free Wi-Fi, air-conditioned rooms and a team that speaks five languages. See what to expect.",
+    },
     title: "Hotel services",
     subtitle:
       "Small touches and useful conveniences to make your stay memorable.",
@@ -109,6 +126,14 @@ export const en: Dictionary = {
     languagesTitle: "Service in",
   },
   about: {
+    meta: {
+      title: "About our hotel in Porto",
+      description:
+        "Meet Hotel Vice-Rei: a classic 2-star hotel on Rua Júlio Dinis in Porto, with almost 50 years of personal, attentive service to every guest.",
+    },
+    ctaTitle: "Book direct with us",
+    ctaBody:
+      "On the official website you see the available rates, choose your room and get your confirmation by email.",
     title: "About",
     subtitle: "Hotel Vice-Rei · Porto",
     intro: "Welcome to Hotel Vice-Rei",
@@ -141,6 +166,11 @@ export const en: Dictionary = {
     ],
   },
   offers: {
+    meta: {
+      title: "Hotel offers and stay packages in Porto",
+      description:
+        "Offers and packages at Hotel Vice-Rei in Porto for short breaks, longer stays and special occasions. Book direct on the official hotel website.",
+    },
     title: "Offers & packages",
     subtitle:
       "Rates curated for different stays and occasions. Booking direct always guarantees the best price.",
@@ -152,6 +182,12 @@ export const en: Dictionary = {
     bookOffer: "Book package",
   },
   gallery: {
+    meta: {
+      title: "Hotel photo gallery",
+      description:
+        "Photos of Hotel Vice-Rei in Porto: rooms, common areas, the breakfast room and the city around us. Take a look at the hotel before you book.",
+    },
+    photoAlt: "Hotel Vice-Rei, Porto — photo {n}",
     title: "Gallery",
     subtitle: "A glimpse of what awaits you at Hotel Vice-Rei.",
     panoramaEyebrow: "Multimedia · 360º",
@@ -164,6 +200,11 @@ export const en: Dictionary = {
       "Starting loads an external 3D library (A-Frame). It only loads after you click.",
   },
   contact: {
+    meta: {
+      title: "Contact, address and directions",
+      description:
+        "Contact Hotel Vice-Rei: Rua Júlio Dinis, 779, 4050-326 Porto. Phone, email, contact form and a map with the places of interest nearby.",
+    },
     title: "Contact",
     subtitle:
       "We're here to help. Reach us by phone, email or through the form.",
@@ -235,13 +276,28 @@ export const en: Dictionary = {
   cookies: {
     title: "Your privacy",
     message:
-      "We use cookies that are essential to run the site and, with your consent, cookies to analyse browsing. You can accept, reject or learn more.",
+      "We use cookies that are essential for the website and, with your consent, analytics and marketing cookies. You can accept, reject or choose.",
     accept: "Accept all",
     reject: "Reject non-essential",
     learnMore: "Learn more about cookies",
     settings: "Settings",
+    preferences: "Cookie preferences",
+    customize: "Customise",
+    save: "Save choices",
+    necessary: "Essential",
+    necessaryDesc: "Required for the website to work.",
+    analytics: "Analytics",
+    analyticsDesc: "Measure visits and how the site is used (Google Analytics, Microsoft Clarity, Hotjar) so we can improve it.",
+    marketing: "Marketing",
+    marketingDesc: "Measure how well our ads perform (Google Ads, Meta Pixel).",
+    alwaysOn: "Always on",
   },
   privacy: {
+    meta: {
+      title: "Privacy and cookie policy",
+      description:
+        "How Hotel Vice-Rei collects, uses and protects your personal data and which cookies it uses, in line with the GDPR. Learn about your rights.",
+    },
     title: "Privacy Policy",
     subtitle:
       "How Hotel Vice-Rei collects, uses and protects your personal data, in compliance with the GDPR.",
@@ -269,11 +325,16 @@ export const en: Dictionary = {
       },
       {
         heading: "6. Cookies",
-        body: "We use cookies essential to the operation of the site and, with your consent, analytics cookies. You can manage your preferences at any time through the cookie banner or your browser settings.",
+        body: "We use cookies essential to the operation of the site and, with your consent, analytics cookies (Google Analytics, Microsoft Clarity, Hotjar) and marketing cookies (Google Ads, Meta Pixel). You can change your choice at any time via the “Cookie preferences” link in the footer or your browser settings.",
       },
     ],
   },
   accessibility: {
+    meta: {
+      title: "Website accessibility statement",
+      description:
+        "Hotel Vice-Rei's commitment to an accessible website: the measures in place, known limitations and how to reach us if you find a barrier.",
+    },
     title: "Accessibility",
     subtitle:
       "We are committed to making the Hotel Vice-Rei website usable by everyone, regardless of their abilities.",
@@ -315,12 +376,20 @@ export const en: Dictionary = {
     basedOn: "based on",
     reviewsWord: "reviews",
     viewOnTripadvisor: "View on TripAdvisor",
+    publicRatings: "Public ratings",
+    viewProfile: "See reviews on",
+    testimonialsNote: "Testimonials shared by guests. Public ratings are on the platforms listed above.",
   },
   bestPrice: {
     title: "Best price guaranteed",
     subtitle: "When you book directly on our site.",
   },
   cancellation: {
+    meta: {
+      title: "Cancellation policy and rates",
+      description:
+        "Cancellation terms at Hotel Vice-Rei in Porto: flexible and non-refundable rates, changes to a booking, no-shows and how refunds work.",
+    },
     title: "Cancellation & flexible rates",
     subtitle: "Clear conditions so you can book with peace of mind.",
     updated: "Last updated: June 2026",
@@ -348,6 +417,11 @@ export const en: Dictionary = {
     ],
   },
   blog: {
+    meta: {
+      title: "Blog: tips and itineraries for visiting Porto",
+      description:
+        "Tips, itineraries and news from Hotel Vice-Rei to make the most of Porto: culture, food, walks and events close to the hotel. Plan your trip.",
+    },
     title: "Blog & Porto",
     subtitle: "Tips, itineraries and news to make the most of the city.",
     readMore: "Read article",
@@ -363,33 +437,80 @@ export const en: Dictionary = {
     items: [
       {
         q: "What are the check-in and check-out times?",
-        a: "Check-in is from 3pm to 9.30pm and check-out until noon. Reception is staffed 24 hours, so you can arrive at any time of day or night. We store luggage free of charge before check-in and after check-out.",
+        a: "Check-in is from 3:00 pm to 9:30 pm and check-out is by 12:00 noon. If you expect to arrive after 9:30 pm, let us know in advance so we can arrange your arrival. Early check-in and late check-out can be requested, subject to availability.",
       },
       {
         q: "Is breakfast included?",
-        a: "Yes, continental breakfast is included in most rates. In superior rooms and the Romantic package it can be served in your room if you ask the day before.",
+        a: "It depends on the rate. When you choose a room on the website, each rate shows whether breakfast is included, and this is also stated in your booking confirmation.",
       },
       {
         q: "Can I cancel free of charge?",
-        a: "Flexible rates can be cancelled free of charge up to 48 hours before the check-in date. Non-refundable promotions are always flagged before you confirm.",
+        a: "With flexible rates, cancellation is free up to 48 hours before the check-in date. Non-refundable rates are always clearly marked before you confirm.",
       },
       {
         q: "Does the hotel have parking?",
-        a: "Yes, we have a covered, monitored garage, subject to availability. You can add it to your booking as an extra for €12 per night.",
+        a: "Please contact us before your arrival to find out which parking options are available.",
       },
       {
-        q: "How far is the historic centre and the airport?",
-        a: "We are in Porto's business district, a few minutes' walk from Casa da Música, 5 minutes from the Alfândega Congress Centre, 10 minutes from the Foz beaches and 20 minutes from Francisco Sá Carneiro Airport.",
+        q: "Where is the hotel?",
+        a: "At Rua Júlio Dinis, 779, in Porto's business district, close to Casa da Música. The historic centre and Francisco Sá Carneiro Airport can be reached by metro, bus or taxi.",
+      },
+      {
+        q: "Is there Wi-Fi?",
+        a: "Yes, Wi-Fi is free for guests.",
+      },
+      {
+        q: "Are cots or extra beds available?",
+        a: "No. The hotel has no cots or extra beds. For three people, the Triple room has three single beds.",
+      },
+      {
+        q: "Can I travel with children?",
+        a: "Yes. Enter the number and ages of the children when booking: they count towards the room's maximum occupancy, as there are no cots or extra beds.",
+      },
+      {
+        q: "Is there a tourist tax?",
+        a: "Yes. Porto's municipal tourist tax is charged per guest per night, under the terms and exemptions set by the city council, and is paid at the hotel.",
       },
       {
         q: "Are pets allowed?",
-        a: "No, the hotel does not accept pets, other than clearly identified guide dogs. If you are travelling with an animal, contact us before booking and we will help you find an alternative nearby.",
+        a: "No, pets are not allowed, with the exception of assistance dogs.",
+      },
+      {
+        q: "Is smoking allowed?",
+        a: "No. Smoking is not allowed in the rooms or in any indoor area of the hotel.",
       },
       {
         q: "Which languages does the team speak?",
-        a: "Our team serves guests in Portuguese, English, Spanish, French and Italian.",
+        a: "Our team speaks Portuguese, English, Spanish, French and Italian.",
       },
     ],
+  },
+  map: {
+    eyebrow: "Around the hotel",
+    title: "What's nearby",
+    show: "Show map",
+    hint: "The interactive map uses external services (tiles from OpenFreeMap, the map engine via jsDelivr) and only loads after you click.",
+    loading: "Loading map…",
+    error: "The map could not be loaded. Use the list below or open Google Maps.",
+    hotel: "Hotel Vice-Rei",
+    legend: "Legend",
+    all: "All",
+    filter: "Filter by category",
+    listTitle: "Places of interest",
+    walk: "{n} min walk",
+    website: "Learn more",
+    showOnMap: "Show on map",
+    mapLabel: "Interactive map with the hotel and places of interest",
+    categories: {
+      sight: "Landmarks",
+      museum: "Museums",
+      food: "Restaurants",
+      shopping: "Shopping",
+      transport: "Transport",
+      nature: "Parks and nature",
+      nightlife: "Nightlife",
+      other: "Other",
+    },
   },
   a11y: {
     skipToContent: "Skip to content",
@@ -404,8 +525,20 @@ export const en: Dictionary = {
     previousImage: "Previous image",
     nextImage: "Next image",
     closeGallery: "Close gallery",
+    breadcrumb: "Breadcrumb",
+    mainNav: "Main navigation",
+    mobileNav: "Navigation menu",
+    footerNav: "Quick links",
+    legalNav: "Legal information",
+    photo: "Photo {n}",
+    openImage: "Open image {n}",
   },
   notFound: {
+    meta: {
+      title: "Page not found",
+      description:
+        "The page you are looking for does not exist or has been moved.",
+    },
     code: "404",
     title: "Page not found",
     body: "The page you are looking for does not exist or has moved.",

@@ -1,20 +1,28 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
+import { pageMeta, parentImages } from "@/lib/seo";
 import { PageHero } from "@/components/PageHero";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
 import { Reveal } from "@/components/animations/Reveal";
 
 type Props = { params: Promise<{ locale: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
-  return {
-    title: dict.accessibility.title,
-    description: dict.accessibility.subtitle,
-  };
+  return pageMeta({
+    locale,
+    path: "/acessibilidade",
+    title: dict.accessibility.meta.title,
+    description: dict.accessibility.meta.description,
+    fallbackImages: await parentImages(parent),
+  });
 }
 
 export default async function AccessibilityPage({ params }: Props) {
@@ -30,6 +38,13 @@ export default async function AccessibilityPage({ params }: Props) {
         title={dict.accessibility.title}
         subtitle={dict.accessibility.subtitle}
         image="/images/hero/legal.webp"
+      />
+
+      <PageBreadcrumbs
+        locale={locale}
+        dict={dict}
+        path="/acessibilidade"
+        crumbs={[{ label: dict.accessibility.title }]}
       />
 
       <section className="container-x py-16 sm:py-20 lg:py-24">

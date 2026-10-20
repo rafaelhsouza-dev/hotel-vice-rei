@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -8,7 +9,11 @@ import {
   getOffers,
   getTestimonials,
   getHotel,
+  getSeo,
 } from "@/lib/repo/content";
+import { ratingsFrom } from "@/lib/facts";
+import { pageMeta, parentImages } from "@/lib/seo";
+import { PublicRatings } from "@/components/site/PublicRatings";
 import { HeroHome } from "@/components/HeroHome";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/animations/Reveal";
@@ -21,6 +26,23 @@ import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ locale: string }> };
 
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = getDictionary(locale);
+  return pageMeta({
+    locale,
+    path: "",
+    title: dict.home.meta.title,
+    description: dict.home.meta.description,
+    absoluteTitle: true,
+    fallbackImages: await parentImages(parent),
+  });
+}
+
 /** Safety net: content edited in the admin already invalidates on demand. */
 export const revalidate = 300;
 
@@ -30,13 +52,15 @@ export default async function HomePage({ params }: Props) {
   const locale = raw as Locale;
   const dict = getDictionary(locale);
 
-  const [rooms, services, offers, testimonials, hotel] = await Promise.all([
+  const [rooms, services, offers, testimonials, hotel, seo] = await Promise.all([
     getRooms(),
     getServices(),
     getOffers(),
     getTestimonials(),
     getHotel(),
+    getSeo(),
   ]);
+  const ratings = ratingsFrom(seo, hotel);
   const featuredRooms = rooms.slice(0, 3);
 
   return (
@@ -69,7 +93,7 @@ export default async function HomePage({ params }: Props) {
         <div className="grid gap-12 lg:grid-cols-12 items-center">
           <Reveal as="div" className="lg:col-span-5" stagger>
             <span className="eyebrow">{dict.home.intro.eyebrow}</span>
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight text-balance">
+            <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight text-balance">
               {dict.home.intro.title}
             </h2>
             <p className="mt-6 text-lg text-[var(--color-ink-soft)] leading-relaxed">
@@ -138,7 +162,7 @@ export default async function HomePage({ params }: Props) {
           <Reveal className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div>
               <span className="eyebrow">{dict.home.rooms.eyebrow}</span>
-              <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+              <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
                 {dict.home.rooms.title}
               </h2>
               <p className="mt-4 max-w-xl text-[var(--color-ink-soft)]">
@@ -191,8 +215,9 @@ export default async function HomePage({ params }: Props) {
                     <span className="inline-flex items-center gap-1.5">
                       <Icon name="users" width={14} height={14} /> {room.capacity} {dict.rooms.people}
                     </span>
-                    <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-flex min-w-0 items-center gap-1.5">
                       <Icon name="bed" width={14} height={14} />
+                      <span className="truncate">{room.bed[locale]}</span>
                     </span>
                     <span>{room.size}m²</span>
                   </div>
@@ -211,7 +236,7 @@ export default async function HomePage({ params }: Props) {
       <section className="container-x py-16 sm:py-20 lg:py-28">
         <Reveal className="max-w-2xl">
           <span className="eyebrow">{dict.home.services.eyebrow}</span>
-          <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+          <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
             {dict.home.services.title}
           </h2>
         </Reveal>
@@ -252,7 +277,7 @@ export default async function HomePage({ params }: Props) {
                 <span aria-hidden className="h-px w-6 bg-[var(--color-accent-soft)]" />
                 {dict.home.offers.eyebrow}
               </span>
-              <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+              <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
                 {dict.home.offers.title}
               </h2>
             </div>
@@ -326,35 +351,12 @@ export default async function HomePage({ params }: Props) {
         <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <span className="eyebrow">{dict.home.testimonials.eyebrow}</span>
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+            <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
               {dict.home.testimonials.title}
             </h2>
           </div>
-          <a
-            href={hotel.social.tripadvisor}
-            target="_blank"
-            rel="noreferrer"
-            className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-white hairline px-5 py-4 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-floating)]"
-          >
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-[var(--color-success)]/10 font-display text-lg text-[var(--color-success)]">
-              {hotel.rating.score}
-            </span>
-            <span className="leading-tight">
-              <span className="flex items-center gap-0.5 text-[var(--color-accent)]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Icon key={i} name="star" width={13} height={13} />
-                ))}
-              </span>
-              <span className="mt-1 block text-xs text-[var(--color-ink-muted)]">
-                {dict.reviews.basedOn} {hotel.rating.count.toLocaleString()}{" "}
-                {dict.reviews.reviewsWord}
-              </span>
-              <span className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-deep)] transition-all group-hover:gap-2">
-                {dict.reviews.viewOnTripadvisor}
-                <Icon name="arrow-right" width={12} height={12} />
-              </span>
-            </span>
-          </a>
+          {/* Real public scores only; the demo 4.6/1280 is never shown. */}
+          <PublicRatings ratings={ratings} dict={dict} locale={locale} />
         </Reveal>
         <Reveal
           className="mt-12 grid gap-6 md:grid-cols-3"
@@ -371,7 +373,7 @@ export default async function HomePage({ params }: Props) {
                   <Icon key={i} name="star" width={14} height={14} />
                 ))}
               </div>
-              <blockquote className="font-display text-xl leading-snug tracking-tight">
+              <blockquote className="font-display text-lg leading-snug tracking-tight sm:text-xl">
                 “{t.quote[locale]}”
               </blockquote>
               <figcaption className="mt-auto text-sm">
@@ -383,6 +385,9 @@ export default async function HomePage({ params }: Props) {
             </figure>
           ))}
         </Reveal>
+        <p className="mt-6 text-xs text-[var(--color-ink-muted)]">
+          {dict.reviews.testimonialsNote}
+        </p>
       </section>
 
       {/* LOCATION */}
@@ -390,7 +395,7 @@ export default async function HomePage({ params }: Props) {
         <div className="container-x py-16 sm:py-20 lg:py-28 grid gap-12 lg:grid-cols-2 items-center">
           <Reveal stagger>
             <span className="eyebrow">{dict.home.location.eyebrow}</span>
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl leading-tight tracking-tight">
+            <h2 className="mt-4 font-display text-3xl sm:text-5xl leading-tight tracking-tight">
               {dict.home.location.title}
             </h2>
             <p className="mt-6 text-lg text-[var(--color-ink-soft)] leading-relaxed">
@@ -411,7 +416,12 @@ export default async function HomePage({ params }: Props) {
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-ink-muted)]">
                   {dict.contact.phone}
                 </p>
-                <p className="mt-2 font-medium">{hotel.phones[0]}</p>
+                <a
+                  href={`tel:${hotel.phones[0].replace(/\s+/g, "")}`}
+                  className="mt-2 inline-block font-medium hover:text-[var(--color-accent-deep)]"
+                >
+                  {hotel.phones[0]}
+                </a>
               </div>
             </div>
             <Link
@@ -429,6 +439,7 @@ export default async function HomePage({ params }: Props) {
               lat={hotel.coords.lat}
               lng={hotel.coords.lng}
               dict={dict}
+              locale={locale}
               label={`${hotel.name} — ${hotel.address.street}`}
               address={`${hotel.name}, ${hotel.address.street}, ${hotel.address.postalCode} ${hotel.address.city}`}
             />

@@ -2,14 +2,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
-import { getRooms, getRoomBySlug, getHotel } from "@/lib/repo/content";
+import { getRooms, getRoomBySlug } from "@/lib/repo/content";
 import { SITE_URL } from "@/lib/site";
 import type { Metadata } from "next";
+import { BCP47, jsonLdScript, pageMeta } from "@/lib/seo";
+import { HOTEL_ID } from "@/components/JsonLd";
+import { PageBreadcrumbs } from "@/components/site/PageBreadcrumbs";
+import { lightboxLabels } from "@/components/site/labels";
 import { PageHero } from "@/components/PageHero";
 import { Icon } from "@/components/Icon";
 import { LightboxGallery } from "@/components/LightboxGallery";
 import { Panorama360 } from "@/components/Panorama360";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -24,34 +27,33 @@ export async function generateStaticParams() {
   return out;
 }
 
+function roomTitle(template: { many: string; one: string }, name: string, size: number, capacity: number) {
+  return (capacity === 1 ? template.one : template.many)
+    .replace("{name}", name)
+    .replace("{size}", String(size))
+    .replace("{n}", String(capacity));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
   const room = await getRoomBySlug(slug);
   if (!room) return {};
+  const dict = getDictionary(locale);
 
-  const title = `${room.name[locale]} — ${room.size}m², até ${room.capacity} pessoas`;
-  const description = room.shortDescription[locale];
-  const path = `/quartos/${room.slug}`;
-
-  return {
-    title,
-    description,
-    alternates: {
-      canonical: `${SITE_URL}/${locale}${path}`,
-      languages: Object.fromEntries([
-        ...locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
-        ["x-default", `${SITE_URL}/pt${path}`],
-      ]),
-    },
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: `${SITE_URL}/${locale}${path}`,
-      images: [{ url: `${SITE_URL}${room.image}`, width: 1200, height: 630, alt: room.name[locale] }],
-    },
-  };
+  return pageMeta({
+    locale,
+    path: `/quartos/${room.slug}`,
+    title: roomTitle(
+      { many: dict.rooms.roomTitle, one: dict.rooms.roomTitleOne },
+      room.name[locale],
+      room.size,
+      room.capacity,
+    ),
+    description: room.shortDescription[locale],
+    image: room.image,
+    imageAlt: room.name[locale],
+  });
 }
 
 export default async function RoomDetailPage({ params }: Props) {
@@ -59,8 +61,40 @@ export default async function RoomDetailPage({ params }: Props) {
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const dict = getDictionary(locale);
-  const [room, hotel] = await Promise.all([getRoomBySlug(slug), getHotel()]);
+  const room = await getRoomBySlug(slug);
   if (!room) notFound();
+  const url = `${SITE_URL}/${locale}/quartos/${room.slug}`;
+
+  const roomLd = {
+    "@context": "https://schema.org",
+    "@type": "HotelRoom",
+    "@id": `${url}#room`,
+    name: room.name[locale],
+    description: room.shortDescription[locale],
+    url,
+    image: room.gallery.length
+      ? room.gallery.map((src) => `${SITE_URL}${src}`)
+      : `${SITE_URL}${room.image}`,
+    bed: { "@type": "BedDetails", typeOfBed: room.bed[locale] },
+    occupancy: { "@type": "QuantitativeValue", maxValue: room.capacity, unitText: "person" },
+    floorSize: { "@type": "QuantitativeValue", value: room.size, unitCode: "MTK" },
+    amenityFeature: room.amenities[locale].map((name) => ({
+      "@type": "LocationFeatureSpecification",
+      name,
+      value: true,
+    })),
+    containedInPlace: { "@id": HOTEL_ID },
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}/${locale}/reservar?room=${room.id}`,
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        minPrice: room.priceFrom,
+        priceCurrency: "EUR",
+        unitText: "night",
+      },
+    },
+  };
 
   return (
     <div>
@@ -71,14 +105,16 @@ export default async function RoomDetailPage({ params }: Props) {
         image={room.image}
       />
 
-      <Breadcrumbs
+      <PageBreadcrumbs
         locale={locale}
-        homeLabel={dict.nav.home}
+        dict={dict}
+        path={`/quartos/${room.slug}`}
         crumbs={[
           { label: dict.nav.rooms, href: `/${locale}/quartos` },
           { label: room.name[locale] },
         ]}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(roomLd)} />
 
       <section className="container-x py-12 sm:py-16 lg:py-20 grid gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6 text-lg text-[var(--color-ink-soft)] leading-relaxed">
@@ -87,11 +123,12 @@ export default async function RoomDetailPage({ params }: Props) {
           ))}
 
           <LightboxGallery
-            className="grid grid-cols-2 gap-4 pt-6"
+            className="grid grid-cols-2 gap-3 pt-6 sm:gap-4"
             aspectClass="aspect-[4/3]"
-            images={room.gallery.map((src) => ({
+            labels={lightboxLabels(dict)}
+            images={room.gallery.map((src, i) => ({
               src,
-              alt: room.name[locale],
+              alt: `${room.name[locale]} — ${dict.a11y.photo.replace("{n}", String(i + 1))}`,
               caption: room.name[locale],
             }))}
           />
@@ -116,7 +153,7 @@ export default async function RoomDetailPage({ params }: Props) {
             <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-ink-muted)]">
               {dict.rooms.fromPrice}
             </p>
-            <p className="mt-2 font-display text-4xl">{room.priceFrom}€</p>
+            <p className="mt-2 font-display text-4xl">{new Intl.NumberFormat(BCP47[locale], { style: "currency", currency: "EUR" }).format(room.priceFrom)}</p>
             <p className="text-xs text-[var(--color-ink-muted)] mt-1">
               {dict.booking.night} · {dict.booking.bestPrice}
             </p>
@@ -147,7 +184,8 @@ export default async function RoomDetailPage({ params }: Props) {
         </aside>
       </section>
 
-      {/* 360º ROOM VIEW */}
+      {/* 360º ROOM VIEW — only for rooms that have their own panorama. */}
+      {room.panorama360 && (
       <section className="bg-[var(--color-line-soft)]">
         <div className="container-x py-16 sm:py-20 lg:py-24">
           <div className="max-w-2xl">
@@ -168,6 +206,7 @@ export default async function RoomDetailPage({ params }: Props) {
           </div>
         </div>
       </section>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { MOTION_OK } from "./motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -29,33 +30,32 @@ export function Counter({ value, className }: Props) {
 
     const target = parseFloat(match[1]);
     const suffix = value.slice(match[1].length);
-    const obj = { v: 0 };
 
-    setDisplay("0" + suffix);
-
-    const tween = gsap.to(obj, {
-      v: target,
-      duration: 1.6,
-      ease: "power3.out",
-      paused: true,
-      onUpdate: () => {
-        const cur =
-          target % 1 === 0 ? Math.round(obj.v) : obj.v.toFixed(1);
-        setDisplay(`${cur}${suffix}`);
-      },
+    // Reduced motion: the final value stays as rendered, no count-up.
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      const obj = { v: 0 };
+      setDisplay("0" + suffix);
+      const tween = gsap.to(obj, {
+        v: target,
+        duration: 1.6,
+        ease: "power3.out",
+        paused: true,
+        onUpdate: () => {
+          const cur = target % 1 === 0 ? Math.round(obj.v) : obj.v.toFixed(1);
+          setDisplay(`${cur}${suffix}`);
+        },
+      });
+      ScrollTrigger.create({
+        trigger: el,
+        start: "top 90%",
+        onEnter: () => tween.play(),
+        once: true,
+      });
+      return () => setDisplay(value);
     });
 
-    const st = ScrollTrigger.create({
-      trigger: el,
-      start: "top 90%",
-      onEnter: () => tween.play(),
-      once: true,
-    });
-
-    return () => {
-      tween.kill();
-      st.kill();
-    };
+    return () => mm.revert();
   }, [value]);
 
   return (

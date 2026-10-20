@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { MOTION_OK } from "./motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -23,20 +24,20 @@ export function Parallax({
     const el = ref.current;
     if (!el) return;
 
-    const tween = gsap.to(el, {
-      y: -amount,
-      ease: "none",
-      scrollTrigger: {
-        trigger: el,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-      },
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      gsap.to(el, {
+        y: -amount,
+        ease: "none",
+        scrollTrigger: {
+          trigger: el,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
     });
-    return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
-    };
+    return () => mm.revert();
   }, [amount]);
 
   return (

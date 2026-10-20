@@ -4,7 +4,7 @@ export const es: Dictionary = {
   meta: {
     title: "Hotel Vice-Rei · Oporto — Elegancia, confort y calidad",
     description:
-      "Hotel Vice-Rei en Oporto. 55 habitaciones, recepción 24h, Wi-Fi gratis y ubicación privilegiada en la Rua Júlio Dinis. Reserva directa con el mejor precio garantizado.",
+      "Hotel Vice-Rei, 2 estrellas en Oporto: 55 habitaciones en la Rua Júlio Dinis, junto a la Casa da Música, con Wi-Fi gratis. Reserva en la web oficial.",
   },
   nav: {
     home: "Inicio",
@@ -53,6 +53,11 @@ export const es: Dictionary = {
     bestPrice: "Mejor precio garantizado",
   },
   home: {
+    meta: {
+      title: "Hotel Vice-Rei Oporto · Hotel de 2 estrellas en Júlio Dinis",
+      description:
+        "Hotel Vice-Rei, 2 estrellas en Oporto: 55 habitaciones en la Rua Júlio Dinis, junto a la Casa da Música, con Wi-Fi gratis. Reserva en la web oficial.",
+    },
     intro: {
       eyebrow: "Sobre el hotel",
       title: "Un clásico de Oporto con casi 50 años.",
@@ -77,7 +82,7 @@ export const es: Dictionary = {
       title: "Paquetes para disfrutar Oporto",
     },
     testimonials: {
-      eyebrow: "Huéspedes",
+      eyebrow: "Testimonios de huéspedes",
       title: "Lo que dicen de nosotros",
     },
     location: {
@@ -87,6 +92,13 @@ export const es: Dictionary = {
     },
   },
   rooms: {
+    meta: {
+      title: "Habitaciones en Oporto: individual, doble y triple",
+      description:
+        "Seis tipos de habitación en el Hotel Vice-Rei de Oporto: Individual, Twin/Doble, Superior, Triple y Romántica, con baño privado y Wi-Fi gratuito.",
+    },
+    roomTitle: "{name} — {size} m², hasta {n} personas",
+    roomTitleOne: "{name} — {size} m², 1 persona",
     title: "Nuestras habitaciones",
     subtitle:
       "55 habitaciones distribuidas en individuales, dobles, twin y triples. Todas con baño privado, aire acondicionado, TV por cable y Wi-Fi gratuito.",
@@ -102,6 +114,11 @@ export const es: Dictionary = {
     breakfastIncluded: "Desayuno incluido en la tarifa",
   },
   services: {
+    meta: {
+      title: "Servicios y comodidades del hotel",
+      description:
+        "Servicios y comodidades del Hotel Vice-Rei en Oporto: Wi-Fi gratuito, habitaciones climatizadas y atención en cinco idiomas. Descubre lo que te espera.",
+    },
     title: "Servicios del hotel",
     subtitle:
       "Pequeños cuidados y comodidades para que tu estancia sea memorable.",
@@ -109,6 +126,14 @@ export const es: Dictionary = {
     languagesTitle: "Atención en",
   },
   about: {
+    meta: {
+      title: "Presentación del hotel en Oporto",
+      description:
+        "Conoce el Hotel Vice-Rei: un hotel clásico de 2 estrellas en la Rua Júlio Dinis de Oporto, con casi 50 años de atención personalizada al huésped.",
+    },
+    ctaTitle: "Reserva directamente con nosotros",
+    ctaBody:
+      "En la web oficial ves las tarifas disponibles, eliges la habitación y recibes la confirmación por email.",
     title: "Sobre nosotros",
     subtitle: "Hotel Vice-Rei · Oporto",
     intro: "Bienvenidos al Hotel Vice-Rei",
@@ -141,6 +166,11 @@ export const es: Dictionary = {
     ],
   },
   offers: {
+    meta: {
+      title: "Ofertas y paquetes de estancia en Oporto",
+      description:
+        "Ofertas y paquetes del Hotel Vice-Rei en Oporto para escapadas, estancias más largas y ocasiones especiales. Reserva directamente en la web oficial.",
+    },
     title: "Ofertas y paquetes",
     subtitle:
       "Tarifas pensadas para diferentes estancias y ocasiones. Reservar directamente siempre garantiza el mejor precio.",
@@ -152,6 +182,12 @@ export const es: Dictionary = {
     bookOffer: "Reservar paquete",
   },
   gallery: {
+    meta: {
+      title: "Galería de fotos del hotel",
+      description:
+        "Fotos del Hotel Vice-Rei en Oporto: habitaciones, zonas comunes, la sala de desayunos y la ciudad que nos rodea. Mira el hotel antes de reservar.",
+    },
+    photoAlt: "Hotel Vice-Rei, Oporto — foto {n}",
     title: "Galería",
     subtitle: "Un vistazo a lo que te espera en el Hotel Vice-Rei.",
     panoramaEyebrow: "Multimedia · 360º",
@@ -164,6 +200,11 @@ export const es: Dictionary = {
       "Al iniciar se carga una biblioteca 3D externa (A-Frame). Solo se carga después de hacer clic.",
   },
   contact: {
+    meta: {
+      title: "Contacto, dirección y cómo llegar",
+      description:
+        "Contacto del Hotel Vice-Rei: Rua Júlio Dinis, 779, 4050-326 Oporto. Teléfono, email, formulario y un mapa con los puntos de interés cercanos.",
+    },
     title: "Contacto",
     subtitle:
       "Estamos aquí para ayudarte. Háblanos por teléfono, email o a través del formulario.",
@@ -235,13 +276,28 @@ export const es: Dictionary = {
   cookies: {
     title: "Tu privacidad",
     message:
-      "Utilizamos cookies esenciales para el funcionamiento del sitio y, con tu consentimiento, cookies para analizar la navegación. Puedes aceptar, rechazar o saber más.",
+      "Usamos cookies esenciales para el funcionamiento del sitio y, con tu consentimiento, cookies de análisis y de marketing. Puedes aceptar, rechazar o elegir.",
     accept: "Aceptar todo",
     reject: "Rechazar no esenciales",
     learnMore: "Saber más sobre cookies",
     settings: "Ajustes",
+    preferences: "Preferencias de cookies",
+    customize: "Personalizar",
+    save: "Guardar selección",
+    necessary: "Esenciales",
+    necessaryDesc: "Necesarias para el funcionamiento del sitio.",
+    analytics: "Análisis",
+    analyticsDesc: "Miden las visitas y el uso del sitio (Google Analytics, Microsoft Clarity, Hotjar) para mejorarlo.",
+    marketing: "Marketing",
+    marketingDesc: "Miden la eficacia de nuestros anuncios (Google Ads, Meta Pixel).",
+    alwaysOn: "Siempre activas",
   },
   privacy: {
+    meta: {
+      title: "Política de privacidad y cookies",
+      description:
+        "Cómo el Hotel Vice-Rei recoge, utiliza y protege tus datos personales y qué cookies utiliza, conforme al RGPD. Conoce tus derechos como usuario.",
+    },
     title: "Política de Privacidad",
     subtitle:
       "Cómo el Hotel Vice-Rei recoge, utiliza y protege tus datos personales, en cumplimiento del RGPD.",
@@ -269,11 +325,16 @@ export const es: Dictionary = {
       },
       {
         heading: "6. Cookies",
-        body: "Utilizamos cookies esenciales para el funcionamiento del sitio y, con tu consentimiento, cookies analíticas. Puedes gestionar tus preferencias en cualquier momento mediante el banner de cookies o los ajustes de tu navegador.",
+        body: "Utilizamos cookies esenciales para el funcionamiento del sitio y, con tu consentimiento, cookies de análisis (Google Analytics, Microsoft Clarity, Hotjar) y de marketing (Google Ads, Meta Pixel). Puedes cambiar tu elección en cualquier momento en el enlace «Preferencias de cookies» del pie de página o en los ajustes de tu navegador.",
       },
     ],
   },
   accessibility: {
+    meta: {
+      title: "Declaración de accesibilidad del sitio",
+      description:
+        "El compromiso del Hotel Vice-Rei con un sitio web accesible: medidas aplicadas, limitaciones conocidas y cómo contactarnos si encuentras barreras.",
+    },
     title: "Accesibilidad",
     subtitle:
       "Nos comprometemos a que el sitio del Hotel Vice-Rei sea utilizable por todas las personas, con independencia de sus capacidades.",
@@ -315,12 +376,20 @@ export const es: Dictionary = {
     basedOn: "según",
     reviewsWord: "opiniones",
     viewOnTripadvisor: "Ver en TripAdvisor",
+    publicRatings: "Valoraciones públicas",
+    viewProfile: "Ver opiniones en",
+    testimonialsNote: "Testimonios compartidos por huéspedes. Las valoraciones públicas están en las plataformas indicadas arriba.",
   },
   bestPrice: {
     title: "Mejor precio garantizado",
     subtitle: "Reservando directamente en nuestra web.",
   },
   cancellation: {
+    meta: {
+      title: "Política de cancelación y tarifas",
+      description:
+        "Condiciones de cancelación del Hotel Vice-Rei en Oporto: tarifas flexibles y no reembolsables, cambios, no presentación y reembolsos.",
+    },
     title: "Cancelación y tarifas flexibles",
     subtitle: "Condiciones claras para reservar con tranquilidad.",
     updated: "Última actualización: junio de 2026",
@@ -348,6 +417,11 @@ export const es: Dictionary = {
     ],
   },
   blog: {
+    meta: {
+      title: "Blog: consejos y rutas para visitar Oporto",
+      description:
+        "Consejos, rutas y novedades del Hotel Vice-Rei para aprovechar Oporto al máximo: cultura, gastronomía, paseos y eventos cerca del hotel.",
+    },
     title: "Blog & Oporto",
     subtitle:
       "Consejos, rutas y novedades para aprovechar la ciudad al máximo.",
@@ -363,34 +437,81 @@ export const es: Dictionary = {
     title: "Lo que preguntan los huéspedes antes de reservar",
     items: [
       {
-        q: "¿A qué hora son la entrada y la salida?",
-        a: "La entrada es de 15h a 21:30 y la salida hasta las 12h. La recepción funciona 24 horas, así que puede llegar a cualquier hora. Guardamos el equipaje sin coste antes de la entrada y después de la salida.",
+        q: "¿A qué hora son el check-in y el check-out?",
+        a: "El check-in es de 15:00 a 21:30 y el check-out hasta las 12:00. Si prevés llegar después de las 21:30, avísanos con antelación para organizar tu llegada. Puedes solicitar check-in anticipado o check-out tardío, sujetos a disponibilidad.",
       },
       {
-        q: "¿El desayuno está incluido?",
-        a: "Sí, el desayuno continental está incluido en la mayoría de las tarifas. En las habitaciones superiores y en el paquete Romántico puede servirse en la habitación, solicitándolo la víspera.",
+        q: "¿Está incluido el desayuno?",
+        a: "Depende de la tarifa. Al elegir la habitación en la web, cada tarifa indica si incluye desayuno; esta información también figura en la confirmación de la reserva.",
       },
       {
         q: "¿Puedo cancelar sin coste?",
-        a: "En las tarifas flexibles la cancelación es gratuita hasta 48 horas antes de la fecha de entrada. Las promociones no reembolsables se indican siempre antes de confirmar.",
+        a: "En las tarifas flexibles la cancelación es gratuita hasta 48 horas antes de la fecha de check-in. Las tarifas no reembolsables siempre se indican antes de confirmar.",
       },
       {
         q: "¿El hotel tiene aparcamiento?",
-        a: "Sí, disponemos de garaje cubierto y vigilado, sujeto a disponibilidad. Puede añadirlo a la reserva como extra por 12 € por noche.",
+        a: "Contacta con nosotros antes de tu llegada para conocer las opciones de aparcamiento disponibles.",
       },
       {
-        q: "¿A qué distancia está del centro histórico y del aeropuerto?",
-        a: "Estamos en el Centro de Negocios de Oporto, a pocos minutos a pie de la Casa da Música, a 5 minutos del Centro de Congresos de la Alfândega, a 10 minutos de las playas de Foz y a 20 minutos del aeropuerto Francisco Sá Carneiro.",
+        q: "¿Dónde está el hotel?",
+        a: "En la Rua Júlio Dinis, 779, en el centro de negocios de Oporto, cerca de la Casa da Música. El centro histórico y el aeropuerto Francisco Sá Carneiro son accesibles en metro, autobús o taxi.",
+      },
+      {
+        q: "¿Hay Wi-Fi?",
+        a: "Sí, el Wi-Fi es gratuito para los huéspedes.",
+      },
+      {
+        q: "¿Hay cunas o camas supletorias?",
+        a: "No. El hotel no dispone de cunas ni de camas supletorias. Para tres personas, la habitación Triple tiene tres camas individuales.",
+      },
+      {
+        q: "¿Puedo viajar con niños?",
+        a: "Sí. Indica el número y la edad de los niños al reservar: cuentan para la capacidad máxima de la habitación, ya que no hay cunas ni camas supletorias.",
+      },
+      {
+        q: "¿Hay tasa turística?",
+        a: "Sí. La tasa turística municipal de Oporto se cobra por huésped y por noche, en los términos y con las exenciones que fija el ayuntamiento, y se paga en el hotel.",
       },
       {
         q: "¿Se admiten mascotas?",
-        a: "No, el hotel no admite mascotas, salvo perros guía debidamente identificados. Si viaja con un animal, contáctenos antes de reservar y le ayudaremos a encontrar una alternativa cercana.",
+        a: "No, el hotel no admite mascotas, con excepción de los perros de asistencia.",
       },
       {
-        q: "¿En qué idiomas atienden?",
+        q: "¿Se puede fumar?",
+        a: "No. No está permitido fumar en las habitaciones ni en las zonas interiores del hotel.",
+      },
+      {
+        q: "¿En qué idiomas se atiende a los huéspedes?",
         a: "El equipo atiende en portugués, inglés, español, francés e italiano.",
       },
     ],
+  },
+  map: {
+    eyebrow: "Alrededor del hotel",
+    title: "Qué hay cerca",
+    show: "Mostrar mapa",
+    hint: "El mapa interactivo usa servicios externos (teselas de OpenFreeMap y el motor del mapa vía jsDelivr) y solo se carga después de hacer clic.",
+    loading: "Cargando el mapa…",
+    error: "No se ha podido cargar el mapa. Usa la lista de abajo o ábrelo en Google Maps.",
+    hotel: "Hotel Vice-Rei",
+    legend: "Leyenda",
+    all: "Todos",
+    filter: "Filtrar por categoría",
+    listTitle: "Puntos de interés",
+    walk: "{n} min a pie",
+    website: "Más información",
+    showOnMap: "Ver en el mapa",
+    mapLabel: "Mapa interactivo con el hotel y los puntos de interés",
+    categories: {
+      sight: "Monumentos",
+      museum: "Museos",
+      food: "Restaurantes",
+      shopping: "Compras",
+      transport: "Transporte",
+      nature: "Parques y naturaleza",
+      nightlife: "Vida nocturna",
+      other: "Otros",
+    },
   },
   a11y: {
     skipToContent: "Saltar al contenido",
@@ -405,8 +526,20 @@ export const es: Dictionary = {
     previousImage: "Imagen anterior",
     nextImage: "Imagen siguiente",
     closeGallery: "Cerrar galería",
+    breadcrumb: "Ruta de navegación",
+    mainNav: "Navegación principal",
+    mobileNav: "Menú de navegación",
+    footerNav: "Accesos rápidos",
+    legalNav: "Información legal",
+    photo: "Foto {n}",
+    openImage: "Abrir imagen {n}",
   },
   notFound: {
+    meta: {
+      title: "Página no encontrada",
+      description:
+        "La página que buscas no existe o se ha movido.",
+    },
     code: "404",
     title: "Página no encontrada",
     body: "La página que busca no existe o ha sido movida.",
