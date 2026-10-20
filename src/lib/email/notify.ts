@@ -62,19 +62,24 @@ async function deliver(
 }
 
 /** Right after the booking is placed (and again when a pending one confirms). */
-export async function notifyBookingPlaced(bookingId: string, payment?: { entity: string; reference: string; amount: number; expiresAt: string | null } | { url: string }) {
+export async function notifyBookingPlaced(
+  bookingId: string,
+  payment?: { entity: string; reference: string; amount: number; expiresAt: string | null } | { url: string },
+): Promise<boolean> {
   try {
     const b = await getBooking(bookingId);
-    if (!b) return;
+    if (!b) return false;
     const s = await summary(b);
     const blocks: Block[] = [];
     let payUrl: string | undefined;
     if (payment && "entity" in payment) blocks.push(multibancoBlock(s.lang, payment));
     if (payment && "url" in payment) payUrl = payment.url;
     const kind = b.status === "confirmed" ? "confirmed" : "pending";
-    await deliver(b, `booking_${kind}`, bookingEmail(kind, s, { blocks, payUrl }), true);
+    const r = await deliver(b, `booking_${kind}`, bookingEmail(kind, s, { blocks, payUrl }), true);
+    return r.ok;
   } catch (err) {
     console.error("[notify] booking placed:", (err as Error).message);
+    return false;
   }
 }
 

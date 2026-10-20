@@ -9,7 +9,6 @@ import { syncChannel, testChannel } from "@/lib/channels/engine";
 import { redeemInviteCode } from "@/lib/channels/providers/beds24";
 import { getAdapter, isProviderId } from "@/lib/channels/registry";
 import { rotateIcalToken } from "@/lib/repo/ical-token";
-import { clearAvailability, setAvailability } from "@/lib/repo/availability";
 
 /**
  * Mutations for the integrations module. Every one asserts a session, and
@@ -141,32 +140,4 @@ export async function rotateIcalTokenAction() {
     "ok",
     "Novo endereço gerado. Atualize os URLs em todas as plataformas — os anteriores deixaram de funcionar.",
   );
-}
-
-/** Manual block or stop-sell, used from the availability calendar. */
-export async function saveAvailabilityOverride(form: FormData) {
-  const actor = await requirePermission("availability.manage");
-  void auditForm(actor, "saveAvailabilityOverride", form);
-  const roomId = str(form, "roomId");
-  const from = str(form, "from");
-  const to = str(form, "to");
-  if (!roomId || !from || !to) back("/admin/disponibilidade", "erro", "Datas inválidas.");
-  if (to < from) back("/admin/disponibilidade", "erro", "A data final é anterior à inicial.");
-
-  if (str(form, "action") === "clear") {
-    await clearAvailability(roomId, from, to);
-    revalidatePath("/admin/disponibilidade");
-    back("/admin/disponibilidade", "ok", "Período reposto.");
-  }
-
-  const rateInput = str(form, "rate");
-  await setAvailability(roomId, from, to, {
-    unitsBlocked: int(form, "unitsBlocked"),
-    minStay: Math.max(1, int(form, "minStay", 1)),
-    closed: bool(form, "closed"),
-    ...(rateInput ? { rate: Number(rateInput.replace(",", ".")) } : {}),
-  });
-
-  revalidatePath("/admin/disponibilidade");
-  back("/admin/disponibilidade", "ok", "Disponibilidade atualizada.");
 }

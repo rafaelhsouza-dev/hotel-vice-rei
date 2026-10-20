@@ -162,4 +162,34 @@ describe.skipIf(!enabled)("booking core (Postgres)", () => {
     expect(b.status).toBe("cancelled");
     expect(b.cancelFee).toBe(0);
   });
+  it("extranet allotments are held back from the site and consumed by extranet bookings", async () => {
+    const id = "extranet-teste-integracao";
+    await db.query(`DELETE FROM channels WHERE id = $1`, [id]);
+    const start = (await availability.getCalendar(ROOM, plus(60), plus(60)))[0];
+    const before = start.free;
+    await db.query(
+      `INSERT INTO channels (id, provider, kind, name, enabled, settings) VALUES ($1,'extranet','api','Teste',true,$2::jsonb)`,
+      [id, JSON.stringify({ allotments: { [ROOM]: 2 } })],
+    );
+    try {
+      const held = (await availability.getCalendar(ROOM, plus(60), plus(60)))[0];
+      expect(held.free).toBe(before - 2);
+      expect(held.unitsAllotted).toBe(start.unitsAllotted + 2);
+
+      const placed = await service.placeBooking(stay(plus(60), plus(61)), guest, {
+        source: "extranet",
+        staff: true,
+        channelId: id,
+      });
+      expect(placed.ok).toBe(true);
+      if (placed.ok) created.push(placed.id);
+      // The extranet sale comes out of its own allotment, not the site's stock.
+      const after = (await availability.getCalendar(ROOM, plus(60), plus(60)))[0];
+      expect(after.free).toBe(before - 2);
+      expect(after.unitsAllotted).toBe(start.unitsAllotted + 1);
+    } finally {
+      await db.query(`DELETE FROM bookings WHERE channel_id = $1`, [id]);
+      await db.query(`DELETE FROM channels WHERE id = $1`, [id]);
+    }
+  });
 });

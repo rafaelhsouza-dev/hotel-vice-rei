@@ -20,7 +20,7 @@ import { listRatePlans } from "@/lib/repo/rate-plans";
 import { listRooms } from "@/lib/repo/admin";
 import { availableUnitsFor } from "@/lib/repo/operations";
 import { feeIfCancelledToday, canTransition } from "@/lib/booking/lifecycle";
-import { penaltyFrom, hotelNow, type PolicySnapshot } from "@/lib/booking/pricing";
+import { penaltyFrom, hotelNow, addDays, type PolicySnapshot } from "@/lib/booking/pricing";
 import { ISO_COUNTRIES, requiresBulletin } from "@/lib/siba/countries";
 import { guestUrl } from "@/lib/email/notify";
 import {
@@ -256,7 +256,13 @@ export default async function BookingDetailPage({
               <div>
                 <dt className="text-xs text-[var(--color-ink-muted)]">Cancelamento</dt>
                 <dd className="font-medium">
-                  {policy.refundable === false ? "Não reembolsável" : penaltyDate ? `Grátis até ${formatDate(penaltyDate)} (exclusive)` : "—"}
+                  {policy.refundable === false
+                    ? "Não reembolsável"
+                    : penaltyDate
+                      ? penaltyDate <= today
+                        ? `Com penalização desde ${formatDate(penaltyDate)} (hoje: ${euro.format(fee)})`
+                        : `Grátis até ${formatDate(addDays(penaltyDate, -1))}, inclusive`
+                      : "—"}
                 </dd>
               </div>
               {b.eta && (

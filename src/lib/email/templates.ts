@@ -277,7 +277,13 @@ export function stayBlock(s: StaySummary): Block {
   if (s.touristTax > 0) rows.push([t.tax, money(s.touristTax, s.lang)]);
   if (s.paid > 0) rows.push([t.paid, money(s.paid, s.lang)]);
   const policy = [
-    s.refundable && s.penaltyFrom ? t.freeCancel(date(addDay(s.penaltyFrom, -1), s.lang)) : !s.refundable ? t.nonRefundable : "",
+    s.refundable && s.penaltyFrom
+      ? s.penaltyFrom > new Date().toISOString().slice(0, 10)
+        ? t.freeCancel(date(addDay(s.penaltyFrom, -1), s.lang))
+        : ""
+      : !s.refundable
+        ? t.nonRefundable
+        : "",
     s.payAtHotel ? t.payHotel : "",
   ]
     .filter(Boolean)

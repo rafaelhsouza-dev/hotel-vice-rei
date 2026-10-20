@@ -9,7 +9,7 @@ const isoDate = (v: unknown) =>
 
 // --- bookings --------------------------------------------------------------
 
-export type BookingStatus = "pending" | "confirmed" | "checked_in" | "cancelled";
+export type BookingStatus = "pending" | "confirmed" | "checked_in" | "checked_out" | "cancelled" | "no_show";
 
 export type BookingInput = {
   firstName: string;
@@ -73,64 +73,6 @@ function toBooking(r: Record<string, unknown>): Booking {
     createdAt: (r.created_at as Date)?.toISOString?.() ?? String(r.created_at),
     unitId: (r.unit_id as number) ?? null,
   };
-}
-
-export async function listBookings(opts: {
-  status?: BookingStatus | "all";
-  search?: string;
-  limit?: number;
-  offset?: number;
-} = {}): Promise<{ items: Booking[]; total: number }> {
-  const where: string[] = [];
-  const params: unknown[] = [];
-
-  if (opts.status && opts.status !== "all") {
-    params.push(opts.status);
-    where.push(`status = $${params.length}`);
-  }
-  if (opts.search) {
-    params.push(`%${opts.search.toLowerCase()}%`);
-    where.push(
-      `(lower(first_name || ' ' || last_name) LIKE $${params.length}
-        OR lower(email) LIKE $${params.length}
-        OR lower(reference) LIKE $${params.length})`,
-    );
-  }
-  const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
-
-  const totalRow = await queryOne<{ n: string }>(
-    `SELECT count(*)::text AS n FROM bookings ${clause}`,
-    params,
-  );
-
-  const limit = opts.limit ?? 25;
-  const offset = opts.offset ?? 0;
-  const rows = await query(
-    `SELECT * FROM bookings ${clause} ORDER BY created_at DESC
-     LIMIT ${limit} OFFSET ${offset}`,
-    params,
-  );
-
-  return { items: rows.map(toBooking), total: Number(totalRow?.n ?? 0) };
-}
-
-export async function getBooking(id: string): Promise<Booking | null> {
-  const row = await queryOne(`SELECT * FROM bookings WHERE id = $1`, [id]);
-  return row ? toBooking(row) : null;
-}
-
-export async function setBookingStatus(
-  id: string,
-  status: BookingStatus,
-): Promise<void> {
-  await query(
-    `UPDATE bookings SET status = $2, updated_at = now() WHERE id = $1`,
-    [id, status],
-  );
-}
-
-export async function deleteBooking(id: string): Promise<void> {
-  await query(`DELETE FROM bookings WHERE id = $1`, [id]);
 }
 
 export type DashboardStats = {

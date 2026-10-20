@@ -257,6 +257,7 @@ export function ReservationFlow({
         <h2 className="mt-6 font-display text-3xl tracking-tight">{confirmed ? s.successConfirmed : s.successPending}</h2>
         <p className="mt-3 leading-relaxed text-[var(--color-ink-soft)]">
           {confirmed ? s.successBodyConfirmed : s.successBodyPending}
+          {result.emailSent ? ` ${s.emailSentNote}` : ""}
         </p>
         <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-line-soft)] px-5 py-2.5">
           <span className="text-xs uppercase tracking-[0.18em] text-[var(--color-ink-muted)]">{dict.booking_page.reference}</span>
@@ -847,7 +848,7 @@ export function ReservationFlow({
             </div>
             {selectedPlan && (
               <div className="flex items-center justify-between gap-3">
-                <dt className="text-[var(--color-ink-muted)]">{s.choosePlan}</dt>
+                <dt className="text-[var(--color-ink-muted)]">{s.rate}</dt>
                 <dd className="text-right font-medium">{selectedPlan.name[locale] ?? selectedPlan.name.pt}</dd>
               </div>
             )}

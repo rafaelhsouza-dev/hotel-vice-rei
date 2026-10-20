@@ -315,25 +315,6 @@ export async function moveRow(formData: FormData) {
 
 // --- bookings, inbox, subscribers -----------------------------------------
 
-export async function setBookingStatus(formData: FormData) {
-  const actor = await requirePermission("bookings.manage");
-  void auditForm(actor, "setBookingStatus", formData);
-  await ops.setBookingStatus(
-    str(formData, "id"),
-    str(formData, "status") as ops.BookingStatus,
-  );
-  revalidatePath("/admin/reservas");
-  revalidatePath("/admin");
-}
-
-export async function removeBooking(formData: FormData) {
-  const actor = await requirePermission("settings.manage");
-  void auditForm(actor, "removeBooking", formData);
-  await ops.deleteBooking(str(formData, "id"));
-  revalidatePath("/admin/reservas");
-  revalidatePath("/admin");
-}
-
 export async function setMessageRead(formData: FormData) {
   const actor = await requirePermission("messages.manage");
   void auditForm(actor, "setMessageRead", formData);
@@ -356,22 +337,6 @@ export async function removeSubscriber(formData: FormData) {
   await ops.deleteSubscriber(str(formData, "id"));
   revalidatePath("/admin/newsletter");
 }
-
-export async function saveAnalytics(formData: FormData) {
-  const actor = await requirePermission("settings.manage");
-  void auditForm(actor, "saveAnalytics", formData);
-
-  await repo.updateAnalytics({
-    ga4: str(formData, "ga4"),
-    gtm: str(formData, "gtm"),
-    searchConsole: str(formData, "searchConsole"),
-  });
-
-  refresh(TAGS.analytics);
-  redirect("/admin/definicoes");
-}
-
-// --- settings --------------------------------------------------------------
 
 export async function saveSettings(formData: FormData) {
   const actor = await requirePermission("settings.manage");

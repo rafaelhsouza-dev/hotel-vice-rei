@@ -8,11 +8,12 @@ import * as m from "@/lib/repo/maintenance";
 import { saveUpload } from "@/lib/uploads";
 import { insertMedia } from "@/lib/repo/ops";
 import { bool, date, dec, int, oneOf, str } from "@/lib/form";
+import { withFlash } from "@/lib/form";
 
 /** Faults, repair orders and inspections. */
 
 function back(path: string, kind: "ok" | "erro", message: string): never {
-  redirect(`${path}?${kind}=${encodeURIComponent(message.slice(0, 400))}`);
+  redirect(withFlash(path, kind, message));
 }
 
 export async function reportIssueAction(form: FormData) {

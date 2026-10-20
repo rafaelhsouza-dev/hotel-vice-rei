@@ -38,6 +38,7 @@ import { readBookingRules } from "@/lib/repo/rate-plans";
 import { query, queryOne } from "@/lib/db";
 import { violationText, getEngineStrings } from "@/i18n/engine";
 import { bool, date, dec, decOrNull, int, isEmail, oneOf, str } from "@/lib/form";
+import { withFlash } from "@/lib/form";
 import { guestsFromForm } from "@/lib/booking/guest-form";
 
 /** Front-desk mutations. Each asserts its permission and writes the audit log. */
@@ -45,7 +46,7 @@ import { guestsFromForm } from "@/lib/booking/guest-form";
 const pt = getEngineStrings("pt");
 
 function back(path: string, kind: "ok" | "erro", message: string): never {
-  redirect(`${path}${path.includes("?") ? "&" : "?"}${kind}=${encodeURIComponent(message.slice(0, 400))}`);
+  redirect(withFlash(path, kind, message));
 }
 
 const detail = (id: string) => `/admin/reservas/${id}`;

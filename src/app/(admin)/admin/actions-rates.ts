@@ -9,11 +9,12 @@ import { clearAvailability, setAvailability, type AvailabilityOverride } from "@
 import { queryOne } from "@/lib/db";
 import type { RatePlan } from "@/lib/booking/pricing";
 import { bool, date, dec, decOrNull, int, intOrNull, oneOf, slugify, str, triState, trio } from "@/lib/form";
+import { withFlash } from "@/lib/form";
 
 /** Rate plans and the availability/rate calendar. */
 
 function back(path: string, kind: "ok" | "erro", message: string): never {
-  redirect(`${path}${path.includes("?") ? "&" : "?"}${kind}=${encodeURIComponent(message.slice(0, 400))}`);
+  redirect(withFlash(path, kind, message));
 }
 
 export async function saveRatePlanAction(form: FormData) {

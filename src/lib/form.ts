@@ -71,3 +71,13 @@ export function slugify(value: string): string {
     .replace(/^-+|-+$/g, "")
     .slice(0, 60);
 }
+
+/**
+ * Appends ?ok= / ?erro= to a redirect target, keeping any #fragment at the
+ * end where browsers expect it (`/x#conta?ok=` would lose the message).
+ */
+export function withFlash(path: string, kind: "ok" | "erro", message: string): string {
+  const [base, hash] = path.split("#");
+  const sep = base.includes("?") ? "&" : "?";
+  return `${base}${sep}${kind}=${encodeURIComponent(message.slice(0, 600))}${hash ? `#${hash}` : ""}`;
+}

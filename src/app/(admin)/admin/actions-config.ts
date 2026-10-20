@@ -20,11 +20,12 @@ import { query } from "@/lib/db";
 import { TAGS } from "@/lib/repo/content";
 import { runJob, type JobName } from "@/lib/jobs";
 import { bool, dec, int, isEmail, str } from "@/lib/form";
+import { withFlash } from "@/lib/form";
 
 /** Configuration: users, external services, booking rules, SEO, jobs. */
 
 function back(path: string, kind: "ok" | "erro", message: string): never {
-  redirect(`${path}${path.includes("?") ? "&" : "?"}${kind}=${encodeURIComponent(message.slice(0, 400))}`);
+  redirect(withFlash(path, kind, message));
 }
 
 // --- account ----------------------------------------------------------------

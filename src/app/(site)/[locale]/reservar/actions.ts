@@ -160,6 +160,7 @@ export type BookingResult =
       touristTax: number;
       manageUrl: string;
       status: "pending" | "confirmed";
+      emailSent: boolean;
       payment:
         | null
         | { kind: "redirect"; url: string }
@@ -257,7 +258,7 @@ export async function submitBooking(payload: QuoteInput & {
     }
 
     const manageUrl = guestUrl({ locale, guestToken: result.guestToken });
-    await notifyBookingPlaced(
+    const emailSent = await notifyBookingPlaced(
       result.id,
       payment?.kind === "multibanco" ? payment : payment?.kind === "redirect" ? { url: manageUrl } : undefined,
     );
@@ -270,6 +271,7 @@ export async function submitBooking(payload: QuoteInput & {
       touristTax: result.quote.touristTax,
       manageUrl,
       status: result.status,
+      emailSent,
       payment,
     };
   } catch (err) {

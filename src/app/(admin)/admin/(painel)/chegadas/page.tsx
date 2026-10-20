@@ -51,8 +51,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
          (SELECT count(*) FROM units WHERE active)::text AS units,
          (SELECT count(*) FROM bookings WHERE status NOT IN ('cancelled','no_show') AND check_in <= $1::date AND check_out > $1::date)::text AS occupied,
          (SELECT COALESCE(sum((n->>'price')::numeric),0) FROM bookings b, jsonb_array_elements(b.nightly) n
-            WHERE b.status NOT IN ('cancelled','no_show') AND (n->>'date') = $1)::text AS room_revenue,
-         (SELECT count(*) FROM bookings WHERE status = 'confirmed' AND check_in < $1::date AND check_out > $1::date - 1)::text AS late`,
+            WHERE b.status NOT IN ('cancelled','no_show') AND (n->>'date')::date = $1::date)::text AS room_revenue`,
       [day],
     ),
   ]);
