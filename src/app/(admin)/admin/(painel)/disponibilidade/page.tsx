@@ -1,9 +1,9 @@
 import { requirePagePermission } from "@/lib/auth/session";
 import { getCalendar, addDays, today, type DayAvailability } from "@/lib/repo/availability";
 import { getRooms } from "@/lib/repo/content";
-import { saveAvailabilityOverride } from "@/app/(admin)/admin/actions-channels";
+import { CalendarForm } from "./CalendarForm";
 import {
-  AdminHeader, Section, Card, EmptyState, Flash, fieldClass, labelClass,
+  AdminHeader, Section, EmptyState, Flash, fieldClass, labelClass,
 } from "@/components/admin/ui";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 
@@ -44,7 +44,12 @@ function detail(day: DayAvailability): string {
     `${day.unitsBooked} reservas do site`,
     `${day.unitsBlocked} de plataformas`,
   ];
+  if (day.unitsAllotted > 0) parts.push(`${day.unitsAllotted} reservadas para extranets`);
   if (day.minStay > 1) parts.push(`mínimo ${day.minStay} noites`);
+  if (day.maxStay) parts.push(`máximo ${day.maxStay} noites`);
+  if (day.closedArrival) parts.push("sem chegadas");
+  if (day.closedDeparture) parts.push("sem partidas");
+  parts.push(`${day.rate.toFixed(2)} €`);
   return parts.join(", ");
 }
 
@@ -81,7 +86,7 @@ export default async function AvailabilityPage({
     <>
       <AdminHeader
         title="Disponibilidade"
-        subtitle={`${from} a ${to}. Os números são unidades ainda por vender.`}
+        subtitle={`${from} a ${to}. Em cada dia: quartos ainda por vender e preço da noite. O ponto indica restrições (estadia mínima, sem chegadas/partidas).`}
       />
 
       <Section>
@@ -169,9 +174,15 @@ export default async function AvailabilityPage({
                       <td key={day.date} className="px-0.5 py-1 text-center">
                         <span
                           title={detail(day)}
-                          className={`inline-grid h-8 w-8 place-items-center rounded-lg text-xs font-medium ${cellTone(day)}`}
+                          className={`relative inline-grid h-11 w-9 place-items-center rounded-lg text-xs font-medium leading-none ${cellTone(day)}`}
                         >
-                          <span aria-hidden="true">{day.closed ? "×" : day.free}</span>
+                          <span aria-hidden="true" className="grid gap-0.5">
+                            <span>{day.closed ? "×" : day.free}</span>
+                            <span className="text-[9px] font-normal opacity-80">{Math.round(day.rate)}€</span>
+                          </span>
+                          {(day.minStay > 1 || day.closedArrival || day.closedDeparture || day.maxStay) && (
+                            <span aria-hidden="true" className="absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent-deep)]" />
+                          )}
                           {/* The colour and the glyph both need a text
                               equivalent: "×" alone tells a screen reader
                               nothing, and colour tells it less. */}
@@ -186,98 +197,7 @@ export default async function AvailabilityPage({
           </div>
         )}
 
-        {/* --- manual override --------------------------------------------- */}
-        <Card className="mt-8 p-6">
-          <h2 className="font-display text-lg tracking-tight">Bloquear ou ajustar um período</h2>
-          <p className="mt-1 max-w-3xl text-sm text-[var(--color-ink-muted)]">
-            Usado para manutenção, alojamento de equipa ou estadias mínimas em época alta. O que
-            for definido aqui é enviado às plataformas na próxima sincronização.
-          </p>
-          <form action={saveAvailabilityOverride} className="mt-4 grid gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-3">
-              <label className={labelClass} htmlFor="roomId">
-                Tipologia
-              </label>
-              <select id="roomId" name="roomId" required className={fieldClass}>
-                {rooms.map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.name.pt}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="lg:col-span-2">
-              <label className={labelClass} htmlFor="ov-from">
-                De
-              </label>
-              <input id="ov-from" name="from" type="date" required defaultValue={from} className={fieldClass} />
-            </div>
-            <div className="lg:col-span-2">
-              <label className={labelClass} htmlFor="ov-to">
-                Até
-              </label>
-              <input id="ov-to" name="to" type="date" required defaultValue={to} className={fieldClass} />
-            </div>
-            <div className="lg:col-span-1">
-              <label className={labelClass} htmlFor="unitsBlocked">
-                Bloquear
-              </label>
-              <input
-                id="unitsBlocked"
-                name="unitsBlocked"
-                type="number"
-                min={0}
-                defaultValue={0}
-                className={fieldClass}
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <label className={labelClass} htmlFor="minStay">
-                Mín. noites
-              </label>
-              <input
-                id="minStay"
-                name="minStay"
-                type="number"
-                min={1}
-                defaultValue={1}
-                className={fieldClass}
-              />
-            </div>
-            <div className="lg:col-span-2">
-              <label className={labelClass} htmlFor="rate">
-                Preço (€)
-              </label>
-              <input
-                id="rate"
-                name="rate"
-                inputMode="decimal"
-                placeholder="manter"
-                className={fieldClass}
-              />
-            </div>
-            <div className="flex items-end gap-3 lg:col-span-12">
-              <label className="flex items-center gap-2.5 text-sm">
-                <input
-                  type="checkbox"
-                  name="closed"
-                  className="h-4 w-4 rounded border-[var(--color-line)]"
-                />
-                Encerrar à venda
-              </label>
-              <SubmitButton pendingLabel="A guardar…">Aplicar</SubmitButton>
-              <SubmitButton
-                variant="ghost"
-                name="action"
-                value="clear"
-                pendingLabel="A repor…"
-                confirm="Repor este período aos valores automáticos?"
-              >
-                Repor período
-              </SubmitButton>
-            </div>
-          </form>
-        </Card>
+        <CalendarForm rooms={rooms.map((r) => ({ id: r.id, name: r.name.pt }))} from={from} to={to} />
       </Section>
     </>
   );

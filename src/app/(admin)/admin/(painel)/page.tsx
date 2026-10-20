@@ -1,6 +1,5 @@
 import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
-import { requireSession } from "@/lib/auth/session";
 import { getHotel, getRooms } from "@/lib/repo/content";
 import { getDashboardStats, type DashboardStats } from "@/lib/repo/ops";
 import { opsSnapshot, type OpsSnapshot } from "@/lib/repo/operations";
@@ -13,15 +12,19 @@ export const dynamic = "force-dynamic";
 const STATUS_LABEL: Record<string, string> = {
   pending: "Pendente",
   confirmed: "Confirmada",
-  checked_in: "Check-in",
+  checked_in: "Em estadia",
+  checked_out: "Saída feita",
   cancelled: "Cancelada",
+  no_show: "Não compareceu",
 };
 
 const STATUS_TONE = {
   pending: "warning",
   confirmed: "success",
   checked_in: "neutral",
+  checked_out: "neutral",
   cancelled: "danger",
+  no_show: "danger",
 } as const;
 
 const euro = new Intl.NumberFormat("pt-PT", {
@@ -48,8 +51,7 @@ const EMPTY: DashboardStats = {
 };
 
 export default async function DashboardPage() {
-  await requirePagePermission("/admin");
-  const session = await requireSession();
+  const session = await requirePagePermission("/admin");
   const hotel = await getHotel();
   const rooms = await getRooms();
 
@@ -244,7 +246,7 @@ export default async function DashboardPage() {
                       key={b.id}
                       className="border-b border-[var(--color-line-soft)] last:border-0"
                     >
-                      <Td className="font-mono text-xs">{b.reference}</Td>
+                      <Td className="font-mono text-xs"><Link href={`/admin/reservas/${b.id}`} className="text-[var(--color-accent-deep)] hover:underline">{b.reference}</Link></Td>
                       <Td className="font-medium">
                         {b.firstName} {b.lastName}
                       </Td>

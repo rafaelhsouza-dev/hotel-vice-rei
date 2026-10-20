@@ -10,7 +10,7 @@ import type { BusyPeriod, DayAvailability } from "../repo/availability";
  * silently no-ops.
  */
 
-export type ProviderId = "ical" | "beds24" | "booking" | "expedia" | "manual";
+export type ProviderId = "ical" | "beds24" | "booking" | "expedia" | "manual" | "extranet";
 
 export type ChannelCapabilities = {
   /** Can hand us reservations. */

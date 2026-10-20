@@ -125,7 +125,7 @@ export const ROUTE_PERMISSIONS: [prefix: string, permission: Permission][] = [
   ["/admin/newsletter", "messages.manage"],
   ["/admin/acomodacoes", "pms.view"],
   ["/admin/tarefas", "housekeeping.manage"],
-  ["/admin/avarias", "maintenance.manage"],
+  ["/admin/avarias", "pms.view"],
   ["/admin/inspecoes", "housekeeping.manage"],
   ["/admin/insumos", "inventory.manage"],
   ["/admin/fornecedores", "inventory.manage"],

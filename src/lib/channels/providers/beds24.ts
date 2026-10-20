@@ -124,7 +124,7 @@ export const beds24Adapter: ChannelAdapter = {
   selfServe: true,
   docsUrl: "https://beds24.com/api/v2/",
   availabilityNote:
-    "API REST pública e documentada. É por aqui que se alcança o Booking.com, Airbnb, Expedia e Vrbo sem ser parceiro certificado de cada um. Requer conta Beds24 e as tipologias mapeadas.",
+    "API REST pública e documentada que alcança Booking.com, Airbnb, Expedia e Vrbo. Descartado no plano por custo (cobra por quarto: ~182 €/mês para 55 quartos); o adaptador fica disponível como alternativa.",
   capabilities: {
     importReservations: true,
     exportAvailability: true,

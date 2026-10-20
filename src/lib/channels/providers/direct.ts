@@ -64,7 +64,7 @@ export const expediaAdapter: ChannelAdapter = {
   selfServe: false,
   docsUrl: "https://expediaconnectivity.com/apis/",
   availabilityNote:
-    "Aberto a hotéis independentes, mas as credenciais são emitidas no Expedia Partner Central e a palavra-passe tem de ter pelo menos 16 caracteres. Depois de as ter, a ligação funciona sem intermediários.",
+    "A ligação direta (EQC) exige certificação da Expedia, concedida à discrição dela e pensada para fornecedores de software (verificado em 20/10/2026). Fica pronta a usar se a Expedia emitir credenciais; o caminho previsto é um channel manager (fase 2).",
   capabilities: {
     importReservations: true,
     exportAvailability: true,

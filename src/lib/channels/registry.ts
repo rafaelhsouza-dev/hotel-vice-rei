@@ -1,6 +1,7 @@
 import { icalAdapter } from "./providers/ical";
 import { beds24Adapter } from "./providers/beds24";
 import { bookingAdapter, expediaAdapter } from "./providers/direct";
+import { extranetAdapter } from "./providers/extranet";
 import type { ChannelAdapter, ProviderId } from "./types";
 
 /**
@@ -20,6 +21,7 @@ export const ADAPTERS: ChannelAdapter[] = [
   beds24Adapter,
   expediaAdapter,
   bookingAdapter,
+  extranetAdapter,
 ];
 
 export function getAdapter(provider: string): ChannelAdapter {

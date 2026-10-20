@@ -82,12 +82,21 @@ export default async function IntegrationsPage({
       <Section>
         <Flash ok={ok} error={erro} />
 
+        <div className="mb-6 rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 text-sm">
+          <strong className="font-medium">Fase atual: sem channel manager.</strong> O Booking.com e a Google não aceitam ligação direta de motores próprios; a ligação
+          automática às OTAs fica para a fase 2 (Zodomus ou Channex). Até lá, cada plataforma gere-se na sua extranet com um contingente de quartos reservado em{" "}
+          <Link href="/admin/integracoes/extranets" className="font-medium text-[var(--color-accent-deep)] underline">
+            Extranets e contingentes
+          </Link>
+          .
+        </div>
+
         {/* --- channels --------------------------------------------------- */}
         {channels.length === 0 ? (
           <EmptyState message="Sem canais configurados. Verifique a ligação à base de dados." />
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
-            {channels.map((channel) => {
+            {channels.filter((c) => c.provider !== "extranet").map((channel) => {
               const adapter = ADAPTERS.find((a) => a.id === channel.provider);
               return (
                 <Card key={channel.id} className="flex flex-col p-6">
