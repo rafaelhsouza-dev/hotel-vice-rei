@@ -2,7 +2,8 @@
 
 import { updateTag, revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireSession } from "@/lib/auth/session";
+import { requireAnyPermission, requirePermission } from "@/lib/auth/session";
+import { auditForm } from "@/lib/repo/audit";
 import { locales, type Locale } from "@/i18n/config";
 import { TAGS } from "@/lib/repo/content";
 import * as repo from "@/lib/repo/admin";
@@ -80,7 +81,8 @@ function refresh(...tags: string[]) {
 // --- rooms -----------------------------------------------------------------
 
 export async function saveRoom(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "saveRoom", formData);
 
   const name = parseTrio(formData, "name");
   const id = str(formData, "id") || toSlug(name.pt || "quarto");
@@ -116,7 +118,8 @@ export async function saveRoom(formData: FormData) {
 // --- offers ----------------------------------------------------------------
 
 export async function saveOffer(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "saveOffer", formData);
 
   const title = parseTrio(formData, "title");
   const id = str(formData, "id") || toSlug(title.pt || "promocao");
@@ -143,7 +146,8 @@ export async function saveOffer(formData: FormData) {
 // --- services --------------------------------------------------------------
 
 export async function saveService(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "saveService", formData);
 
   const title = parseTrio(formData, "title");
   await repo.upsertService({
@@ -162,7 +166,8 @@ export async function saveService(formData: FormData) {
 // --- testimonials ----------------------------------------------------------
 
 export async function saveTestimonial(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "saveTestimonial", formData);
 
   const author = str(formData, "author");
   await repo.upsertTestimonial({
@@ -182,7 +187,8 @@ export async function saveTestimonial(formData: FormData) {
 // --- blog ------------------------------------------------------------------
 
 export async function savePost(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "savePost", formData);
 
   const title = parseTrio(formData, "title");
   const previousSlug = str(formData, "previousSlug") || undefined;
@@ -210,7 +216,8 @@ export async function savePost(formData: FormData) {
 // --- gallery ---------------------------------------------------------------
 
 export async function addGalleryImage(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "addGalleryImage", formData);
   const src = str(formData, "src");
   if (src) await repo.addGalleryImage(src, str(formData, "alt", "Hotel Vice-Rei · Porto"));
   refresh(TAGS.gallery);
@@ -219,7 +226,8 @@ export async function addGalleryImage(formData: FormData) {
 // --- extras & promo codes --------------------------------------------------
 
 export async function saveExtra(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("rates.manage");
+  void auditForm(actor, "saveExtra", formData);
 
   const label = parseTrio(formData, "label");
   await repo.upsertExtra({
@@ -237,7 +245,8 @@ export async function saveExtra(formData: FormData) {
 }
 
 export async function savePromoCode(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("rates.manage");
+  void auditForm(actor, "savePromoCode", formData);
   const code = str(formData, "code");
   if (!code) return;
 
@@ -253,7 +262,8 @@ export async function savePromoCode(formData: FormData) {
 }
 
 export async function removePromoCode(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("rates.manage");
+  void auditForm(actor, "removePromoCode", formData);
   await repo.deletePromoCode(str(formData, "code"));
   revalidatePath("/admin/tarifas");
 }
@@ -271,21 +281,24 @@ const TABLE_TAGS: Record<string, string> = {
 };
 
 export async function togglePublished(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "togglePublished", formData);
   const table = str(formData, "table");
   await repo.setPublished(table, str(formData, "id"), bool(formData, "next"));
   refresh(TABLE_TAGS[table] ?? "");
 }
 
 export async function deleteRow(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "deleteRow", formData);
   const table = str(formData, "table");
   await repo.deleteRow(table, str(formData, "id"));
   refresh(TABLE_TAGS[table] ?? "");
 }
 
 export async function moveRow(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "moveRow", formData);
   const table = str(formData, "table");
   const ids = str(formData, "ids").split(",").filter(Boolean);
   const id = str(formData, "id");
@@ -303,7 +316,8 @@ export async function moveRow(formData: FormData) {
 // --- bookings, inbox, subscribers -----------------------------------------
 
 export async function setBookingStatus(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("bookings.manage");
+  void auditForm(actor, "setBookingStatus", formData);
   await ops.setBookingStatus(
     str(formData, "id"),
     str(formData, "status") as ops.BookingStatus,
@@ -313,34 +327,39 @@ export async function setBookingStatus(formData: FormData) {
 }
 
 export async function removeBooking(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("settings.manage");
+  void auditForm(actor, "removeBooking", formData);
   await ops.deleteBooking(str(formData, "id"));
   revalidatePath("/admin/reservas");
   revalidatePath("/admin");
 }
 
 export async function setMessageRead(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("messages.manage");
+  void auditForm(actor, "setMessageRead", formData);
   await ops.setMessageRead(str(formData, "id"), bool(formData, "next"));
   revalidatePath("/admin/mensagens");
   revalidatePath("/admin");
 }
 
 export async function removeMessage(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("messages.manage");
+  void auditForm(actor, "removeMessage", formData);
   await ops.deleteMessage(str(formData, "id"));
   revalidatePath("/admin/mensagens");
   revalidatePath("/admin");
 }
 
 export async function removeSubscriber(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("messages.manage");
+  void auditForm(actor, "removeSubscriber", formData);
   await ops.deleteSubscriber(str(formData, "id"));
   revalidatePath("/admin/newsletter");
 }
 
 export async function saveAnalytics(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("settings.manage");
+  void auditForm(actor, "saveAnalytics", formData);
 
   await repo.updateAnalytics({
     ga4: str(formData, "ga4"),
@@ -355,7 +374,8 @@ export async function saveAnalytics(formData: FormData) {
 // --- settings --------------------------------------------------------------
 
 export async function saveSettings(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("settings.manage");
+  void auditForm(actor, "saveSettings", formData);
 
   await repo.updateSettings({
     name: str(formData, "name"),

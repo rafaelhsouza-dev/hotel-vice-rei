@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { listMessages } from "@/lib/repo/ops";
 import { setMessageRead, removeMessage } from "@/app/(admin)/admin/actions";
 import { AdminHeader, Section, Card, EmptyState, Badge } from "@/components/admin/ui";
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 const fmt = new Intl.DateTimeFormat("pt-PT", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function MessagesAdminPage() {
+  await requirePagePermission("/admin/mensagens");
   let messages: Awaited<ReturnType<typeof listMessages>> = [];
   let dbDown = false;
   try {

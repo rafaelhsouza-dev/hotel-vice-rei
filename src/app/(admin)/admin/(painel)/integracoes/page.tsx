@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { listChannels, listSyncLog, listChannelReservations } from "@/lib/repo/channels";
 import { getIcalToken } from "@/lib/repo/ical-token";
@@ -42,6 +43,7 @@ export default async function IntegrationsPage({
 }: {
   searchParams: Promise<{ ok?: string; erro?: string }>;
 }) {
+  await requirePagePermission("/admin/integracoes");
   const { ok, erro } = await searchParams;
 
   let channels: Awaited<ReturnType<typeof listChannels>> = [];

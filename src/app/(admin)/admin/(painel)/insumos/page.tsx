@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import {
   listInventory, listMovements, listStaff, listSuppliers,
@@ -22,6 +23,7 @@ export default async function InventoryPage({
 }: {
   searchParams: Promise<{ categoria?: string; rutura?: string }>;
 }) {
+  await requirePagePermission("/admin/insumos");
   const sp = await searchParams;
   const category = (CATEGORIES as readonly string[]).includes(sp.categoria ?? "")
     ? (sp.categoria as Category)

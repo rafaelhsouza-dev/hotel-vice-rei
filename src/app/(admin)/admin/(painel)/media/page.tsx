@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Image from "next/image";
 import { listMedia } from "@/lib/repo/ops";
 import { uploadsDir, uploadsWritable } from "@/lib/uploads";
@@ -15,6 +16,7 @@ const kb = (bytes: number) =>
     : `${Math.round(bytes / 1024)} KB`;
 
 export default async function MediaAdminPage() {
+  await requirePagePermission("/admin/media");
   const items = await listMedia().catch(() => []);
   const writable = await uploadsWritable();
 

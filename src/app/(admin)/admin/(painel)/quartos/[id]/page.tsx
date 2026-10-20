@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRoom, listRooms } from "@/lib/repo/admin";
@@ -15,6 +16,7 @@ export default async function RoomEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/quartos/x");
   const { id } = await params;
   const isNew = id === "novo";
   const room = isNew ? null : await getRoom(id);

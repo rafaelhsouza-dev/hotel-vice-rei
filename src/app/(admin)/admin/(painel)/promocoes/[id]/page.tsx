@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listOffers } from "@/lib/repo/admin";
@@ -15,6 +16,7 @@ export default async function OfferEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/promocoes/x");
   const { id } = await params;
   const isNew = id === "nova";
   const offers = await listOffers();

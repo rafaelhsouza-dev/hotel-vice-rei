@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { listStaff, DEPARTMENTS, SHIFTS } from "@/lib/repo/operations";
 import { saveStaff, removeStaff } from "@/app/(admin)/admin/actions-ops";
@@ -12,6 +13,7 @@ import { Icon } from "@/components/Icon";
 export const dynamic = "force-dynamic";
 
 export default async function StaffPage() {
+  await requirePagePermission("/admin/equipa");
   let staff: Awaited<ReturnType<typeof listStaff>> = [];
   try {
     staff = await listStaff();

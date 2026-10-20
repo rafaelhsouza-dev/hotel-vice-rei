@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { listExtras, listPromoCodes } from "@/lib/repo/admin";
 import { savePromoCode, removePromoCode } from "@/app/(admin)/admin/actions";
@@ -13,6 +14,7 @@ export const dynamic = "force-dynamic";
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
 export default async function RatesAdminPage() {
+  await requirePagePermission("/admin/tarifas");
   const extras = await listExtras();
   const codes = await listPromoCodes();
   const extraIds = extras.map((e) => e.id);

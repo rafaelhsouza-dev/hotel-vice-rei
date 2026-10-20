@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { getCalendar, addDays, today, type DayAvailability } from "@/lib/repo/availability";
 import { getRooms } from "@/lib/repo/content";
 import { saveAvailabilityOverride } from "@/app/(admin)/admin/actions-channels";
@@ -52,6 +53,7 @@ export default async function AvailabilityPage({
 }: {
   searchParams: Promise<{ ok?: string; erro?: string; from?: string }>;
 }) {
+  await requirePagePermission("/admin/disponibilidade");
   const { ok, erro, from: fromParam } = await searchParams;
 
   const from = /^\d{4}-\d{2}-\d{2}$/.test(fromParam ?? "") ? fromParam! : today();

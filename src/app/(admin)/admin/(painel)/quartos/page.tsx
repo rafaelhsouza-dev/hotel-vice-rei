@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Image from "next/image";
 import { listRooms } from "@/lib/repo/admin";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge } from "@/components/admin/ui";
@@ -6,6 +7,7 @@ import { RowActions } from "@/components/admin/RowActions";
 export const dynamic = "force-dynamic";
 
 export default async function RoomsAdminPage() {
+  await requirePagePermission("/admin/quartos");
   const rooms = await listRooms();
   const ids = rooms.map((r) => r.id);
 

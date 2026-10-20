@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listInventory, listSuppliers, listMovements, CATEGORIES } from "@/lib/repo/operations";
@@ -18,6 +19,7 @@ export default async function InventoryItemPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/insumos/x");
   const { id } = await params;
   const isNew = id === "novo";
 

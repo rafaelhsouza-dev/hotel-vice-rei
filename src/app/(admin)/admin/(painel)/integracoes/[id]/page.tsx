@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getChannel, getMaskedCredentials } from "@/lib/repo/channels";
@@ -25,6 +26,7 @@ export default async function ChannelPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ ok?: string; erro?: string }>;
 }) {
+  await requirePagePermission("/admin/integracoes/x");
   const { id } = await params;
   const { ok, erro } = await searchParams;
 

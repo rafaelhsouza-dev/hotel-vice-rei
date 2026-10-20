@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { getHotel, getAnalytics } from "@/lib/repo/content";
 import { saveSettings, saveAnalytics } from "@/app/(admin)/admin/actions";
 import { AdminHeader, Section, Card, fieldClass, labelClass } from "@/components/admin/ui";
@@ -7,6 +8,7 @@ import { SubmitButton } from "@/components/admin/SubmitButton";
 export const dynamic = "force-dynamic";
 
 export default async function SettingsAdminPage() {
+  await requirePagePermission("/admin/definicoes");
   const [hotel, analytics] = await Promise.all([getHotel(), getAnalytics()]);
 
   return (

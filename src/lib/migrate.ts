@@ -1,4 +1,6 @@
-import { randomToken } from "./crypto";
+import { encryptSecret, decryptSecret, needsReencryption, randomToken } from "./crypto";
+import { SCHEMA_PMS_SQL } from "./schema-pms";
+import { STANDARD_PLAN } from "./booking/pricing";
 import { query, transaction, isDbConfigured } from "./db";
 import { SCHEMA_SQL } from "./schema";
 import { hashPassword } from "./auth/password";
@@ -580,12 +582,68 @@ async function seedIcalToken() {
   ]);
 }
 
+/**
+ * The booking engine needs at least one rate plan. The first one mirrors what
+ * the site promised before plans existed: free cancellation up to 48 h,
+ * payment at the hotel, the room's own nightly price.
+ */
+async function seedRatePlan() {
+  if (!(await isEmpty("rate_plans"))) return;
+  const p = STANDARD_PLAN;
+  await query(
+    `INSERT INTO rate_plans (id, name, description, board, refundable, free_cancel_days,
+       cancel_penalty, payment_policy, min_stay, position)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,0) ON CONFLICT (id) DO NOTHING`,
+    [p.id, JSON.stringify(p.name), JSON.stringify(p.description), p.board, p.refundable,
+     p.freeCancelDays, p.cancelPenalty, p.paymentPolicy, p.minStay],
+  );
+}
+
+/** A starting inspection checklist the governess can edit. */
+async function seedChecklist() {
+  if (!(await isEmpty("checklists"))) return;
+  const items = [
+    "Cama feita com roupa limpa e sem manchas",
+    "Casa de banho limpa e seca, sem cabelos",
+    "Toalhas e amenities repostos",
+    "Chão aspirado e sem pó nas superfícies",
+    "Ar condicionado, luzes e TV a funcionar",
+    "Janelas, cortinas e estores em bom estado",
+    "Minibar e cofre verificados",
+    "Sem cheiros e quarto arejado",
+  ];
+  await query(`INSERT INTO checklists (name, items) VALUES ($1, $2::jsonb)`, [
+    "Inspeção de quarto após limpeza",
+    JSON.stringify(items),
+  ]);
+}
+
+/**
+ * Once CREDENTIALS_KEY is configured, moves every stored secret from the
+ * legacy JWT-derived key to the dedicated one. Idempotent: payloads already
+ * sealed with the new key are left alone, unreadable ones are not touched.
+ */
+async function reencryptCredentials() {
+  for (const table of ["channels", "integrations"] as const) {
+    const rows = await query<{ id: string; credentials: string }>(
+      `SELECT id, credentials FROM ${table} WHERE credentials <> ''`,
+    );
+    for (const row of rows) {
+      if (!needsReencryption(row.credentials)) continue;
+      const plain = decryptSecret(row.credentials);
+      if (!plain) continue;
+      await query(`UPDATE ${table} SET credentials = $2 WHERE id = $1`, [row.id, encryptSecret(plain)]);
+    }
+  }
+}
+
 export async function ensureDatabase(): Promise<boolean> {
   if (migrated) return true;
   if (!isDbConfigured()) return false;
 
   try {
     await query(SCHEMA_SQL);
+    await query(SCHEMA_PMS_SQL);
     await seedSettings();
     await seedRoomsTable();
     await seedServicesTable();
@@ -608,6 +666,9 @@ export async function ensureDatabase(): Promise<boolean> {
     await migrateRoomAmenities();
     await migrateServiceCopy();
     await migrateLegalNumber();
+    await seedRatePlan();
+    await seedChecklist();
+    await reencryptCredentials();
     migrated = true;
     console.log("[migrate] database ready");
     return true;

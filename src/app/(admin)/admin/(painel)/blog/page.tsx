@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Image from "next/image";
 import { listPosts } from "@/lib/repo/admin";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge } from "@/components/admin/ui";
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 const fmt = new Intl.DateTimeFormat("pt-PT", { dateStyle: "medium", timeZone: "UTC" });
 
 export default async function BlogAdminPage() {
+  await requirePagePermission("/admin/blog");
   const posts = await listPosts();
   const ids = posts.map((p) => p.slug);
 

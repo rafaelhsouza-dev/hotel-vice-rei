@@ -1,0 +1,17 @@
+Cópias de referência do SIBA, descarregadas em 2026-10-20 (sem alterações).
+
+boletinsalojamento-prod.wsdl.txt  https://siba.ssi.gov.pt/baws/boletinsalojamento.asmx?wsdl
+boletinsalojamento-dev.wsdl.txt   https://siba.ssi.gov.pt/bawsdev/boletinsalojamento.asmx?wsdl
+bal.xsd.txt                       https://siba.ssi.gov.pt/s/documentacao/XSD/bal.XSD
+tabela-icao-siba.xml.txt          https://siba.ssi.gov.pt/s/documentacao/DocPaisesNH.aspx
+                                  (iframe de https://siba.ssi.gov.pt/ajuda/modos-de-envio/lista-de-paises/,
+                                  conteúdo do <pre id="txtTabelaICAO"> já sem entidades HTML)
+modos-de-envio.pagina.txt         https://siba.ssi.gov.pt/ajuda/modos-de-envio/ (texto da página;
+                                  tabelas dos campos XML e do ficheiro .DAT)
+
+Outras fontes consultadas:
+  https://siba.ssi.gov.pt/ajuda/perguntas-frequentes/   (só estrangeiros, qualquer idade; prazo 3 dias úteis)
+  https://siba.ssi.gov.pt/ajuda/perguntas-tecnicas/     (P12 modo de envio fixo; P14 só a tabela ICAO; P18 ambiente de testes)
+  https://siba.ssi.gov.pt/files/EnvioBA.zip             (programa de exemplo VB.NET: Base64 de UTF-8;
+                                                         unidade fictícia de testes 121212121 / 00 / 999999999)
+  https://siba.ssi.gov.pt/files/SIBA_Manual_de_Utilizador_v1.5.pdf (exemplo de ficheiro .DAT)

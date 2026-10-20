@@ -49,7 +49,17 @@ export type IconName =
   | "inbox"
   | "alert"
   | "sync"
-  | "plug";
+  | "plug"
+  | "wrench"
+  | "chart"
+  | "receipt"
+  | "card"
+  | "key"
+  | "clipboard"
+  | "door"
+  | "activity"
+  | "download"
+  | "grid";
 
 const paths: Record<IconName, ReactElement> = {
   wifi: (
@@ -287,6 +297,53 @@ const paths: Record<IconName, ReactElement> = {
       <path d="M9 3v6M15 3v6" />
       <path d="M6 9h12v3a6 6 0 0 1-12 0z" />
       <path d="M12 18v3" />
+    </>
+  ),
+  wrench: <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z" />,
+  chart: (
+    <>
+      <path d="M4 20V4M4 20h16" />
+      <path d="M8 16v-4M12 16V8M16 16v-6" />
+    </>
+  ),
+  receipt: (
+    <>
+      <path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" />
+      <path d="M9 8h6M9 12h6M9 16h3" />
+    </>
+  ),
+  card: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 10h18M7 15h3" />
+    </>
+  ),
+  key: (
+    <>
+      <circle cx="8" cy="15" r="4" />
+      <path d="m11 12 9-9M17 6l3 3M15 8l2 2" />
+    </>
+  ),
+  clipboard: (
+    <>
+      <rect x="5" y="4" width="14" height="17" rx="2" />
+      <path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6" />
+    </>
+  ),
+  door: (
+    <>
+      <path d="M5 21V3h11v18M3 21h18" />
+      <path d="M13 12h.01M16 3l3 1v17" />
+    </>
+  ),
+  activity: <path d="M3 12h4l3-8 4 16 3-8h4" />,
+  download: <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />,
+  grid: (
+    <>
+      <rect x="4" y="4" width="7" height="7" rx="1" />
+      <rect x="13" y="4" width="7" height="7" rx="1" />
+      <rect x="4" y="13" width="7" height="7" rx="1" />
+      <rect x="13" y="13" width="7" height="7" rx="1" />
     </>
   ),
 };

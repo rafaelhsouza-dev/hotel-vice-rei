@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireSession } from "@/lib/auth/session";
+import { requireAnyPermission, requirePermission } from "@/lib/auth/session";
+import { auditForm } from "@/lib/repo/audit";
 import { locales, type Locale } from "@/i18n/config";
 import * as ops from "@/lib/repo/operations";
 
@@ -42,7 +43,8 @@ function oneOf<T extends readonly string[]>(
 // --- units -----------------------------------------------------------------
 
 export async function saveUnit(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("settings.manage");
+  void auditForm(actor, "saveUnit", formData);
   const code = str(formData, "code");
   if (!code) return;
 
@@ -61,7 +63,8 @@ export async function saveUnit(formData: FormData) {
 }
 
 export async function changeUnitStatus(formData: FormData) {
-  await requireSession();
+  const actor = await requireAnyPermission("housekeeping.manage", "maintenance.manage");
+  void auditForm(actor, "changeUnitStatus", formData);
   await ops.setUnitStatus(
     int(formData, "id"),
     oneOf(str(formData, "status"), ops.UNIT_STATUSES, "available"),
@@ -71,13 +74,15 @@ export async function changeUnitStatus(formData: FormData) {
 }
 
 export async function removeUnit(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("settings.manage");
+  void auditForm(actor, "removeUnit", formData);
   await ops.deleteUnit(int(formData, "id"));
   revalidatePath("/admin/acomodacoes");
 }
 
 export async function assignUnit(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("bookings.manage");
+  void auditForm(actor, "assignUnit", formData);
   const unitId = str(formData, "unitId");
   await ops.assignBookingUnit(str(formData, "bookingId"), unitId ? Number(unitId) : null);
   revalidatePath("/admin/reservas");
@@ -87,7 +92,8 @@ export async function assignUnit(formData: FormData) {
 // --- staff -----------------------------------------------------------------
 
 export async function saveStaff(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("staff.manage");
+  void auditForm(actor, "saveStaff", formData);
   const name = str(formData, "name");
   if (!name) return;
 
@@ -108,7 +114,8 @@ export async function saveStaff(formData: FormData) {
 }
 
 export async function removeStaff(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("staff.manage");
+  void auditForm(actor, "removeStaff", formData);
   await ops.deleteStaff(str(formData, "id"));
   revalidatePath("/admin/equipa");
 }
@@ -116,7 +123,8 @@ export async function removeStaff(formData: FormData) {
 // --- tasks -----------------------------------------------------------------
 
 export async function createTask(formData: FormData) {
-  await requireSession();
+  const actor = await requireAnyPermission("housekeeping.manage", "maintenance.manage");
+  void auditForm(actor, "createTask", formData);
   const title = str(formData, "title");
   if (!title) return;
 
@@ -137,7 +145,8 @@ export async function createTask(formData: FormData) {
 }
 
 export async function changeTaskStatus(formData: FormData) {
-  await requireSession();
+  const actor = await requireAnyPermission("housekeeping.manage", "maintenance.manage");
+  void auditForm(actor, "changeTaskStatus", formData);
   await ops.setTaskStatus(
     str(formData, "id"),
     oneOf(str(formData, "status"), ops.TASK_STATUSES, "pending"),
@@ -148,13 +157,15 @@ export async function changeTaskStatus(formData: FormData) {
 }
 
 export async function changeTaskAssignee(formData: FormData) {
-  await requireSession();
+  const actor = await requireAnyPermission("housekeeping.manage", "maintenance.manage");
+  void auditForm(actor, "changeTaskAssignee", formData);
   await ops.assignTask(str(formData, "id"), str(formData, "assigneeId") || null);
   revalidatePath("/admin/tarefas");
 }
 
 export async function removeTask(formData: FormData) {
-  await requireSession();
+  const actor = await requireAnyPermission("housekeeping.manage", "maintenance.manage");
+  void auditForm(actor, "removeTask", formData);
   await ops.deleteTask(str(formData, "id"));
   revalidatePath("/admin/tarefas");
   revalidatePath("/admin");
@@ -163,7 +174,8 @@ export async function removeTask(formData: FormData) {
 // --- suppliers & inventory -------------------------------------------------
 
 export async function saveSupplier(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("inventory.manage");
+  void auditForm(actor, "saveSupplier", formData);
   const name = str(formData, "name");
   if (!name) return;
 
@@ -180,14 +192,16 @@ export async function saveSupplier(formData: FormData) {
 }
 
 export async function removeSupplier(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("inventory.manage");
+  void auditForm(actor, "removeSupplier", formData);
   await ops.deleteSupplier(str(formData, "id"));
   revalidatePath("/admin/fornecedores");
   revalidatePath("/admin/insumos");
 }
 
 export async function saveInventoryItem(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("inventory.manage");
+  void auditForm(actor, "saveInventoryItem", formData);
   const name = str(formData, "name");
   if (!name) return;
 
@@ -208,13 +222,15 @@ export async function saveInventoryItem(formData: FormData) {
 }
 
 export async function removeInventoryItem(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("inventory.manage");
+  void auditForm(actor, "removeInventoryItem", formData);
   await ops.deleteInventoryItem(str(formData, "id"));
   revalidatePath("/admin/insumos");
 }
 
 export async function recordMovement(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("inventory.manage");
+  void auditForm(actor, "recordMovement", formData);
 
   const reason = oneOf(str(formData, "reason"), ops.MOVEMENT_REASONS, "adjustment");
   const amount = Math.abs(dec(formData, "amount"));
@@ -242,7 +258,8 @@ export async function recordMovement(formData: FormData) {
 // --- meals -----------------------------------------------------------------
 
 export async function saveMeal(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "saveMeal", formData);
   const name = parseTrio(formData, "name");
   if (!name.pt) return;
 
@@ -266,7 +283,8 @@ export async function saveMeal(formData: FormData) {
 }
 
 export async function removeMeal(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "removeMeal", formData);
   await ops.deleteMeal(str(formData, "id"));
   revalidatePath("/admin/refeicoes");
 }

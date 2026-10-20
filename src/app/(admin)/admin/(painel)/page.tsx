@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { requireSession } from "@/lib/auth/session";
 import { getHotel, getRooms } from "@/lib/repo/content";
@@ -47,6 +48,7 @@ const EMPTY: DashboardStats = {
 };
 
 export default async function DashboardPage() {
+  await requirePagePermission("/admin");
   const session = await requireSession();
   const hotel = await getHotel();
   const rooms = await getRooms();

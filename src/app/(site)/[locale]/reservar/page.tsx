@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n";
 import { getRooms, getOffers, getExtras } from "@/lib/repo/content";
+import { getBookingRules } from "@/lib/repo/rate-plans";
 import { SITE_URL } from "@/lib/site";
 import { PageHero } from "@/components/PageHero";
 import { ReservationFlow } from "@/components/ReservationFlow";
@@ -45,17 +46,18 @@ export default async function ReservePage({ params, searchParams }: Props) {
   const locale = raw as Locale;
   const dict = getDictionary(locale);
 
-  const [rooms, offers, extras] = await Promise.all([
+  const [rooms, offers, extras, rules] = await Promise.all([
     getRooms(),
     getOffers(),
     getExtras(),
+    getBookingRules(),
   ]);
 
   const initial = {
     checkIn: sp.checkIn ?? "",
     checkOut: sp.checkOut ?? "",
-    adults: sp.adults ? Number(sp.adults) : 2,
-    children: sp.children ? Number(sp.children) : 0,
+    adults: Number(sp.adults) || 2,
+    children: Number(sp.children) || 0,
     roomId: sp.room ?? "",
     offerId: sp.offer ?? "",
   };
@@ -80,6 +82,9 @@ export default async function ReservePage({ params, searchParams }: Props) {
           offers={offers}
           extras={extras}
           initial={initial}
+          childMaxAge={rules.childMaxAge}
+          privacyHref={`/${locale}/privacidade`}
+          cancellationHref={`/${locale}/cancelamento`}
         />
       </section>
     </div>

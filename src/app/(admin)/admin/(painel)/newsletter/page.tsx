@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { listSubscribers } from "@/lib/repo/ops";
 import { removeSubscriber } from "@/app/(admin)/admin/actions";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge } from "@/components/admin/ui";
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 const fmt = new Intl.DateTimeFormat("pt-PT", { dateStyle: "medium" });
 
 export default async function NewsletterAdminPage() {
+  await requirePagePermission("/admin/newsletter");
   let subscribers: Awaited<ReturnType<typeof listSubscribers>> = [];
   try {
     subscribers = await listSubscribers();

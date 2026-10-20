@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listExtras } from "@/lib/repo/admin";
@@ -13,6 +14,7 @@ export default async function ExtraEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/tarifas/x");
   const { id } = await params;
   const isNew = id === "novo";
   const extras = await listExtras();

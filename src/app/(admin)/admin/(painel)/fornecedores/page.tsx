@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { listSuppliers } from "@/lib/repo/operations";
 import { saveSupplier, removeSupplier } from "@/app/(admin)/admin/actions-ops";
 import {
@@ -8,6 +9,7 @@ import { SubmitButton } from "@/components/admin/SubmitButton";
 export const dynamic = "force-dynamic";
 
 export default async function SuppliersPage() {
+  await requirePagePermission("/admin/fornecedores");
   let suppliers: Awaited<ReturnType<typeof listSuppliers>> = [];
   try {
     suppliers = await listSuppliers();

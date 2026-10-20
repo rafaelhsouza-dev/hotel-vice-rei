@@ -9,6 +9,8 @@ export type SessionPayload = {
   email: string;
   name: string;
   role: string;
+  /** admin_users.session_version at issue time; a bump revokes the cookie. */
+  ver?: number;
   iat: number;
   exp: number;
 };

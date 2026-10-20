@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Image from "next/image";
 import { listGallery } from "@/lib/repo/admin";
 import { listMedia } from "@/lib/repo/ops";
@@ -10,6 +11,7 @@ import { RowActions } from "@/components/admin/RowActions";
 export const dynamic = "force-dynamic";
 
 export default async function GalleryAdminPage() {
+  await requirePagePermission("/admin/galeria");
   const images = await listGallery();
   const ids = images.map((i) => String(i.id));
   const media = await listMedia().catch(() => []);

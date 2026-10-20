@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { listTestimonials } from "@/lib/repo/admin";
 import { Icon } from "@/components/Icon";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge } from "@/components/admin/ui";
@@ -6,6 +7,7 @@ import { RowActions } from "@/components/admin/RowActions";
 export const dynamic = "force-dynamic";
 
 export default async function TestimonialsAdminPage() {
+  await requirePagePermission("/admin/testemunhos");
   const items = await listTestimonials();
   const ids = items.map((t) => t.id);
 

@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Image from "next/image";
 import { listOffers } from "@/lib/repo/admin";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge } from "@/components/admin/ui";
@@ -6,6 +7,7 @@ import { RowActions } from "@/components/admin/RowActions";
 export const dynamic = "force-dynamic";
 
 export default async function OffersAdminPage() {
+  await requirePagePermission("/admin/promocoes");
   const offers = await listOffers();
   const ids = offers.map((o) => o.id);
 

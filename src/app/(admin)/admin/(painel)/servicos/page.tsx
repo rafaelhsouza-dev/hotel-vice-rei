@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import { listServices } from "@/lib/repo/admin";
 import { Icon, type IconName } from "@/components/Icon";
 import { AdminHeader, Section, TableWrap, Th, Td, EmptyState, Badge } from "@/components/admin/ui";
@@ -6,6 +7,7 @@ import { RowActions } from "@/components/admin/RowActions";
 export const dynamic = "force-dynamic";
 
 export default async function ServicesAdminPage() {
+  await requirePagePermission("/admin/servicos");
   const services = await listServices();
   const ids = services.map((s) => s.id);
 

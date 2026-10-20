@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, locales } from "./i18n/config";
 import { SESSION_COOKIE, verifySession } from "./lib/auth/jwt";
+import { can, permissionForPath } from "./lib/auth/permissions";
 
 const PUBLIC_FILE = /\.(.*)$/;
 
@@ -44,7 +45,18 @@ export async function proxy(request: NextRequest) {
       return NextResponse.next();
     }
     const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
-    if (session) return NextResponse.next();
+    if (session) {
+      // Early, cookie-based role check for a friendlier redirect. Pages and
+      // actions re-check against the database; this is not the barrier.
+      const needed = permissionForPath(pathname);
+      if (needed && pathname !== "/admin/sem-acesso" && !can(session.role, needed)) {
+        const denied = request.nextUrl.clone();
+        denied.pathname = "/admin/sem-acesso";
+        denied.search = "";
+        return NextResponse.redirect(denied);
+      }
+      return NextResponse.next();
+    }
 
     const login = request.nextUrl.clone();
     login.pathname = "/admin/login";

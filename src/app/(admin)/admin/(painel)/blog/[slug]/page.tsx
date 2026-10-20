@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listPosts } from "@/lib/repo/admin";
@@ -15,6 +16,7 @@ export default async function PostEditPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await requirePagePermission("/admin/blog/x");
   const { slug } = await params;
   const isNew = slug === "novo";
   const posts = await listPosts();

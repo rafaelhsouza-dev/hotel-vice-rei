@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { listMeals, MEAL_SERVICES } from "@/lib/repo/operations";
 import { removeMeal } from "@/app/(admin)/admin/actions-ops";
@@ -11,6 +12,7 @@ export const dynamic = "force-dynamic";
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
 export default async function MealsPage() {
+  await requirePagePermission("/admin/refeicoes");
   let meals: Awaited<ReturnType<typeof listMeals>> = [];
   try {
     meals = await listMeals();

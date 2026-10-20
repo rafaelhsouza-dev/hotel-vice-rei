@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireSession } from "@/lib/auth/session";
+import { requireAnyPermission, requirePermission } from "@/lib/auth/session";
+import { auditForm } from "@/lib/repo/audit";
 import * as channels from "@/lib/repo/channels";
 import { syncChannel, testChannel } from "@/lib/channels/engine";
 import { redeemInviteCode } from "@/lib/channels/providers/beds24";
@@ -36,7 +37,8 @@ function back(path: string, kind: "ok" | "erro", message: string): never {
 }
 
 export async function saveChannel(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "saveChannel", form);
   const id = str(form, "id");
   const provider = str(form, "provider");
   if (!id || !isProviderId(provider)) back(BASE, "erro", "Canal inválido.");
@@ -53,7 +55,8 @@ export async function saveChannel(form: FormData) {
 }
 
 export async function saveChannelCredentials(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "saveChannelCredentials", form);
   const id = str(form, "id");
   const channel = await channels.getChannel(id);
   if (!channel) back(BASE, "erro", "Canal não encontrado.");
@@ -85,7 +88,8 @@ export async function saveChannelCredentials(form: FormData) {
 }
 
 export async function saveRoomMapping(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "saveRoomMapping", form);
   const channelId = str(form, "channelId");
   const roomId = str(form, "roomId");
   if (!channelId || !roomId) back(BASE, "erro", "Mapeamento inválido.");
@@ -101,7 +105,8 @@ export async function saveRoomMapping(form: FormData) {
 }
 
 export async function testChannelAction(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "testChannelAction", form);
   const id = str(form, "id");
   const result = await testChannel(id);
   revalidatePath(`${BASE}/${id}`);
@@ -109,7 +114,8 @@ export async function testChannelAction(form: FormData) {
 }
 
 export async function syncChannelAction(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "syncChannelAction", form);
   const id = str(form, "id");
   const outcome = await syncChannel(id);
   revalidatePath(BASE);
@@ -118,14 +124,16 @@ export async function syncChannelAction(form: FormData) {
 }
 
 export async function removeChannel(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "removeChannel", form);
   await channels.deleteChannel(str(form, "id"));
   revalidatePath(BASE);
   back(BASE, "ok", "Canal removido.");
 }
 
 export async function rotateIcalTokenAction() {
-  await requireSession();
+  const actor = await requirePermission("integrations.manage");
+  void auditForm(actor, "rotateIcalTokenAction", null);
   await rotateIcalToken();
   revalidatePath(BASE);
   back(
@@ -137,7 +145,8 @@ export async function rotateIcalTokenAction() {
 
 /** Manual block or stop-sell, used from the availability calendar. */
 export async function saveAvailabilityOverride(form: FormData) {
-  await requireSession();
+  const actor = await requirePermission("availability.manage");
+  void auditForm(actor, "saveAvailabilityOverride", form);
   const roomId = str(form, "roomId");
   const from = str(form, "from");
   const to = str(form, "to");

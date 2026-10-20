@@ -1,0 +1,341 @@
+Fonte: https://siba.ssi.gov.pt/ajuda/modos-de-envio/ (texto extraído em 2026-10-20)
+
+Para criar o WSDL para acesso aos Web Services abra o browser e aceda ao seguinte endereço:
+Ambiente de desenvolvimento
+https://siba.ssi.gov.pt/bawsdev/boletinsalojamento.asmx?wsdl
+Ambiente de produção
+https://siba.ssi.gov.pt/baws/boletinsalojamento.asmx?wsdl
+			 Método Disponível
+			EntregaBoletinsAlojamento (UnidadeHoteleira As String, Estabelecimento As String, ChaveAcesso as string, Boletins As String) As String.
+Em que:
+<UnidadeHoteleira> é o NIPC da unidade hoteleira
+<Estabelecimento> é o número de estabelecimento fornecido pela UCFE
+<ChaveAcesso> é a chave de ativação/autenticação fornecida pela UCFE em ofício enviado após o registo.
+<Boletins> Conteúdo em formato XML de acordo com o ficheiro BAL.XSD.
+<UnidadeHoteleira> 
+Este parâmetro deve ter o NIPC da Unidade Hoteleira – 9 caracteres numéricos
+<Estabelecimento>
+O número de estabelecimento é fornecido pela UCFE após o registo da Unidade Hoteleira. Corresponde ao número de ordem da Unidade Hoteleira para o mesmo NIPC. A primeira Unidade Hoteleira a registar-se com um NIPC receberá o número de estabelecimento ’00’.
+<ChaveAcesso>
+A Chave de Ativação/Autenticação fornecida pela UCFE após o registo da Unidade Hoteleira.
+Esta chave é composta apenas por dígitos.
+<Boletins>
+Este método recebe neste parâmetro um conjunto de caracteres correspondentes a um ficheiro XML com o formato definido pelo ficheiro  BAL.XSD.
+O conteúdo suportado é Base64.
+			 Formato do conteúdo XML
+			Equivale a 3 tabelas com os seguintes conteúdos:
+Tabela – Unidade_Hoteleira
+Esta  tabela tem os dados de identificação da unidade hoteleira. Os campos são todos obrigatórios exceto o <Fax>.
+As alterações de Morada, Telefone/Fax e contacto são atualizados por esta tabela. Para alteração dos restantes dados de identificação deverá contactar a UCFE.
+Campo |
+Tipo |
+Tamanho Máx |
+Descrição / Validação |
+Código_Unidade_Hoteleira |
+Digitos |
+9 |
+NIPC |
+Estabelecimento |
+Numérico |
+4 |
+Número de ordem da Unidade Hoteleira |
+Nome |
+Alfanumérico |
+40 |
+Nome da Unidade Hoteleira |
+Abreviatura |
+Alfanumérico |
+15 |
+Abreviatura do Nome |
+Morada |
+Alfanumérico |
+40 |
+Morada do estabelecimento |
+Localidade |
+Alfanumérico |
+30 |
+ |
+Codigo_Postal |
+Numérico |
+4 |
+ |
+Zona_Postal |
+Numérico |
+3 |
+ |
+Telefone |
+Digitos |
+9 |
+ |
+Fax |
+Digitos |
+9 |
+ |
+Nome_Contacto |
+Alfanumérico |
+40 |
+ |
+Email_Contacto |
+Alfanumérico |
+140 |
+ |
+Tabela – Boletim_Alojamento
+Esta tabela tem os Boletins de Alojamento. Os campos são todos obrigatórios exceto o <Nome> ; <Local_Nascimento> e <Data_Saida>.
+Campo |
+Tipo |
+Tamanho Máx |
+Descrição / Validação |
+Apelido |
+Alfa |
+40 |
+Se o nome do hóspede só tiver um nome, este deverá ser posto neste campo e o nome virá a espaços. |
+Nome |
+Alfa |
+40 |
+O Nome e o Apelido devem ser constituidos apenas pelos seguintes caracteres:  [A : Z] e [ÇÃÁÀÉÊÍÕÔÓÚ’-]e espaço. |
+Nacionalidade |
+Alfa |
+3 |
+Códigos de países definido pela ICAO norma 9303 |
+Data_Nascimento |
+Data |
+ |
+Data anterior ao dia corrente.  Quando o documento de identificação do hóspede não mencionar o mês e o dia de nascimento, deve ser assumido o dia 1 de janeiro. |
+Local_Nascimento |
+Alfanumérico |
+30 |
+ |
+Documento_Identificacao |
+Alfanumérico |
+16 |
+Número de documento de identificação só com caracteres de ‘0’ a ‘9’ e de ‘A’ a ‘Z’ |
+Tipo_Documento_Identificacao |
+Alfa |
+3 |
+‘P’ – Passaporte
+‘B’ – Bilhete de Identidade
+‘O’ – Outro tipo de Documento |
+Pais_Emissor_Documento |
+Alfa |
+3 |
+Códigos de países definido pela ICAO norma 9303 |
+Data_Entrada |
+Data |
+ |
+Igual ou anterior à data do dia |
+Data_Saida |
+Data |
+ |
+Se preenchido deve ser igual ou posterior à data de entrada |
+Pais_Residencia_Origem |
+Alfa |
+3 |
+Códigos de países definido pela ICAO norma 9303 |
+Local_Residencia_Origem |
+Alfanumérica |
+30 |
+ |
+Tabela – Envio
+Esta tabela tem apenas alguns dados de controlo.
+Campo |
+Tipo |
+Tamanho Máx |
+Descrição / Validação |
+Numero_Ficheiro |
+Numérico |
+5 |
+Número de ordem de conteúdo XML gerado pela Unidade Hoteleira |
+Data_Movimento |
+Data |
+ |
+Data de geração do contéudo XML |
+			 Carregamento de Boletins de Alojamento
+			O carregamento dos Boletins de Alojamento é feito chamando o método:
+EntregaBoletinsAlojamento (UnidadeHoteleira As String, Estabelecimento As String, ChaveAcesso as string, Boletins As String) As String.
+ O retorno chegará à unidade hoteleira por duas vias:
+Retorno do método
+Email para o contacto registado na base de dados da UCFE.
+Retorno do Método
+Se o retorno for igual a ‘0’, significa que os boletins de alojamento foram carregados com sucesso e um e-mail de confirmação será enviado para o e-mail registado na base de dados.
+Se o retorno for diferente de ‘0’, então corresponde a um conteúdo XML com o seguinte formato:
+<Codigo_Retorno> – Código do erro detetado
+<Descricao> – Descrição do erro detetado
+Código Exemplo
+Pode fazer o Download de um Programa de Envio em MS Visual Studio 2005. Este o código pode ser usado e alterado livremente. A UCFE não assume qualquer responsabilidade de prejuízos ou perdas provocadas pela utilização do mesmo.
+Este pequeno programa faz o envio de um ficheiro XML com os boletins de alojamento. Para tal é necessário fazer as seguintes parameterizações:
+1 –  Sub Main()
+Se a primeira linha tiver –> “Dim wsSEF As New pt.sef.wwwDev.BoletinsAlojamento” então está a usar os web services de Desenvolvimento e Teste. Para usar os Web Services de Produção tem de substituir por “Dim wsSEF As New pt.sef.www.BoletinsAlojamento“
+2 – Ficheiro EnviarBA.exe.config / app.config
+Este ficheiro xml tem informação de configuração da aplicação. Tem de alterar os valores associados às Tags UnidadeHoteleira ; Estabelecimento e ChaveAcesso em conformidade com os dados fornecidos em ofício emitido pela UCFE após o pré-registo da Unidade Hoteleira.
+Quando fizer o download a aplicação estará parameterizadas para aceder ao web service de desenvolvimento e teste, usando os dados de uma unidade hoteleira fictícia.
+Para executar este programa abra a janela de linha de comandos (cmd.exe) e execute o comando:
+<PATH_DO_EXECUTAVEL>\EnviarBA.exe <Ficheiro_de_Boletins.xml>
+			 UPLOAD DE FICHEIROS 
+			Estrutura do ficheiro de texto:
+Nomenclatura – <NIF><Estabelecimento><Numero de Ficheiro>.DAT
+O ficheiro terá os seguintes 3 tipos de registo:
+Registo de Cabeçalho |
+Tipo 0 |
+Registo de Boletim |
+Tipo 1 |
+Registo de Resumo |
+Tipo 9 |
+Nota: Os campos terminam todos com um caracter | (pipe)
+1º Registo |
+Campo |
+Tipo |
+Tamanho |
+Descrição / Validação |
+Tipo Registo |
+Dígitos |
+1 |
+‘0’ Valor Fixo |
+Tipo Ficheiro |
+Alfanumérico Limitado |
+4 |
+‘BA03’ Valor fixo |
+NIF |
+Dígitos |
+9 |
+Número de identificação fiscal da Unidade Hoteleira |
+Estabelecimento |
+Numérico |
+4 |
+Número do Estabelecimento |
+Nome |
+Alfabético limitado |
+40 |
+Nome |
+Morada |
+Alfabético Limitado |
+40 |
+Morada da UH |
+Localidade |
+Alfabético Limitado |
+30 |
+ |
+Codigo Postal |
+Dígitos |
+4 |
+4 primeiros dígitos do código postal |
+Zona Postal |
+Dígitos |
+3 |
+Últimos 3 dígitos do código postal |
+Telefone |
+Número |
+10 |
+Telefone |
+Fax |
+Número |
+10 |
+Fax |
+Nome Contacto |
+Alfabético Limitado |
+40 |
+Nome do contacto na UH |
+e-Mail Contacto |
+Email |
+140 |
+e-mail do contacto na UH |
+Registos Seguintes |
+Campo |
+Tipo |
+Tamanho |
+Descrição / Validação |
+Tipo Registo |
+Dígitos |
+1 |
+1 Valor Fixo |
+Apelido |
+Alfabético Nome |
+40 |
+Apelido do hóspede |
+Nome |
+Alfabético Nome |
+40 |
+Este campo pode não ser preenchido se o nome completo do hóspede só tiver um nome. Neste caso esse nome deverá estar no campo Apelido. |
+Nacionalidade |
+Alfabético |
+3 |
+Código de Nacionalidade – Tabela ICAO |
+Local de Nascimento |
+Alfabético limitado |
+40 |
+Local de Nascimento. Este campo é opcional |
+Data Nascimento |
+Dígitos |
+8 |
+Data de Nascimento – anterior à data do dia. Quando o documento de identificação do hóspede não mencionar o mês e o dia de nascimento, deve ser assumido o dia 1 de janeiro.– Formato AAAAMMDD. |
+Número Documento |
+Alfanumérico Limitado |
+16 |
+Número do documento de identificação sem espaços embebidos |
+Tipo Documento |
+Alfabético limitado |
+3 |
+B – Bilhete de Identidade
+P – Passaporte
+O – Outro documento de identificação |
+País Emissor |
+Alfabético |
+3 |
+Código de País – Tabela ICAO |
+País Residência |
+Alfabético |
+3 |
+Código de País – Tabela ICAO |
+Local Residência |
+Alfabético limitado |
+30 |
+Local habitual de residência. Este campo é opcional. |
+Data Entrada |
+Dígitos |
+8 |
+Igual ou anterior à data do dia – Formato AAAAMMDD |
+Data Saída |
+Dígitos |
+8 |
+Se preenchido deve ser igual ou posterior à data de entrada – Formato AAAAMMDD. |
+Último Registo |
+Campo |
+Tipo |
+Tamanho |
+Descrição / Validação |
+Tipo Registo |
+Dígitos |
+1 |
+9 Valor fixo |
+Número Registos |
+Número |
+5 |
+Número total de registos do ficheiro incluindo este. |
+Data |
+Dígitos |
+8 |
+Data de geração do ficheiro – Formato AAAAMMDD. A Data tem de ser anterior ou igual à data do dia |
+Número Ficheiro |
+Número |
+5 |
+Número de série do ficheiro da Unidade Hoteleira |
+Tipos de Campo |
+Tipo |
+Descrição / Validação |
+Alfabético Nome |
+Só maiúsculas, caracteres [A : Z] e [ÇÃÁÀÉÊÍÕÔÓÚ’-] e espaço, não pode ser iniciado por espaço. |
+Alfabético Limitado |
+Só maiúsculas, caracteres [A:Z] ; espaço; Hífen; Aspas; Apostrofo; Virgula; Ponto |
+Alfabético |
+Caracteres [A:Z] ; Caracteres Maiúsculos; pontuação ; Espaço |
+Alfanumérico Limitado |
+Caracteres [A:Z] e [0:9] |
+Número |
+[0:9] |
+Dígitos |
+[0:9], Número de dígitos indicado |
+email |
+[A:Z]; sublinhado;hífen inclui um @ e pelo menos um ponto |
+			 INSERÇÃO DIRETA NA PÁGINA 
+			Ao proceder ao envio por esta via as Unidades Hoteleiras farão o registo e envio dos Boletins de Alojamento diretamente na página do SIBA.
+Consulte o Manual do Utilizador.
+							

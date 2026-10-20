@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listMeals, MEAL_SERVICES } from "@/lib/repo/operations";
@@ -14,6 +15,7 @@ export default async function MealEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/refeicoes/x");
   const { id } = await params;
   const isNew = id === "novo";
   const meals = await listMeals();

@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listUnits, UNIT_STATUSES } from "@/lib/repo/operations";
@@ -14,6 +15,7 @@ export default async function UnitEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/acomodacoes/x");
   const { id } = await params;
   const isNew = id === "nova";
   const units = await listUnits();

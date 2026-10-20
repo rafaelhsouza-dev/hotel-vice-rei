@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import {
   listTasks, listUnits, listStaff,
@@ -32,6 +33,7 @@ export default async function TasksPage({
 }: {
   searchParams: Promise<{ estado?: string; tipo?: string; unidade?: string }>;
 }) {
+  await requirePagePermission("/admin/tarefas");
   const sp = await searchParams;
   const status = (FILTERS.some((f) => f.value === sp.estado) ? sp.estado : "open") as
     | TaskStatus

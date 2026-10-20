@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { listUnits, unitSummary, UNIT_STATUSES, type UnitStatus } from "@/lib/repo/operations";
 import { changeUnitStatus, removeUnit } from "@/app/(admin)/admin/actions-ops";
@@ -13,6 +14,7 @@ export default async function UnitsPage({
 }: {
   searchParams: Promise<{ estado?: string }>;
 }) {
+  await requirePagePermission("/admin/acomodacoes");
   const sp = await searchParams;
   const filter = (UNIT_STATUSES as readonly string[]).includes(sp.estado ?? "")
     ? (sp.estado as UnitStatus)

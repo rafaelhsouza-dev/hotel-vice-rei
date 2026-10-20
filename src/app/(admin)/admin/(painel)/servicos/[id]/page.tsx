@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listServices } from "@/lib/repo/admin";
@@ -20,6 +21,7 @@ export default async function ServiceEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/servicos/x");
   const { id } = await params;
   const isNew = id === "novo";
   const services = await listServices();

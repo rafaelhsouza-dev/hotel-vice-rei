@@ -1,4 +1,3 @@
-import { randomBytes } from "node:crypto";
 import { query, queryOne } from "../db";
 
 /** Bookings, inbox, subscribers, media and admin accounts. */
@@ -44,50 +43,6 @@ export type Booking = BookingInput & {
   /** Physical unit assigned to this stay, if any. */
   unitId: number | null;
 };
-
-/** Human-friendly, non-sequential reference such as VR-7F3K9Q. */
-function makeReference(): string {
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const bytes = randomBytes(6);
-  let out = "";
-  for (const b of bytes) out += alphabet[b % alphabet.length];
-  return `VR-${out}`;
-}
-
-export async function createBooking(input: BookingInput): Promise<string> {
-  // Collisions are vanishingly unlikely, but the column is UNIQUE — retry.
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const reference = makeReference();
-    try {
-      await query(
-        `INSERT INTO bookings
-           (reference, first_name, last_name, email, phone, country, notes, room_id,
-            offer_id, check_in, check_out, nights, adults, children, extras,
-            promo_code, base, extras_total, discount, total, payment_method, locale)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,
-        [
-          reference, input.firstName, input.lastName, input.email, input.phone,
-          input.country, input.notes, input.roomId, input.offerId, input.checkIn,
-          input.checkOut, input.nights, input.adults, input.children,
-          JSON.stringify(input.extras), input.promoCode, input.base,
-          input.extrasTotal, input.discount, input.total, input.paymentMethod,
-          input.locale,
-        ],
-      );
-      if (input.promoCode) {
-        await query(
-          `UPDATE promo_codes SET uses = uses + 1 WHERE code = $1`,
-          [input.promoCode],
-        );
-      }
-      return reference;
-    } catch (err) {
-      const message = (err as Error).message;
-      if (!message.includes("bookings_reference_key")) throw err;
-    }
-  }
-  throw new Error("Could not allocate a booking reference");
-}
 
 function toBooking(r: Record<string, unknown>): Booking {
   return {
@@ -373,40 +328,4 @@ export async function deleteMedia(id: string): Promise<string | null> {
     [id],
   );
   return row?.path ?? null;
-}
-
-// --- admin users -----------------------------------------------------------
-
-export type AdminUser = {
-  id: string;
-  email: string;
-  name: string;
-  passwordHash: string;
-  role: string;
-};
-
-export async function findAdminByEmail(email: string): Promise<AdminUser | null> {
-  const row = await queryOne<Record<string, string>>(
-    `SELECT id, email, name, password_hash, role FROM admin_users WHERE email = $1`,
-    [email.toLowerCase().trim()],
-  );
-  if (!row) return null;
-  return {
-    id: row.id,
-    email: row.email,
-    name: row.name,
-    passwordHash: row.password_hash,
-    role: row.role,
-  };
-}
-
-export async function touchLastLogin(id: string): Promise<void> {
-  await query(`UPDATE admin_users SET last_login_at = now() WHERE id = $1`, [id]);
-}
-
-export async function updateAdminPassword(
-  id: string,
-  passwordHash: string,
-): Promise<void> {
-  await query(`UPDATE admin_users SET password_hash = $2 WHERE id = $1`, [id, passwordHash]);
 }

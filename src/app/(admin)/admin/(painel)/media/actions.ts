@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireSession } from "@/lib/auth/session";
+import { requireAnyPermission, requirePermission } from "@/lib/auth/session";
+import { auditForm } from "@/lib/repo/audit";
 import { saveUpload, deleteUpload } from "@/lib/uploads";
 import { insertMedia, deleteMedia } from "@/lib/repo/ops";
 
@@ -11,7 +12,8 @@ export async function uploadMedia(
   _prev: UploadState,
   formData: FormData,
 ): Promise<UploadState> {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "uploadMedia", formData);
 
   const files = formData
     .getAll("files")
@@ -38,7 +40,8 @@ export async function uploadMedia(
 }
 
 export async function removeMedia(formData: FormData) {
-  await requireSession();
+  const actor = await requirePermission("content.manage");
+  void auditForm(actor, "removeMedia", formData);
   const id = String(formData.get("id") ?? "");
   const path = await deleteMedia(id);
   if (path) await deleteUpload(path);

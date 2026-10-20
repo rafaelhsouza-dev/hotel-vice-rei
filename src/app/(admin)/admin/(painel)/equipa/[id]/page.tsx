@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listStaff, DEPARTMENTS, SHIFTS } from "@/lib/repo/operations";
@@ -13,6 +14,7 @@ export default async function StaffEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePagePermission("/admin/equipa/x");
   const { id } = await params;
   const person = (await listStaff()).find((s) => s.id === id);
   if (!person) notFound();

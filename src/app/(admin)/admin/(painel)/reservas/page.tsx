@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth/session";
 import Link from "next/link";
 import { listBookings, type BookingStatus } from "@/lib/repo/ops";
 import { getRooms } from "@/lib/repo/content";
@@ -46,6 +47,7 @@ export default async function BookingsAdminPage({
 }: {
   searchParams: Promise<{ status?: string; q?: string; page?: string }>;
 }) {
+  await requirePagePermission("/admin/reservas");
   const sp = await searchParams;
   const status = (STATUSES.find((s) => s.value === sp.status)?.value ??
     "all") as BookingStatus | "all";
