@@ -234,11 +234,16 @@ async function settleBooking(
   return { confirmedNow: confirm };
 }
 
-export type AppliedEvent = { bookingId: string | null; changed: boolean; confirmedNow: boolean };
+export type AppliedEvent = {
+  bookingId: string | null;
+  changed: boolean;
+  confirmedNow: boolean;
+  status: PaymentEvent["status"];
+};
 
 /** Applies one verified provider event. Safe to call repeatedly. */
 export async function applyPaymentEvent(provider: ProviderId, event: PaymentEvent): Promise<AppliedEvent> {
-  if (event.status === "pending") return { bookingId: null, changed: false, confirmedNow: false };
+  if (event.status === "pending") return { bookingId: null, changed: false, confirmedNow: false, status: event.status };
 
   return transaction(async (client) => {
     const { rows } = await client.query<{ id: string; booking_id: string | null; status: string; amount: string }>(
@@ -248,16 +253,16 @@ export async function applyPaymentEvent(provider: ProviderId, event: PaymentEven
       [provider, event.paymentId && /^[0-9a-f-]{36}$/i.test(event.paymentId) ? event.paymentId : null, event.providerRef],
     );
     const payment = rows[0];
-    if (!payment) return { bookingId: null, changed: false, confirmedNow: false };
+    if (!payment) return { bookingId: null, changed: false, confirmedNow: false, status: event.status };
 
     // Terminal states never move again, except a late success after an
     // expiry we declared ourselves (the guest did pay): that one we honour.
     const terminal = payment.status === "succeeded" || payment.status === "failed" || payment.status === "cancelled";
     if (terminal || payment.status === event.status) {
-      return { bookingId: payment.booking_id, changed: false, confirmedNow: false };
+      return { bookingId: payment.booking_id, changed: false, confirmedNow: false, status: event.status };
     }
     if (payment.status === "expired" && event.status !== "succeeded") {
-      return { bookingId: payment.booking_id, changed: false, confirmedNow: false };
+      return { bookingId: payment.booking_id, changed: false, confirmedNow: false, status: event.status };
     }
 
     if (event.status === "succeeded" && event.amount != null && Math.abs(event.amount - Number(payment.amount)) > 0.009) {
@@ -299,7 +304,7 @@ export async function applyPaymentEvent(provider: ProviderId, event: PaymentEven
         }
       }
     }
-    return { bookingId: payment.booking_id, changed: true, confirmedNow };
+    return { bookingId: payment.booking_id, changed: true, confirmedNow, status: event.status };
   });
 }
 

@@ -46,6 +46,8 @@ export const TAGS = {
   gallery: "gallery",
   extras: "extras",
   analytics: "analytics",
+  seo: "seo",
+  pois: "pois",
 } as const;
 
 const CACHE_SECONDS = 300;
@@ -375,4 +377,99 @@ export const getExtras = unstable_cache(
   },
   ["extras"],
   { tags: [TAGS.extras], revalidate: CACHE_SECONDS },
+);
+
+// --- SEO, monitoring and public reputation ---------------------------------
+
+export type SeoSettings = {
+  bing: string;
+  yandex: string;
+  facebookDomain: string;
+  pinterest: string;
+  clarity: string;
+  metaPixel: string;
+  googleAdsId: string;
+  googleAdsLabel: string;
+  hotjar: string;
+  googleBusinessUrl: string;
+  googleHotelCenterId: string;
+  bookingUrl: string;
+  tripadvisorUrl: string;
+  tripadvisorScore: string;
+  tripadvisorCount: string;
+  bookingScore: string;
+  bookingCount: string;
+  googleScore: string;
+  googleCount: string;
+};
+
+const EMPTY_SEO: SeoSettings = {
+  bing: "",
+  yandex: "",
+  facebookDomain: "",
+  pinterest: "",
+  clarity: "",
+  metaPixel: "",
+  googleAdsId: "",
+  googleAdsLabel: "",
+  hotjar: "",
+  googleBusinessUrl: "",
+  googleHotelCenterId: "",
+  bookingUrl: "",
+  tripadvisorUrl: "",
+  // Verified 2026-08-10 on the public listings; the admin can update them.
+  tripadvisorScore: "3.5",
+  tripadvisorCount: "248",
+  bookingScore: "8.0",
+  bookingCount: "",
+  googleScore: "",
+  googleCount: "",
+};
+
+export const getSeo = unstable_cache(
+  async (): Promise<SeoSettings> => {
+    const rows = await safeQuery<{ seo: Partial<SeoSettings> }>(`SELECT seo FROM settings WHERE id = 1`);
+    const stored = rows?.[0]?.seo ?? {};
+    const out = { ...EMPTY_SEO };
+    for (const k of Object.keys(out) as (keyof SeoSettings)[]) {
+      const v = stored[k];
+      if (typeof v === "string" && v.trim()) out[k] = v.trim();
+    }
+    return out;
+  },
+  ["seo"],
+  { tags: [TAGS.seo], revalidate: CACHE_SECONDS },
+);
+
+// --- points of interest -----------------------------------------------------
+
+export type Poi = {
+  id: string;
+  category: "sight" | "museum" | "food" | "shopping" | "transport" | "nature" | "nightlife" | "other";
+  name: Trio<string>;
+  description: Trio<string>;
+  lat: number;
+  lng: number;
+  walkMinutes: number | null;
+  url: string;
+};
+
+export const getPois = unstable_cache(
+  async (): Promise<Poi[]> => {
+    const rows = await safeQuery<Record<string, unknown>>(
+      `SELECT * FROM pois WHERE published = true ORDER BY position, created_at`,
+    );
+    return (rows ?? []).map((r) => ({
+      id: String(r.id),
+      category: r.category as Poi["category"],
+      name: r.name as Trio<string>,
+      description: r.description as Trio<string>,
+      lat: Number(r.lat),
+      lng: Number(r.lng),
+      walkMinutes: r.walk_minutes == null ? null : Number(r.walk_minutes),
+      url: String(r.url ?? ""),
+    }));
+  },
+  ["pois"],
+  { tags: [TAGS.pois], revalidate: CACHE_SECONDS },
 );

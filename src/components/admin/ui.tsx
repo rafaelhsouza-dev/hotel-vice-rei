@@ -4,7 +4,7 @@ import { Icon, type IconName } from "@/components/Icon";
 /** Shared server-rendered building blocks for the backoffice. */
 
 export const fieldClass =
-  "w-full rounded-xl border border-[var(--color-line)] bg-white px-4 py-2.5 text-sm focus:border-[var(--color-accent-deep)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/15";
+  "w-full rounded-xl border border-[var(--color-line)] bg-white px-4 py-2.5 text-base sm:text-sm focus:border-[var(--color-accent-deep)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-deep)]/40 disabled:bg-[var(--color-line-soft)]";
 
 export const labelClass =
   "mb-1.5 block text-[11px] uppercase tracking-[0.18em] text-[var(--color-ink-muted)]";
@@ -82,9 +82,10 @@ export function Badge({
   tone = "neutral",
 }: {
   children: React.ReactNode;
-  tone?: "neutral" | "success" | "warning" | "danger";
+  tone?: "neutral" | "success" | "warning" | "danger" | "info";
 }) {
   const tones = {
+    info: "bg-sky-50 text-sky-800",
     neutral: "bg-[var(--color-line-soft)] text-[var(--color-ink-soft)]",
     success: "bg-[var(--color-success)]/10 text-[var(--color-success)]",
     warning: "bg-[var(--color-accent)]/15 text-[var(--color-accent-deep)]",
@@ -156,4 +157,70 @@ export function Td({
   className?: string;
 }) {
   return <td className={`px-4 py-3 align-middle ${className}`}>{children}</td>;
+}
+
+/** Small label/value statistic tile used across the PMS screens. */
+export function Stat({
+  label,
+  value,
+  hint,
+  tone = "neutral",
+}: {
+  label: string;
+  value: React.ReactNode;
+  hint?: React.ReactNode;
+  tone?: "neutral" | "warning" | "danger" | "success";
+}) {
+  const tones = {
+    neutral: "",
+    warning: "border-[var(--color-accent)]/40",
+    danger: "border-red-200 bg-red-50/40",
+    success: "border-[var(--color-success)]/30",
+  } as const;
+  return (
+    <div className={`rounded-2xl border border-[var(--color-line)] bg-white p-4 ${tones[tone]}`}>
+      <p className="text-[11px] uppercase tracking-[0.15em] text-[var(--color-ink-muted)]">{label}</p>
+      <p className="mt-1 font-display text-2xl tracking-tight">{value}</p>
+      {hint && <p className="mt-0.5 text-xs text-[var(--color-ink-muted)]">{hint}</p>}
+    </div>
+  );
+}
+
+/** A label + control pair; keeps every admin form consistent. */
+export function Field({
+  label,
+  htmlFor,
+  hint,
+  children,
+  className = "",
+}: {
+  label: string;
+  htmlFor: string;
+  hint?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <label className={labelClass} htmlFor={htmlFor}>
+        {label}
+      </label>
+      {children}
+      {hint && <p className="mt-1 text-xs text-[var(--color-ink-muted)]">{hint}</p>}
+    </div>
+  );
+}
+
+export const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
+
+export function formatDate(iso: string | null | undefined, withTime = false): string {
+  if (!iso) return "—";
+  const d = iso.length === 10 ? new Date(`${iso}T00:00:00Z`) : new Date(iso);
+  return new Intl.DateTimeFormat("pt-PT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
+    timeZone: iso.length === 10 ? "UTC" : "Europe/Lisbon",
+  }).format(d);
 }

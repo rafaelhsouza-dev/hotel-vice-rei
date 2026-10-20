@@ -1,15 +1,18 @@
 import { requirePagePermission } from "@/lib/auth/session";
-import { getHotel, getAnalytics } from "@/lib/repo/content";
-import { saveSettings, saveAnalytics } from "@/app/(admin)/admin/actions";
-import { AdminHeader, Section, Card, fieldClass, labelClass } from "@/components/admin/ui";
+import { getHotel } from "@/lib/repo/content";
+import { readBookingRules } from "@/lib/repo/rate-plans";
+import { RulesForm } from "./RulesForm";
+import { saveSettings } from "@/app/(admin)/admin/actions";
+import { AdminHeader, Section, Card, Flash, fieldClass, labelClass } from "@/components/admin/ui";
 import { LocaleFields } from "@/components/admin/LocaleFields";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function SettingsAdminPage() {
+export default async function SettingsAdminPage({ searchParams }: { searchParams: Promise<{ ok?: string; erro?: string }> }) {
   await requirePagePermission("/admin/definicoes");
-  const [hotel, analytics] = await Promise.all([getHotel(), getAnalytics()]);
+  const [hotel, rules] = await Promise.all([getHotel(), readBookingRules()]);
+  const { ok, erro } = await searchParams;
 
   return (
     <>
@@ -18,6 +21,7 @@ export default async function SettingsAdminPage() {
         subtitle="Dados do hotel usados no site, nos contactos e nos dados estruturados."
       />
       <Section>
+        <Flash ok={ok} error={erro} />
         <form action={saveSettings} className="grid max-w-4xl gap-6">
           <Card className="p-6">
             <h2 className="font-display text-lg tracking-tight">Identidade</h2>
@@ -208,78 +212,7 @@ export default async function SettingsAdminPage() {
           </div>
         </form>
 
-        <form action={saveAnalytics} className="mt-6 grid max-w-4xl gap-6">
-          <Card className="p-6">
-            <h2 className="font-display text-lg tracking-tight">
-              Analytics e verificação
-            </h2>
-            <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
-              As etiquetas só são carregadas depois de o visitante aceitar cookies.
-              Deixe em branco para desativar.
-            </p>
-
-            <div className="mt-5 grid gap-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label className={labelClass} htmlFor="ga4">
-                    Google Analytics 4 · ID de medição
-                  </label>
-                  <input
-                    id="ga4"
-                    name="ga4"
-                    defaultValue={analytics.ga4}
-                    placeholder="G-XXXXXXXXXX"
-                    pattern="^$|^G-[A-Za-z0-9]+$"
-                    title="Formato: G- seguido de letras e números"
-                    className={`${fieldClass} font-mono`}
-                  />
-                  <p className="mt-1.5 text-xs text-[var(--color-ink-muted)]">
-                    Em analytics.google.com: Administrador → Fluxos de dados.
-                  </p>
-                </div>
-                <div>
-                  <label className={labelClass} htmlFor="gtm">
-                    Google Tag Manager · ID do contentor (opcional)
-                  </label>
-                  <input
-                    id="gtm"
-                    name="gtm"
-                    defaultValue={analytics.gtm}
-                    placeholder="GTM-XXXXXXX"
-                    pattern="^$|^GTM-[A-Za-z0-9]+$"
-                    title="Formato: GTM- seguido de letras e números"
-                    className={`${fieldClass} font-mono`}
-                  />
-                  <p className="mt-1.5 text-xs text-[var(--color-ink-muted)]">
-                    Use apenas se gerir as etiquetas pelo Tag Manager.
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <label className={labelClass} htmlFor="searchConsole">
-                  Google Search Console · código de verificação (opcional)
-                </label>
-                <input
-                  id="searchConsole"
-                  name="searchConsole"
-                  defaultValue={analytics.searchConsole}
-                  placeholder="conteúdo da meta tag google-site-verification"
-                  className={`${fieldClass} font-mono`}
-                />
-                <p className="mt-1.5 text-xs text-[var(--color-ink-muted)]">
-                  Só o valor do atributo <code>content</code>, sem a etiqueta completa.
-                </p>
-              </div>
-
-              <div className="border-t border-[var(--color-line)] pt-5">
-                <SubmitButton icon="check" pendingLabel="A guardar…">
-                  Guardar analytics
-                </SubmitButton>
-              </div>
-            </div>
-          </Card>
-        </form>
+        <RulesForm rules={rules} />
       </Section>
     </>
   );

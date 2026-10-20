@@ -403,5 +403,5 @@ export async function saveSettings(formData: FormData) {
   });
 
   refresh(TAGS.settings);
-  redirect("/admin/definicoes");
+  redirect("/admin/definicoes?ok=" + encodeURIComponent("Definições guardadas."));
 }

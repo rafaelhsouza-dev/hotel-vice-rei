@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
+import { getActor } from "@/lib/auth/session";
 import { LoginForm } from "./LoginForm";
 
 export const dynamic = "force-dynamic";
@@ -8,10 +8,12 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; ok?: string }>;
 }) {
-  const { next } = await searchParams;
-  if (await getSession()) redirect("/admin");
+  const { next, ok } = await searchParams;
+  // getActor, not the bare cookie: a revoked session (password changed,
+  // account disabled) must land here instead of bouncing back to /admin.
+  if (await getActor()) redirect("/admin");
 
   return (
     <main className="grid min-h-screen place-items-center px-5 py-16">
@@ -24,7 +26,7 @@ export default async function LoginPage({
             height={512}
             sizes="200px"
             className="h-10 w-auto"
-            priority
+            fetchPriority="high"
           />
         </div>
         <div className="rounded-3xl border border-[var(--color-line)] bg-white p-8 shadow-[var(--shadow-card)]">
@@ -32,6 +34,11 @@ export default async function LoginPage({
           <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
             Aceda com as suas credenciais de gestão.
           </p>
+          {ok && (
+            <p role="status" className="mt-4 rounded-xl bg-[var(--color-success)]/10 px-3 py-2 text-sm text-[var(--color-success)]">
+              {ok.slice(0, 200)}
+            </p>
+          )}
           <LoginForm next={next && next.startsWith("/admin") ? next : "/admin"} />
         </div>
       </div>

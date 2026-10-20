@@ -91,9 +91,16 @@ export function AdminNav({
       </div>
 
       {open && (
-        <div className="border-b border-[var(--color-line)] bg-white p-4 lg:hidden">
+        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-[var(--color-line)] bg-white p-4 lg:hidden">
           {nav}
-          <form action={logout} className="mt-6">
+          <Link
+            href="/admin/conta"
+            onClick={() => setOpen(false)}
+            className="mt-6 block rounded-xl border border-[var(--color-line)] px-3 py-2 text-sm text-[var(--color-ink-soft)]"
+          >
+            A minha conta · {user.name}
+          </Link>
+          <form action={logout} className="mt-3">
             <button
               type="submit"
               className="w-full rounded-xl border border-[var(--color-line)] px-3 py-2 text-sm text-[var(--color-ink-soft)]"
@@ -105,15 +112,17 @@ export function AdminNav({
       )}
 
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-[var(--color-line)] bg-white lg:flex lg:flex-col">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-[var(--color-line)] bg-white lg:flex lg:flex-col">
         <div className="border-b border-[var(--color-line)] px-5 py-5">
           <p className="font-display text-xl tracking-tight">Vice-Rei</p>
           <p className="text-xs text-[var(--color-ink-muted)]">Backoffice</p>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-5">{nav}</div>
         <div className="border-t border-[var(--color-line)] px-5 py-4">
-          <p className="truncate text-sm font-medium">{user.name}</p>
-          <p className="truncate text-xs text-[var(--color-ink-muted)]">{user.email}</p>
+          <Link href="/admin/conta" className="block rounded-lg hover:bg-[var(--color-line-soft)]">
+            <p className="truncate text-sm font-medium">{user.name}</p>
+            <p className="truncate text-xs text-[var(--color-ink-muted)]">{user.email}</p>
+          </Link>
           <form action={logout}>
             <button
               type="submit"
